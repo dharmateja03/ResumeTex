@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Import custom fonts */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap'); /* Substitute for Gambarino */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap'); /* Substitute for Switzer */
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap'); /* Substitute for Volkart */
+/* Font Classes */
+.font-gambarino {
+  font-family: 'DM Serif Display', serif;
+}
+.font-switzer {
+  font-family: 'Inter', sans-serif;
+}
+.font-switzer-light {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+}
+.font-switzer-bold {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+}
+.font-volkart {
+  font-family: 'Lato', sans-serif;
+}
+/* Apply Switzer Bold to all h1 elements */
+h1 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+}
+/* Grid Background */
+.grid-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h100v100H0z' fill='none'/%3E%3Cpath d='M0 0h1v100H0zm20 0h1v100h-1zm20 0h1v100h-1zm20 0h1v100h-1zm20 0h1v100h-1zM0 0v1h100V0zm0 20v1h100v-1zm0 20v1h100v-1zm0 20v1h100v-1zm0 20v1h100v-1z' fill='%23000000' fill-opacity='0.05'/%3E%3C/svg%3E");
+  position: relative;
+}
+.grid-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 30%, rgba(255, 255, 255, 0.5) 100%);
+  backdrop-filter: blur(0px);
+  pointer-events: none;
+}
+.grid-bg > * {
+  position: relative;
+  z-index: 1;
+}
+/* Dots Background */
+.dots-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+}
+/* Lines Background */
+.lines-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+}
+/* Subtle Gradient Background */
+.gradient-bg {
+  background: linear-gradient(135deg, rgba(249, 250, 251, 1) 0%, rgba(240, 244, 248, 1) 100%);
+}
+/* Radial blur effect */
+.radial-blur {
+  position: relative;
+}
+.radial-blur::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 30%, rgba(255, 255, 255, 0.3) 70%, rgba(255, 255, 255, 0.7) 100%);
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+  z-index: 0;
+}
+.radial-blur > * {
+  position: relative;
+  z-index: 1;
+}
+/* Resume features special styling */
+.resume-feature-title {
+  font-family: 'DM Serif Display', serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.02em;
+  background: linear-gradient(to right, #2563eb, #1e40af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+/* Backdrop filter */
+.backdrop-blur-40 {
+  backdrop-filter: blur(40px);
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+.delay-100 {
+  animation-delay: 0.1s;
+}
+.delay-200 {
+  animation-delay: 0.2s;
+}
+.delay-300 {
+  animation-delay: 0.3s;
+}
+.delay-400 {
+  animation-delay: 0.4s;
+}
+.delay-500 {
+  animation-delay: 0.5s;
+}
+.delay-600 {
+  animation-delay: 0.6s;
+}
+.shadow-glow-blue {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+.shadow-glow-amber {
+  box-shadow: 0 0 15px rgba(217, 119, 6, 0.5);
+}

@@ -1,0 +1,2 @@
+web: python app.py
+worker: celery -A celery_app worker --loglevel=info

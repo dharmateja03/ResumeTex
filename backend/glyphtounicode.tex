@@ -1,0 +1,56 @@
+%% glyphtounicode.tex
+%% Minimal implementation for Tectonic compatibility
+%% This provides basic glyphtounicode support to prevent compilation errors
+
+% Define glyphtounicode if not already defined
+\ifx\glyphtounicode\undefined
+  \def\glyphtounicode#1#2{%
+    % Basic implementation - just ignore the mapping
+    % This prevents "undefined control sequence" errors
+  }%
+\fi
+
+% Define pdfglyphtounicode if not already defined  
+\ifx\pdfglyphtounicode\undefined
+  \def\pdfglyphtounicode#1#2{%
+    % Basic implementation - just ignore the mapping
+  }%
+\fi
+
+% Common glyph to unicode mappings that might be referenced
+\glyphtounicode{space}{0020}
+\glyphtounicode{exclam}{0021}
+\glyphtounicode{quotedbl}{0022}
+\glyphtounicode{numbersign}{0023}
+\glyphtounicode{dollar}{0024}
+\glyphtounicode{percent}{0025}
+\glyphtounicode{ampersand}{0026}
+\glyphtounicode{quotesingle}{0027}
+\glyphtounicode{parenleft}{0028}
+\glyphtounicode{parenright}{0029}
+\glyphtounicode{asterisk}{002A}
+\glyphtounicode{plus}{002B}
+\glyphtounicode{comma}{002C}
+\glyphtounicode{hyphen}{002D}
+\glyphtounicode{period}{002E}
+\glyphtounicode{slash}{002F}
+
+% Numbers
+\glyphtounicode{zero}{0030}
+\glyphtounicode{one}{0031}
+\glyphtounicode{two}{0032}
+\glyphtounicode{three}{0033}
+\glyphtounicode{four}{0034}
+\glyphtounicode{five}{0035}
+\glyphtounicode{six}{0036}
+\glyphtounicode{seven}{0037}
+\glyphtounicode{eight}{0038}
+\glyphtounicode{nine}{0039}
+
+% Basic letters (a few examples)
+\glyphtounicode{A}{0041}
+\glyphtounicode{B}{0042}
+\glyphtounicode{C}{0043}
+\glyphtounicode{a}{0061}
+\glyphtounicode{b}{0062}
+\glyphtounicode{c}{0063}
