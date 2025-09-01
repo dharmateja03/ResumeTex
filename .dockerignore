@@ -1,0 +1,28 @@
+# Ignore everything except backend
+*
+!backend/
+!Dockerfile
+!railway.json
+
+# Backend ignores
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo  
+backend/*.pyd
+backend/.Python
+backend/env/
+backend/venv/
+backend/.venv/
+backend/.env*
+backend/app.log
+
+# OS files
+.DS_Store
+.git/
+node_modules/
+resumetx_frontend/
+docs/
+
+# Nixpacks files (force Docker usage)
+.nixpacks/
+nixpacks.toml
