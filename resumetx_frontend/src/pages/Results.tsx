@@ -50,13 +50,13 @@ export function Results() {
     if (!optimizationId) return;
     
     try {
-      const response = await fetch(`http://localhost:8001/optimize/${optimizationId}/status`);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/optimize/${optimizationId}/status`);
       const statusData = await response.json();
       setStatus(statusData);
       
       if (statusData.status === 'completed' && statusData.result_url) {
         // Fetch the actual result
-        const resultResponse = await fetch(`http://localhost:8001/optimize/${optimizationId}/result`);
+        const resultResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/optimize/${optimizationId}/result`);
         if (resultResponse.ok) {
           const resultData = await resultResponse.json();
           
@@ -98,7 +98,7 @@ export function Results() {
 
   const handleDownloadPDF = () => {
     if (result?.pdf_download_url) {
-      window.open(`http://localhost:8001${result.pdf_download_url}`, '_blank');
+      window.open(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}${result.pdf_download_url}`, '_blank');
     }
   };
 
@@ -116,7 +116,7 @@ export function Results() {
     // Set initial PDF URL if available and not already set (use /view endpoint for preview)
     if (!compiledPdfUrl && result?.pdf_download_url) {
       const viewUrl = result.pdf_download_url + '/view';
-      setCompiledPdfUrl(`http://localhost:8001${viewUrl}`);
+      setCompiledPdfUrl(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}${viewUrl}`);
     }
     
     setShowLatexEditor(true);
@@ -138,7 +138,7 @@ export function Results() {
       console.log('Compiling LaTeX code...');
       
       // Call backend to compile the edited LaTeX
-      const response = await fetch(`http://localhost:8001/optimize/compile-latex`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/optimize/compile-latex`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ export function Results() {
           const timestamp = Date.now();
           // Convert download URL to view URL for inline preview
           const viewUrl = compileResult.pdf_download_url.replace('/download/', '/download/') + '/view';
-          setCompiledPdfUrl(`http://localhost:8001${viewUrl}?t=${timestamp}`);
+          setCompiledPdfUrl(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}${viewUrl}?t=${timestamp}`);
           console.log('PDF preview updated for inline viewing:', viewUrl);
         }
         

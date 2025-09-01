@@ -133,7 +133,7 @@ export function Optimize() {
       });
 
       // Call the backend optimization API
-      const response = await fetch('http://localhost:8001/optimize/', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/optimize/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
