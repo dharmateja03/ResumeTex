@@ -115,17 +115,41 @@ async def general_exception_handler(request: Request, exc: Exception):
         }
     )
 
-# Health check and status endpoints
-@app.get("/")
-async def root():
-    """Root endpoint with API information"""
-    return {
-        "name": "ResumeTex API",
-        "version": "1.0.0",
-        "description": "AI-powered resume optimization platform",
-        "status": "online",
-        "environment": environment
-    }
+# Static file serving for frontend
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
+
+# Serve static files if frontend build exists
+if os.path.exists("frontend_build"):
+    app.mount("/static", StaticFiles(directory="frontend_build/static"), name="static")
+    
+    @app.get("/")
+    async def serve_frontend():
+        """Serve the React frontend"""
+        return FileResponse("frontend_build/index.html")
+    
+    # Catch-all route for React Router
+    @app.get("/{full_path:path}")
+    async def serve_react_routes(full_path: str):
+        """Serve React app for all non-API routes"""
+        # Don't interfere with API routes
+        if full_path.startswith(("auth/", "llm/", "optimize/", "download/", "analytics/", "health", "metrics", "docs")):
+            raise HTTPException(status_code=404, detail="Not found")
+        return FileResponse("frontend_build/index.html")
+else:
+    # API-only mode
+    @app.get("/")
+    async def root():
+        """Root endpoint with API information"""
+        return {
+            "name": "ResumeTex API",
+            "version": "1.0.0",
+            "description": "AI-powered resume optimization platform",
+            "status": "online",
+            "environment": environment,
+            "frontend_url": "Deploy frontend separately for full application"
+        }
 
 @app.get("/health")
 async def health_check():
@@ -140,15 +164,18 @@ async def health_check():
         "services": {}
     }
     
-    # Check Redis connection
-    try:
-        redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
-        r = redis.from_url(redis_url)
-        r.ping()
-        health_status["services"]["redis"] = "healthy"
-    except Exception as e:
-        health_status["services"]["redis"] = f"unhealthy: {str(e)}"
-        health_status["status"] = "degraded"
+    # Check Redis connection (optional in development)
+    redis_url = os.getenv("REDIS_URL")
+    if redis_url:
+        try:
+            r = redis.from_url(redis_url)
+            r.ping()
+            health_status["services"]["redis"] = "healthy"
+        except Exception as e:
+            health_status["services"]["redis"] = f"unhealthy: {str(e)}"
+            health_status["status"] = "degraded"
+    else:
+        health_status["services"]["redis"] = "not configured (optional)"
     
     # Check environment variables
     required_vars = ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "SECRET_KEY"]
