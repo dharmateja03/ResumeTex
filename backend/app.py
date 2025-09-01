@@ -1,12 +1,17 @@
 """
 Resume Optimizer FastAPI Application
+Production-ready with proper error handling, logging, and CORS configuration.
 """
 import logging
+import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 import uvicorn
+from dotenv import load_dotenv
 
 from routes.auth import router as auth_router
 from routes.llm import router as llm_router
@@ -14,39 +19,54 @@ from routes.optimize import router as optimize_router
 from routes.download import router as download_router
 from routes.analytics import router as analytics_router
 
-# Configure logging
+# Load environment variables
+load_dotenv()
+
+# Configure logging based on environment
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+environment = os.getenv("ENVIRONMENT", "development")
+
 logging.basicConfig(
-    level=logging.INFO,
+    level=getattr(logging, log_level),
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler("app.log")
-    ]
+        logging.StreamHandler()
+    ] + ([logging.FileHandler("app.log")] if environment == "development" else [])
 )
 logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan events"""
-    logger.info("🚀 Resume Optimizer API starting up...")
+    logger.info(f"🚀 Resume Optimizer API starting up in {environment} mode...")
+    logger.info(f"📊 Log level set to: {log_level}")
     yield
     logger.info("🛑 Resume Optimizer API shutting down...")
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Resume Optimizer API",
-    description="AI-powered resume optimization for job applications",
+    title="ResumeTex API",
+    description="AI-powered resume optimization platform with Google SSO and LaTeX processing",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    docs_url="/docs" if environment == "development" else None,
+    redoc_url="/redoc" if environment == "development" else None
 )
 
-# CORS middleware
+# Production security middleware
+if environment == "production":
+    allowed_hosts = os.getenv("ALLOWED_HOSTS", "*").split(",")
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
+
+# CORS middleware - production ready
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # Frontend URLs
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 # Include routers
@@ -56,26 +76,123 @@ app.include_router(optimize_router, prefix="/optimize", tags=["Resume Optimizati
 app.include_router(download_router, prefix="/download", tags=["File Downloads"])
 app.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
 
+# Global error handlers
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    """Handle HTTP exceptions"""
+    logger.error(f"HTTP {exc.status_code} error at {request.url}: {exc.detail}")
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error": "HTTP Exception",
+            "message": exc.detail,
+            "status_code": exc.status_code
+        }
+    )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Handle request validation errors"""
+    logger.error(f"Validation error at {request.url}: {exc.errors()}")
+    return JSONResponse(
+        status_code=422,
+        content={
+            "error": "Validation Error",
+            "message": "Invalid request data",
+            "details": exc.errors()
+        }
+    )
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    """Handle general exceptions"""
+    logger.error(f"Unexpected error at {request.url}: {str(exc)}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Server Error",
+            "message": "An unexpected error occurred" if environment == "production" else str(exc)
+        }
+    )
+
+# Health check and status endpoints
 @app.get("/")
 async def root():
-    """Root endpoint"""
-    logger.info("📍 Root endpoint accessed")
-    return {"message": "Resume Optimizer API", "version": "1.0.0"}
+    """Root endpoint with API information"""
+    return {
+        "name": "ResumeTex API",
+        "version": "1.0.0",
+        "description": "AI-powered resume optimization platform",
+        "status": "online",
+        "environment": environment
+    }
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
-    logger.info("🏥 Health check accessed")
-    return {"status": "healthy", "message": "Resume Optimizer API is running"}
+    """Comprehensive health check endpoint"""
+    import time
+    import redis
+    
+    health_status = {
+        "status": "healthy",
+        "timestamp": time.time(),
+        "environment": environment,
+        "services": {}
+    }
+    
+    # Check Redis connection
+    try:
+        redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+        r = redis.from_url(redis_url)
+        r.ping()
+        health_status["services"]["redis"] = "healthy"
+    except Exception as e:
+        health_status["services"]["redis"] = f"unhealthy: {str(e)}"
+        health_status["status"] = "degraded"
+    
+    # Check environment variables
+    required_vars = ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "SECRET_KEY"]
+    missing_vars = [var for var in required_vars if not os.getenv(var)]
+    
+    if missing_vars:
+        health_status["services"]["config"] = f"missing variables: {', '.join(missing_vars)}"
+        health_status["status"] = "degraded"
+    else:
+        health_status["services"]["config"] = "healthy"
+    
+    return health_status
 
-@app.exception_handler(Exception)
-async def global_exception_handler(request, exc):
-    """Global exception handler"""
-    logger.error(f"❌ Unhandled exception: {str(exc)}")
-    return JSONResponse(
-        status_code=500,
-        content={"error": "Internal server error", "message": str(exc)}
-    )
+@app.get("/metrics")
+async def metrics():
+    """Basic metrics endpoint for monitoring"""
+    import psutil
+    import time
+    
+    return {
+        "timestamp": time.time(),
+        "uptime": time.time() - psutil.boot_time(),
+        "cpu_percent": psutil.cpu_percent(),
+        "memory_percent": psutil.virtual_memory().percent,
+        "disk_usage": psutil.disk_usage('/').percent
+    }
+
+# Request logging middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    """Log all incoming requests for monitoring"""
+    import time
+    start_time = time.time()
+    
+    # Log request
+    logger.info(f"📨 {request.method} {request.url.path} - Client: {request.client.host if request.client else 'unknown'}")
+    
+    response = await call_next(request)
+    
+    # Log response
+    process_time = time.time() - start_time
+    logger.info(f"📤 {request.method} {request.url.path} - Status: {response.status_code} - Time: {process_time:.3f}s")
+    
+    return response
 
 if __name__ == "__main__":
     import os
