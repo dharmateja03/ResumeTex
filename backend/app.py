@@ -53,10 +53,11 @@ app = FastAPI(
     redoc_url="/redoc" if environment == "development" else None
 )
 
-# Production security middleware
-if environment == "production":
-    allowed_hosts = os.getenv("ALLOWED_HOSTS", "*").split(",")
-    app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
+# Production security middleware - disabled for Railway compatibility
+# Railway uses internal hosts for health checks that we can't predict
+# if environment == "production":
+#     allowed_hosts = os.getenv("ALLOWED_HOSTS", "*").split(",")
+#     app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
 
 # CORS middleware - production ready
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")
