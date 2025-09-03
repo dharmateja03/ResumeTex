@@ -3,6 +3,7 @@
 !backend/
 !Dockerfile
 !railway.json
+!latex_system_prompt.txt
 
 # Backend ignores
 backend/__pycache__/
