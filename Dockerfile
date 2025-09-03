@@ -19,6 +19,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application
 COPY backend/ .
 
+# Copy system prompt file
+COPY latex_system_prompt.txt ../latex_system_prompt.txt
+
 # Create directories
 RUN mkdir -p /tmp/resume_pdfs
 

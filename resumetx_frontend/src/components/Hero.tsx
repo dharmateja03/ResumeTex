@@ -1,5 +1,6 @@
 import React from 'react';
 import { FileTextIcon, ZapIcon, BriefcaseIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 export function Hero() {
   return <div className="relative overflow-hidden gradient-bg">
       <div className="max-w-7xl mx-auto">
@@ -19,9 +20,9 @@ export function Hero() {
               </p>
               <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start opacity-0 animate-fade-in delay-300">
                 <div className="rounded-md shadow">
-                  <a href="#" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-switzer-bold rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition-all duration-300">
+                  <Link to="/login" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-switzer-bold rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition-all duration-300">
                     Get started
-                  </a>
+                  </Link>
                 </div>
                 <div className="mt-3 sm:mt-0 sm:ml-3">
                   <a href="#how-it-works" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-switzer-bold rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 md:py-4 md:text-lg md:px-10 transition-all duration-300">

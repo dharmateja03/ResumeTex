@@ -85,16 +85,40 @@ class PDFGenerator:
             # Copy glyphtounicode.tex to working directory for Tectonic
             self._setup_tectonic_support_files(work_dir)
             
-            # Compile with selected compiler
+            # Try compilation with selected compiler
             start_time = datetime.now()
-            compilation_result = await self._compile_with_compiler(
-                tex_path, work_dir, self.selected_compiler, optimization_id
-            )
+            compilation_result = None
+            last_error = None
+            
+            # Try primary compiler first
+            try:
+                compilation_result = await self._compile_with_compiler(
+                    tex_path, work_dir, self.selected_compiler, optimization_id
+                )
+            except PDFGeneratorError as e:
+                last_error = e
+                logger.warning(f"⚠️ Primary compiler {self.selected_compiler} failed: {str(e)}")
+                
+                # Try fallback compilers if primary fails
+                for fallback_compiler in ['pdflatex', 'xelatex', 'lualatex']:
+                    if fallback_compiler != self.selected_compiler and await self._check_compiler_available(fallback_compiler):
+                        try:
+                            logger.info(f"🔄 Trying fallback compiler: {fallback_compiler}")
+                            compilation_result = await self._compile_with_compiler(
+                                tex_path, work_dir, fallback_compiler, optimization_id
+                            )
+                            logger.info(f"✅ Fallback compiler {fallback_compiler} succeeded")
+                            break
+                        except PDFGeneratorError as fallback_error:
+                            logger.warning(f"⚠️ Fallback compiler {fallback_compiler} also failed: {str(fallback_error)}")
+                            continue
+            
             compile_time = (datetime.now() - start_time).total_seconds()
             
             # Check if PDF was generated
             if not pdf_path.exists():
-                raise PDFGeneratorError("PDF file not generated")
+                error_msg = f"PDF file not generated. Last error: {str(last_error) if last_error else 'Unknown error'}"
+                raise PDFGeneratorError(error_msg)
             
             # Get file size
             pdf_size = pdf_path.stat().st_size
@@ -266,7 +290,6 @@ class PDFGenerator:
         cmd = [
             compiler_path,
             '-interaction=nonstopmode',
-            '-halt-on-error',
             '-output-directory', str(work_dir),
             str(tex_path)
         ]
@@ -294,11 +317,18 @@ class PDFGenerator:
                 log = stdout.decode('utf-8', errors='ignore') + stderr.decode('utf-8', errors='ignore')
                 all_logs.append(f"=== Pass {pass_num} ===\n{log}")
                 
-                if process.returncode != 0:
-                    raise PDFGeneratorError(f"{compiler} compilation failed (exit code: {process.returncode})\n{log}")
-                
-                # Check if PDF exists after first pass
+                # Check if PDF exists after this pass
                 pdf_path = work_dir / tex_path.with_suffix('.pdf').name
+                
+                if process.returncode != 0:
+                    # Even if there's an error, check if PDF was still generated
+                    if pdf_path.exists() and pdf_path.stat().st_size > 1000:
+                        logger.warning(f"⚠️ {compiler} had errors but generated PDF anyway (exit code: {process.returncode})")
+                        break
+                    else:
+                        # Only fail if no usable PDF was generated
+                        raise PDFGeneratorError(f"{compiler} compilation failed (exit code: {process.returncode})\n{log}")
+                
                 if pdf_path.exists():
                     break
             
