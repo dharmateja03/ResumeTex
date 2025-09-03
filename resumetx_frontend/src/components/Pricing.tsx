@@ -74,15 +74,15 @@ export function Pricing() {
                   keep the service running and add new features.
                 </p>
                 <div className="mt-8 space-y-4">
-                  <button className={`block w-full py-2 px-6 border border-transparent rounded-xl text-center font-medium transition-all duration-300 transform ${activeCoffeeButton === 0 ? 'scale-105 shadow-glow-amber' : ''} bg-amber-100 text-amber-700 hover:bg-amber-200 opacity-0 animate-fade-in delay-400`} onMouseEnter={() => setActiveCoffeeButton(0)} onMouseLeave={() => setActiveCoffeeButton(null)}>
+                  <a href="https://buymeacoffee.com/samudhar" target="_blank" rel="noopener noreferrer" className={`block w-full py-2 px-6 border border-transparent rounded-xl text-center font-medium transition-all duration-300 transform ${activeCoffeeButton === 0 ? 'scale-105 shadow-glow-amber' : ''} bg-amber-100 text-amber-700 hover:bg-amber-200 opacity-0 animate-fade-in delay-400`} onMouseEnter={() => setActiveCoffeeButton(0)} onMouseLeave={() => setActiveCoffeeButton(null)}>
                     $5 - Small Coffee
-                  </button>
-                  <button className={`block w-full py-2 px-6 border border-transparent rounded-xl text-center font-medium transition-all duration-300 transform ${activeCoffeeButton === 1 ? 'scale-105 shadow-glow-amber' : ''} bg-amber-500 text-white hover:bg-amber-600 opacity-0 animate-fade-in delay-500`} onMouseEnter={() => setActiveCoffeeButton(1)} onMouseLeave={() => setActiveCoffeeButton(null)}>
+                  </a>
+                  <a href="https://buymeacoffee.com/samudhar" target="_blank" rel="noopener noreferrer" className={`block w-full py-2 px-6 border border-transparent rounded-xl text-center font-medium transition-all duration-300 transform ${activeCoffeeButton === 1 ? 'scale-105 shadow-glow-amber' : ''} bg-amber-500 text-white hover:bg-amber-600 opacity-0 animate-fade-in delay-500`} onMouseEnter={() => setActiveCoffeeButton(1)} onMouseLeave={() => setActiveCoffeeButton(null)}>
                     $10 - Large Coffee
-                  </button>
-                  <button className={`block w-full py-2 px-6 border border-transparent rounded-xl text-center font-medium transition-all duration-300 transform ${activeCoffeeButton === 2 ? 'scale-105 shadow-glow-amber' : ''} bg-amber-700 text-white hover:bg-amber-800 opacity-0 animate-fade-in delay-600`} onMouseEnter={() => setActiveCoffeeButton(2)} onMouseLeave={() => setActiveCoffeeButton(null)}>
+                  </a>
+                  <a href="https://buymeacoffee.com/samudhar" target="_blank" rel="noopener noreferrer" className={`block w-full py-2 px-6 border border-transparent rounded-xl text-center font-medium transition-all duration-300 transform ${activeCoffeeButton === 2 ? 'scale-105 shadow-glow-amber' : ''} bg-amber-700 text-white hover:bg-amber-800 opacity-0 animate-fade-in delay-600`} onMouseEnter={() => setActiveCoffeeButton(2)} onMouseLeave={() => setActiveCoffeeButton(null)}>
                     $25 - Coffee for the Team
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
