@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FileTextIcon, UploadIcon, CheckCircleIcon, XIcon, SendIcon, DownloadIcon, EditIcon, PlayIcon, AlertCircleIcon, ChevronDownIcon, ServerIcon, KeyIcon, CheckIcon, MailIcon, ClockIcon, BarChart3Icon, User, History, LogOut, Settings, Share2, Moon, Sun, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { trackEvent, resetUser } from '../lib/posthog';
-import { useClerk } from '@clerk/clerk-react';
+import { useClerk, useUser } from '@clerk/clerk-react';
 
 interface OptimizationResult {
   optimization_id: string;
@@ -39,6 +39,7 @@ export function Workspace() {
   const navigate = useNavigate();
   const resultsRef = useRef<HTMLDivElement>(null);
   const { signOut } = useClerk();
+  const { user } = useUser();
 
   // Auth & Resume state
   const [isDragging, setIsDragging] = useState(false);
@@ -493,11 +494,17 @@ export function Workspace() {
                   {/* Refer a Friend */}
                   <button
                     onClick={() => {
-                      const userEmail = localStorage.getItem('user_email') || 'friend';
-                      const referralLink = `${window.location.origin}?utm_source=referral&utm_medium=email&utm_campaign=${userEmail}`;
+                      // Get user identifier for referral tracking
+                      const referrerName = user?.username || user?.firstName || user?.primaryEmailAddress?.emailAddress?.split('@')[0] || 'friend';
+                      const referrerId = user?.id || 'unknown';
+                      const referralLink = `${window.location.origin}?ref=${encodeURIComponent(referrerName)}&ref_id=${referrerId}&utm_source=referral&utm_medium=share`;
                       navigator.clipboard.writeText(referralLink);
                       alert('Referral link copied! Share it with your friends.');
-                      trackEvent('referral_link_copied', { user_email: userEmail });
+                      trackEvent('referral_link_copied', {
+                        referrer_name: referrerName,
+                        referrer_id: referrerId,
+                        referrer_email: user?.primaryEmailAddress?.emailAddress
+                      });
                       setShowProfileDropdown(false);
                     }}
                     className={`w-full px-4 py-2 text-left text-sm ${darkMode ? 'text-blue-400 hover:bg-gray-700' : 'text-blue-600 hover:bg-blue-50'} flex items-center space-x-2`}

@@ -16,34 +16,54 @@ export const initPostHog = () => {
       },
     })
 
-    // Capture UTM parameters and referrer on initialization
+    // Capture UTM parameters, referral info, and referrer on initialization
     const urlParams = new URLSearchParams(window.location.search)
-    const utmParams: Record<string, string> = {}
+    const trackingParams: Record<string, string> = {}
 
     // Capture all UTM parameters
     const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']
     utmKeys.forEach(key => {
       const value = urlParams.get(key)
       if (value) {
-        utmParams[key] = value
+        trackingParams[key] = value
       }
     })
+
+    // Capture referral parameters (ref = referrer username, ref_id = referrer user id)
+    const refName = urlParams.get('ref')
+    const refId = urlParams.get('ref_id')
+    if (refName) {
+      trackingParams['referred_by'] = refName
+      trackingParams['referrer_name'] = refName
+    }
+    if (refId) {
+      trackingParams['referrer_id'] = refId
+    }
 
     // Capture referrer
     const referrer = document.referrer || 'direct'
 
-    // Store UTM params and referrer as user properties
-    if (Object.keys(utmParams).length > 0 || referrer !== 'direct') {
+    // Store tracking params and referrer as user properties
+    if (Object.keys(trackingParams).length > 0 || referrer !== 'direct') {
       posthog.register({
         initial_referrer: referrer,
-        ...utmParams
+        ...trackingParams
       })
 
       // Also set as super properties for this session
       posthog.people?.set({
         $initial_referrer: referrer,
-        ...utmParams
+        ...trackingParams
       })
+
+      // Track referral visit event if coming from a referral link
+      if (refName || refId) {
+        posthog.capture('referral_visit', {
+          referrer_name: refName,
+          referrer_id: refId,
+          landing_page: window.location.pathname
+        })
+      }
     }
 
     console.log('✅ PostHog initialized successfully')
