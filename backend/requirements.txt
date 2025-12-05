@@ -10,3 +10,5 @@ celery==5.3.4
 PyJWT==2.8.0
 python-dotenv==1.0.0
 psutil==5.9.6
+clerk-backend-api==1.0.0
+sqlalchemy==2.0.23

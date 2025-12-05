@@ -63,7 +63,7 @@ export function OAuthCallback() {
             if (!hasLLMConfig) {
               navigate('/llm_settings');
             } else {
-              navigate('/dashboard');
+              navigate('/workspace');
             }
           }, 1000);
         } else {

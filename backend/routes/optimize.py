@@ -4,10 +4,12 @@ Resume optimization routes - main functionality
 import logging
 import uuid
 import asyncio
+import os
 from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks
 from typing import Dict, Any, Optional
 from datetime import datetime
 from pathlib import Path
+from sqlalchemy.orm import Session
 
 from models.schemas import (
     OptimizationRequest, OptimizationResponse, OptimizationStatus,
@@ -19,13 +21,187 @@ from services.cache_service import cache_service
 from services.tex_parser import latex_parser
 from services.pdf_generator import pdf_generator
 from routes.auth import get_current_user, get_current_user_optional
+from database.models import OptimizationHistory, get_db, SessionLocal
+from shared_state import optimization_status_store
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# In-memory store for optimization status (in production, use Redis or database)
-optimization_status_store: Dict[str, Dict[str, Any]] = {}
+# Import track_token_usage after router definition to avoid circular import
+def track_token_usage(*args, **kwargs):
+    """Lazy import to avoid circular dependency"""
+    from routes.analytics import track_token_usage as _track_token_usage
+    return _track_token_usage(*args, **kwargs)
+
+def get_persistent_storage_dir() -> Path:
+    """Get persistent storage directory for files"""
+    # Use same logic as database - configurable path for deployment
+    if os.getenv('RAILWAY_ENVIRONMENT'):
+        storage_path = Path('/app/data/optimizations')
+    else:
+        storage_path = Path(__file__).parent.parent / 'data' / 'optimizations'
+
+    storage_path.mkdir(exist_ok=True, parents=True)
+    return storage_path
+
+def save_to_history(
+    optimization_id: str,
+    user_email: str,
+    company_name: str,
+    job_description: str,
+    original_latex: str,
+    optimized_latex: str,
+    llm_provider: str,
+    llm_model: str,
+    status: str,
+    pdf_path: Optional[str] = None,
+    latex_path: Optional[str] = None,
+    error_message: Optional[str] = None,
+    cold_email: Optional[str] = None,
+    cover_letter: Optional[str] = None
+):
+    """Save optimization to database history"""
+    try:
+        db = SessionLocal()
+
+        # Convert absolute paths to relative paths for portability
+        relative_pdf_path = None
+        relative_latex_path = None
+
+        if pdf_path:
+            pdf_file = Path(pdf_path)
+            if pdf_file.exists():
+                relative_pdf_path = str(pdf_file.relative_to(Path(__file__).parent.parent))
+
+        if latex_path:
+            latex_file = Path(latex_path)
+            if latex_file.exists():
+                relative_latex_path = str(latex_file.relative_to(Path(__file__).parent.parent))
+
+        # Create history record
+        history_record = OptimizationHistory(
+            optimization_id=optimization_id,
+            user_email=user_email,
+            company_name=company_name,
+            job_description=job_description,
+            original_latex=original_latex,
+            optimized_latex=optimized_latex,
+            pdf_path=relative_pdf_path,
+            latex_path=relative_latex_path,
+            llm_provider=llm_provider,
+            llm_model=llm_model,
+            status=status,
+            error_message=error_message
+        )
+
+        db.add(history_record)
+        db.commit()
+        db.refresh(history_record)
+
+        logger.info(f"✅ Saved optimization {optimization_id} to history database")
+
+    except Exception as e:
+        logger.error(f"❌ Failed to save optimization to history: {str(e)}")
+        if db:
+            db.rollback()
+    finally:
+        if db:
+            db.close()
+
+async def load_cold_email_prompt() -> str:
+    """Load cold email prompt from file"""
+    try:
+        prompt_path = Path(__file__).parent.parent.parent / "cold_email_prompt.txt"
+        if prompt_path.exists():
+            with open(prompt_path, 'r', encoding='utf-8') as f:
+                return f.read().strip()
+        return ""
+    except Exception as e:
+        logger.error(f"❌ Error loading cold email prompt: {str(e)}")
+        return ""
+
+async def load_cover_letter_prompt() -> str:
+    """Load cover letter prompt from file"""
+    try:
+        prompt_path = Path(__file__).parent.parent.parent / "cover_letter_prompt.txt"
+        if prompt_path.exists():
+            with open(prompt_path, 'r', encoding='utf-8') as f:
+                return f.read().strip()
+        return ""
+    except Exception as e:
+        logger.error(f"❌ Error loading cover letter prompt: {str(e)}")
+        return ""
+
+async def load_email_and_cover_letter_prompt() -> str:
+    """Load combined email and cover letter prompt from file"""
+    try:
+        prompt_path = Path(__file__).parent.parent.parent / "email_and_cover_letter_prompt.txt"
+        if prompt_path.exists():
+            with open(prompt_path, 'r', encoding='utf-8') as f:
+                return f.read().strip()
+        return ""
+    except Exception as e:
+        logger.error(f"❌ Error loading email and cover letter prompt: {str(e)}")
+        return ""
+
+async def generate_email_and_cover_letter(resume_text: str, job_description: str, company_name: str, llm_config) -> tuple[Optional[str], Optional[str]]:
+    """Generate BOTH cold email AND cover letter in a single LLM call"""
+    try:
+        prompt_template = await load_email_and_cover_letter_prompt()
+        if not prompt_template:
+            return None, None
+
+        combined_prompt = f"{prompt_template}\n\nCompany Name: {company_name}\n\nJob Description:\n{job_description}\n\nResume Content:\n{resume_text}"
+
+        logger.info(f"🔄 Generating cold email AND cover letter in single API call...")
+        result = await llm_service.optimize_resume(
+            tex_content="",  # Not needed for email/letter
+            job_description=combined_prompt,
+            system_prompt="Generate BOTH a cold email and cover letter based on the following information. Use the exact delimiters specified in the prompt.",
+            config=llm_config
+        )
+
+        response_text = result.get('optimized_tex', '')
+
+        # Parse the response to extract email and cover letter
+        cold_email = None
+        cover_letter = None
+
+        import re
+
+        # Extract cold email
+        email_match = re.search(r'===BEGIN_COLD_EMAIL===(.*?)===END_COLD_EMAIL===', response_text, re.DOTALL)
+        if email_match:
+            cold_email = email_match.group(1).strip()
+            logger.info(f"✅ Cold email extracted ({len(cold_email)} chars)")
+        else:
+            logger.warning("⚠️ Could not parse cold email from response")
+
+        # Extract cover letter
+        letter_match = re.search(r'===BEGIN_COVER_LETTER===(.*?)===END_COVER_LETTER===', response_text, re.DOTALL)
+        if letter_match:
+            cover_letter = letter_match.group(1).strip()
+            logger.info(f"✅ Cover letter extracted ({len(cover_letter)} chars)")
+        else:
+            logger.warning("⚠️ Could not parse cover letter from response")
+
+        return cold_email, cover_letter
+
+    except Exception as e:
+        logger.error(f"❌ Error generating email and cover letter: {str(e)}")
+        return None, None
+
+# Keep old functions for backward compatibility (not used anymore)
+async def generate_cold_email(resume_text: str, job_description: str, company_name: str, llm_config) -> Optional[str]:
+    """DEPRECATED: Use generate_email_and_cover_letter instead"""
+    email, _ = await generate_email_and_cover_letter(resume_text, job_description, company_name, llm_config)
+    return email
+
+async def generate_cover_letter(resume_text: str, job_description: str, company_name: str, llm_config) -> Optional[str]:
+    """DEPRECATED: Use generate_email_and_cover_letter instead"""
+    _, letter = await generate_email_and_cover_letter(resume_text, job_description, company_name, llm_config)
+    return letter
 
 class CompileLatexRequest(BaseModel):
     tex_content: str
@@ -162,29 +338,78 @@ async def process_optimization_background(optimization_id: str, request: Optimiz
         
         # Load system prompt
         system_prompt = await load_system_prompt()
-        
-        # Call LLM service
+
+        # Add custom instructions if provided
+        if request.custom_instructions and request.custom_instructions.strip():
+            logger.info(f"➕ Adding custom instructions: {len(request.custom_instructions)} chars")
+            system_prompt = f"{system_prompt}\n\nADDITIONAL USER INSTRUCTIONS:\n{request.custom_instructions.strip()}"
+
+        # Call LLM service - RUN IN PARALLEL with email/letter generation if requested
         logger.info(f"📤 Sending to LLM for optimization {optimization_id}")
-        llm_result = await llm_service.optimize_resume(
+
+        # Prepare tasks to run in parallel
+        tasks = []
+        task_names = []
+
+        # Task 1: Resume optimization (always runs)
+        tasks.append(llm_service.optimize_resume(
             request.tex_content,
             request.job_description,
             system_prompt,
             request.llm_config
-        )
-        
+        ))
+        task_names.append("resume_optimization")
+
+        # Task 2: Email + Cover Letter generation (if requested, run in parallel!)
+        if request.generate_cold_email or request.generate_cover_letter:
+            logger.info(f"🚀 Running resume optimization AND email/letter generation IN PARALLEL")
+            tasks.append(generate_email_and_cover_letter(
+                resume_text=request.tex_content,  # Use original resume for now
+                job_description=request.job_description,
+                company_name=request.company_name,
+                llm_config=request.llm_config
+            ))
+            task_names.append("email_and_letter")
+
+        # Execute all tasks in parallel
+        results = await asyncio.gather(*tasks)
+
+        # Extract results
+        llm_result = results[0]  # Resume optimization result
+        cold_email_content = None
+        cover_letter_content = None
+
+        if len(results) > 1:
+            cold_email_content, cover_letter_content = results[1]
+            logger.info(f"✅ Parallel execution completed - resume + email/letter generated together!")
+
         # Update progress
         optimization_status_store[optimization_id]["progress"] = 70
-        optimization_status_store[optimization_id]["message"] = "LLM processing completed, validating result..."
-        
-        # Validate optimization result
+        optimization_status_store[optimization_id]["message"] = "LLM processing completed, cleaning and validating result..."
+
+        # Get optimized LaTeX from LLM
         optimized_tex = llm_result['optimized_tex']
-        
-        # Log the complete LLM-generated LaTeX code
-        logger.info(f"📝 COMPLETE LLM-GENERATED LaTeX CODE (ID: {optimization_id}):")
+
+        # Log the RAW LLM response (before cleaning)
+        logger.info(f"📝 RAW LLM RESPONSE (ID: {optimization_id}):")
         logger.info("=" * 80)
-        logger.info(optimized_tex)
+        logger.info(optimized_tex[:500] + "..." if len(optimized_tex) > 500 else optimized_tex)
         logger.info("=" * 80)
-        logger.info(f"📊 LLM generated {len(optimized_tex)} characters of LaTeX")
+        logger.info(f"📊 Raw LLM output: {len(optimized_tex)} characters")
+
+        # Clean the LaTeX content (remove markdown fences, etc.)
+        logger.info("🧹 Cleaning LLM response (removing markdown fences, extra whitespace)")
+        optimized_tex = latex_parser.clean_latex_content(optimized_tex)
+
+        # Log the CLEANED LaTeX code
+        logger.info(f"📝 CLEANED LaTeX CODE (ID: {optimization_id}):")
+        logger.info("=" * 80)
+        logger.info(optimized_tex[:500] + "..." if len(optimized_tex) > 500 else optimized_tex)
+        logger.info("=" * 80)
+        logger.info(f"📊 Cleaned LaTeX: {len(optimized_tex)} characters")
+
+        # Update the result with cleaned content
+        llm_result['optimized_tex'] = optimized_tex
         
         validation_result = latex_parser.validate_optimization_result(
             request.tex_content,
@@ -216,34 +441,137 @@ async def process_optimization_background(optimization_id: str, request: Optimiz
             enhanced_result
         )
         
+        # Email and cover letter were already generated in parallel above!
+        # Just filter out the ones user didn't request
+        if cold_email_content and not request.generate_cold_email:
+            cold_email_content = None
+
+        if cover_letter_content and not request.generate_cover_letter:
+            cover_letter_content = None
+
+        if cold_email_content:
+            logger.info(f"✅ Cold email ready ({len(cold_email_content)} chars)")
+
+        if cover_letter_content:
+            logger.info(f"✅ Cover letter ready ({len(cover_letter_content)} chars)")
+        
         # Update progress
-        optimization_status_store[optimization_id]["progress"] = 85
+        optimization_status_store[optimization_id]["progress"] = 95
         optimization_status_store[optimization_id]["message"] = "Generating PDF..."
-        
+
         # Generate PDF
-        pdf_result = await pdf_generator.compile_latex_to_pdf(
-            optimized_tex,
-            optimization_id,
-            request.company_name
-        )
-        
-        if not pdf_result['success']:
+        pdf_result = None
+        pdf_error = None
+        try:
+            pdf_result = await pdf_generator.compile_latex_to_pdf(
+                optimized_tex,
+                optimization_id,
+                request.company_name
+            )
+        except Exception as pdf_ex:
+            # PDF compilation raised an exception
+            pdf_error = str(pdf_ex)
+            logger.error(f"❌ PDF compilation exception for {optimization_id}: {pdf_error}")
+
+        if pdf_error or (pdf_result and not pdf_result['success']):
             logger.error(f"❌ PDF generation failed for {optimization_id}")
-            optimization_status_store[optimization_id]["status"] = "failed"
-            optimization_status_store[optimization_id]["error"] = "PDF generation failed"
-            return
-        
-        # Cache PDF path
+            logger.info(f"💾 Saving raw LaTeX despite PDF failure for manual download")
+
+            # Save the raw LaTeX content to persistent storage even though PDF failed
+            import shutil
+            tex_file_path = None
+            try:
+                # Save to persistent storage instead of temp directory
+                storage_dir = get_persistent_storage_dir()
+                latex_filename = f"{request.company_name}_resume_{optimization_id}_FAILED.tex"
+                tex_file_path = storage_dir / latex_filename
+
+                # Write LaTeX to file
+                with open(tex_file_path, 'w', encoding='utf-8') as f:
+                    f.write(optimized_tex)
+
+                logger.info(f"✅ Saved raw LaTeX to: {tex_file_path}")
+
+                # Cache the LaTeX file path
+                await cache_service.cache_pdf_file(optimization_id, str(tex_file_path))
+
+                # Update status with partial success
+                error_msg = pdf_error if pdf_error else pdf_result.get('error', 'Unknown error')
+                optimization_status_store[optimization_id].update({
+                    "status": "failed",
+                    "progress": 100,
+                    "message": "⚠️ PDF compilation failed due to limited server resources. Please copy the LaTeX code below and paste it into Overleaf.com to generate your PDF.",
+                    "error": f"PDF cannot be compiled on this server due to resource limitations. Please use Overleaf.com: {error_msg}",
+                    "result": {
+                        **enhanced_result,
+                        'optimized_tex': optimized_tex,  # Include LaTeX code for Overleaf
+                        'latex_download_url': f"/optimize/{optimization_id}/download/latex",
+                        'pdf_compilation_error': error_msg,
+                        'has_raw_latex': True,
+                        'cold_email': cold_email_content,
+                        'cover_letter': cover_letter_content
+                    },
+                    "cached": False
+                })
+
+                # Save to history database (failed status)
+                save_to_history(
+                    optimization_id=optimization_id,
+                    user_email=status_data.get("user_email", "anonymous"),
+                    company_name=request.company_name,
+                    job_description=request.job_description,
+                    original_latex=request.tex_content,
+                    optimized_latex=optimized_tex,
+                    llm_provider=request.llm_config.provider.value,
+                    llm_model=request.llm_config.model,
+                    status="failed",
+                    latex_path=str(tex_file_path),
+                    error_message=f"PDF compilation failed: {error_msg}",
+                    cold_email=cold_email_content,
+                    cover_letter=cover_letter_content
+                )
+
+                logger.info(f"✅ Raw LaTeX available despite PDF failure for {optimization_id}")
+                return
+
+            except Exception as e:
+                logger.error(f"❌ Failed to save raw LaTeX: {str(e)}")
+                optimization_status_store[optimization_id]["status"] = "failed"
+                optimization_status_store[optimization_id]["error"] = "PDF generation failed"
+                return
+
+        # PDF succeeded - cache PDF path
+        if not pdf_result:
+            raise Exception("PDF compilation failed unexpectedly")
+
         await cache_service.cache_pdf_file(optimization_id, pdf_result['pdf_path'])
-        
-        # Complete optimization with all details
+
+        # Save LaTeX file to persistent storage
+        storage_dir = get_persistent_storage_dir()
+        latex_filename = f"{request.company_name}_resume_{optimization_id}.tex"
+        latex_save_path = storage_dir / latex_filename
+
+        with open(latex_save_path, 'w', encoding='utf-8') as f:
+            f.write(optimized_tex)
+        logger.info(f"💾 Saved LaTeX file to: {latex_save_path}")
+
+        # Copy PDF to persistent storage
+        import shutil
+        pdf_filename = f"{request.company_name}_resume_{optimization_id}.pdf"
+        pdf_save_path = storage_dir / pdf_filename
+        shutil.copy2(pdf_result['pdf_path'], pdf_save_path)
+        logger.info(f"💾 Saved PDF file to: {pdf_save_path}")
+
+        # Complete optimization with all details (cold email/cover letter already generated above)
         final_result = {
             **enhanced_result,  # This already includes job details
             'pdf_info': pdf_result,
             'validation': validation_result,
-            'optimization_id': optimization_id
+            'optimization_id': optimization_id,
+            'cold_email': cold_email_content,
+            'cover_letter': cover_letter_content
         }
-        
+
         optimization_status_store[optimization_id].update({
             "status": "completed",
             "progress": 100,
@@ -252,7 +580,38 @@ async def process_optimization_background(optimization_id: str, request: Optimiz
             "cached": False,
             "completed_at": datetime.now()
         })
-        
+
+        # Track token usage for analytics
+        usage_data = llm_result.get('usage', {})
+        if usage_data:
+            input_tokens = usage_data.get('input_tokens', 0) + usage_data.get('cache_creation_input_tokens', 0) + usage_data.get('cache_read_input_tokens', 0)
+            output_tokens = usage_data.get('output_tokens', 0)
+            track_token_usage(
+                user_email=status_data.get("user_email", "anonymous"),
+                provider=request.llm_config.provider.value,
+                model=request.llm_config.model,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                company_name=request.company_name
+            )
+
+        # Save to history database
+        save_to_history(
+            optimization_id=optimization_id,
+            user_email=status_data.get("user_email", "anonymous"),
+            company_name=request.company_name,
+            job_description=request.job_description,
+            original_latex=request.tex_content,
+            optimized_latex=optimized_tex,
+            llm_provider=request.llm_config.provider.value,
+            llm_model=request.llm_config.model,
+            status="completed",
+            pdf_path=str(pdf_save_path),
+            latex_path=str(latex_save_path),
+            cold_email=cold_email_content,
+            cover_letter=cover_letter_content
+        )
+
         logger.info(f"✅ Optimization completed successfully for {optimization_id}")
         
     except Exception as e:
@@ -321,20 +680,27 @@ async def get_optimization_result(optimization_id: str):
         )
     
     status_data = optimization_status_store[optimization_id]
+    current_status = status_data["status"]
     
-    if status_data["status"] != "completed":
+    # Allow both completed and failed statuses to return results
+    if current_status == "processing":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Optimization not completed. Status: {status_data['status']}"
+            detail=f"Optimization still in progress. Status: {current_status}"
         )
     
     result = status_data.get("result", {})
     
     # Get PDF download URL if available
     pdf_download_url = None
+    latex_download_url = None
     pdf_path = await cache_service.get_pdf_path(optimization_id)
     if pdf_path:
         pdf_download_url = f"/download/{optimization_id}"
+    
+    # Check for LaTeX download if PDF failed
+    if current_status == "failed" and result.get("has_raw_latex"):
+        latex_download_url = result.get("latex_download_url")
     
     processing_stats = {
         "processing_time_seconds": result.get("processing_time_seconds"),
@@ -345,17 +711,24 @@ async def get_optimization_result(optimization_id: str):
         "cached": status_data.get("cached", False)
     }
     
-    logger.info(f"✅ Returning result for optimization {optimization_id}")
+    # Get error message if failed
+    error_message = status_data.get("error") if current_status == "failed" else None
     
+    logger.info(f"✅ Returning result for optimization {optimization_id} (status: {current_status})")
+
     return OptimizationResult(
         optimization_id=optimization_id,
-        status="completed",
+        status=current_status,
         optimized_tex=result.get("optimized_tex"),
         original_tex=status_data.get("original_tex"),
         job_description=status_data.get("job_description"),
         company_name=status_data.get("company_name"),
         custom_instructions=status_data.get("custom_instructions"),
-        pdf_download_url=pdf_download_url,
+        pdf_download_url=pdf_download_url if current_status == "completed" else None,
+        latex_download_url=latex_download_url if current_status == "failed" else None,
+        error_message=error_message,
+        cold_email=result.get("cold_email"),
+        cover_letter=result.get("cover_letter"),
         processing_stats=processing_stats
     )
 
@@ -452,7 +825,7 @@ async def compile_latex(request: CompileLatexRequest):
         if not pdf_result['success']:
             logger.error(f"❌ PDF compilation failed for {compile_id}: {pdf_result.get('error')}")
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"PDF compilation failed: {pdf_result.get('error', 'Unknown error')}"
             )
         

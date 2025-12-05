@@ -18,6 +18,8 @@ from routes.llm import router as llm_router
 from routes.optimize import router as optimize_router
 from routes.download import router as download_router
 from routes.analytics import router as analytics_router
+from routes.history import router as history_router
+from database import init_db
 
 # Load environment variables
 load_dotenv()
@@ -40,6 +42,14 @@ async def lifespan(app: FastAPI):
     """Application lifespan events"""
     logger.info(f"🚀 Resume Optimizer API starting up in {environment} mode...")
     logger.info(f"📊 Log level set to: {log_level}")
+
+    # Initialize database
+    try:
+        init_db()
+        logger.info("✅ Database initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Database initialization failed: {str(e)}")
+
     yield
     logger.info("🛑 Resume Optimizer API shutting down...")
 
@@ -59,15 +69,21 @@ app = FastAPI(
 #     allowed_hosts = os.getenv("ALLOWED_HOSTS", "*").split(",")
 #     app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
 
-# CORS middleware - production ready
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")
+# CORS middleware - permissive for development
+if environment == "production":
+    allowed_origins = os.getenv("ALLOWED_ORIGINS", "https://yourdomain.com").split(",")
+else:
+    # Development: Allow all origins
+    allowed_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_credentials=True if environment == "production" else False,  # credentials not compatible with wildcard
+    allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"]
+    expose_headers=["*"],
+    max_age=3600
 )
 
 # Include routers
@@ -76,6 +92,7 @@ app.include_router(llm_router, prefix="/llm", tags=["LLM Configuration"])
 app.include_router(optimize_router, prefix="/optimize", tags=["Resume Optimization"])
 app.include_router(download_router, prefix="/download", tags=["File Downloads"])
 app.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
+app.include_router(history_router, prefix="/history", tags=["History"])
 
 # Global error handlers
 @app.exception_handler(HTTPException)
@@ -135,7 +152,7 @@ if os.path.exists("frontend_build"):
     async def serve_react_routes(full_path: str):
         """Serve React app for all non-API routes"""
         # Don't interfere with API routes
-        if full_path.startswith(("auth/", "llm/", "optimize/", "download/", "analytics/", "health", "metrics", "docs")):
+        if full_path.startswith(("auth/", "llm/", "optimize/", "download/", "analytics/", "history/", "health", "metrics", "docs")):
             raise HTTPException(status_code=404, detail="Not found")
         return FileResponse("frontend_build/index.html")
 else:

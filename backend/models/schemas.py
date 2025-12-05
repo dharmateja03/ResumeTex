@@ -13,6 +13,7 @@ class LLMProvider(str, Enum):
     GOOGLE = "google"
     MISTRAL = "mistral"
     DEEPSEEK = "deepseek"
+    OPENROUTER = "openrouter"
     CUSTOM = "custom"
 
 # Authentication Schemas
@@ -54,6 +55,8 @@ class OptimizationRequest(BaseModel):
     company_name: str = Field(..., min_length=1, description="Company name")
     custom_instructions: Optional[str] = Field(None, description="Additional AI instructions")
     llm_config: LLMConfig
+    generate_cold_email: bool = Field(default=False, description="Generate cold email (max 250 words)")
+    generate_cover_letter: bool = Field(default=False, description="Generate cover letter")
 
 class OptimizationResponse(BaseModel):
     optimization_id: str
@@ -77,6 +80,10 @@ class OptimizationResult(BaseModel):
     company_name: Optional[str] = None
     custom_instructions: Optional[str] = None
     pdf_download_url: Optional[str] = None
+    latex_download_url: Optional[str] = None  # For failed PDF compilations
+    error_message: Optional[str] = None  # Error details if status is failed
+    cold_email: Optional[str] = None
+    cover_letter: Optional[str] = None
     processing_stats: Dict[str, Any]
 
 # Analytics Schemas

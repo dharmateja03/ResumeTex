@@ -16,7 +16,7 @@ class LLMService:
     
     def __init__(self):
         self.client = httpx.AsyncClient(timeout=120.0)
-        
+
     async def test_connection(self, config: LLMConfig) -> LLMConnectionResponse:
         """Test connection to LLM provider"""
         start_time = time.time()
@@ -33,6 +33,8 @@ class LLMService:
                 response = await self._test_mistral(config)
             elif config.provider == LLMProvider.DEEPSEEK:
                 response = await self._test_deepseek(config)
+            elif config.provider == LLMProvider.OPENROUTER:
+                response = await self._test_openrouter(config)
             elif config.provider == LLMProvider.CUSTOM:
                 response = await self._test_custom(config)
             else:
@@ -103,6 +105,9 @@ class LLMService:
             elif config.provider == LLMProvider.DEEPSEEK:
                 logger.info("🔄 Calling DeepSeek API...")
                 result = await self._call_deepseek(combined_prompt, tex_content, config)
+            elif config.provider == LLMProvider.OPENROUTER:
+                logger.info("🔄 Calling OpenRouter API...")
+                result = await self._call_openrouter(combined_prompt, tex_content, config)
             elif config.provider == LLMProvider.CUSTOM:
                 logger.info("🔄 Calling Custom API endpoint...")
                 result = await self._call_custom(combined_prompt, tex_content, config)
@@ -223,11 +228,14 @@ class LLMService:
             return LLMConnectionResponse(status="error", message=str(e))
     
     async def _call_anthropic(self, prompt: str, tex_content: str, config: LLMConfig) -> Dict[str, Any]:
-        """Call Anthropic API"""
+        """Call Anthropic API with prompt caching for 90% cost reduction"""
         logger.info(f"🔄 Calling Anthropic API with model {config.model}")
         logger.info(f"📡 Anthropic endpoint: https://api.anthropic.com/v1/messages")
         logger.info(f"📝 Sending combined prompt ({len(prompt)} chars) + LaTeX resume ({len(tex_content)} chars)")
-        
+        logger.info(f"💾 Using prompt caching to reduce token costs by ~90%")
+
+        # Use prompt caching to cache the system prompt and resume content
+        # This reduces costs from $3/1M tokens to $0.30/1M for cached content
         response = await self.client.post(
             "https://api.anthropic.com/v1/messages",
             headers={
@@ -238,10 +246,23 @@ class LLMService:
             json={
                 "model": config.model,
                 "max_tokens": 4000,
+                "system": [
+                    {
+                        "type": "text",
+                        "text": prompt,
+                        "cache_control": {"type": "ephemeral"}
+                    }
+                ],
                 "messages": [
                     {
-                        "role": "user", 
-                        "content": f"{prompt}\n\nHere is the LaTeX resume to optimize:\n\n{tex_content}"
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": f"Here is the LaTeX resume to optimize:\n\n{tex_content}",
+                                "cache_control": {"type": "ephemeral"}
+                            }
+                        ]
                     }
                 ]
             }
@@ -254,16 +275,45 @@ class LLMService:
         logger.info(f"✅ Got HTTP 200 response from Anthropic API")
         data = response.json()
         logger.info(f"📦 Anthropic response parsed successfully")
-        
-        optimized_tex = data['content'][0]['text']
-        logger.info(f"📝 EXTRACTED OPTIMIZED LaTeX FROM ANTHROPIC: {len(optimized_tex)} characters")
-        
+
+        # Log cache statistics to show cost savings
+        usage = data.get('usage', {})
+        input_tokens = usage.get('input_tokens', 0)
+        cache_creation_tokens = usage.get('cache_creation_input_tokens', 0)
+        cache_read_tokens = usage.get('cache_read_input_tokens', 0)
+        output_tokens = usage.get('output_tokens', 0)
+
+        if cache_read_tokens > 0:
+            savings_pct = (cache_read_tokens / (cache_read_tokens + input_tokens)) * 90
+            logger.info(f"💰 CACHE HIT! Saved ~{savings_pct:.1f}% on input tokens")
+            logger.info(f"📊 Usage: {input_tokens} new + {cache_read_tokens} cached (90% off) + {output_tokens} output tokens")
+        elif cache_creation_tokens > 0:
+            logger.info(f"💾 Cache created: {cache_creation_tokens} tokens (future requests will be 90% cheaper)")
+            logger.info(f"📊 Usage: {input_tokens} input + {output_tokens} output tokens")
+        else:
+            logger.info(f"📊 Usage: {input_tokens} input + {output_tokens} output tokens")
+
+        raw_text = data['content'][0]['text']
+        logger.info(f"📝 RAW RESPONSE: {len(raw_text)} characters")
+
+        # STRIP EXPLANATORY TEXT - find where \documentclass starts
+        optimized_tex = raw_text
+        if '\\documentclass' in raw_text:
+            idx = raw_text.find('\\documentclass')
+            optimized_tex = raw_text[idx:]
+            logger.info(f"✅ STRIPPED TEXT - Found \\documentclass at position {idx}")
+
+        logger.info(f"📝 FINAL LaTeX: {len(optimized_tex)} characters")
+
         # Log first line to verify LaTeX format
         if optimized_tex.strip():
             first_line = optimized_tex.strip().split('\n')[0]
-            logger.info(f"📄 First line of optimized LaTeX: {first_line}")
-        
-        return {'optimized_tex': optimized_tex}
+            logger.info(f"📄 First line: {first_line[:80]}")
+
+        return {
+            'optimized_tex': optimized_tex,
+            'usage': usage
+        }
     
     async def _test_google(self, config: LLMConfig) -> LLMConnectionResponse:
         """Test Google AI connection"""
@@ -382,6 +432,64 @@ class LLMService:
         logger.info(f"✅ DeepSeek API response received - {len(optimized_tex)} characters")
         return {'optimized_tex': optimized_tex}
     
+    async def _test_openrouter(self, config: LLMConfig) -> LLMConnectionResponse:
+        """Test OpenRouter connection"""
+        try:
+            response = await self.client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {config.api_key}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://resume-optimizer.app",
+                    "X-Title": "Resume Optimizer"
+                },
+                json={
+                    "model": config.model,
+                    "messages": [{"role": "user", "content": "Test connection"}],
+                    "max_tokens": 5
+                }
+            )
+
+            if response.status_code == 200:
+                return LLMConnectionResponse(status="success", message="Connection successful")
+            else:
+                error_msg = f"HTTP {response.status_code}: {response.text}"
+                return LLMConnectionResponse(status="error", message=error_msg)
+
+        except Exception as e:
+            return LLMConnectionResponse(status="error", message=str(e))
+
+    async def _call_openrouter(self, prompt: str, tex_content: str, config: LLMConfig) -> Dict[str, Any]:
+        """Call OpenRouter API"""
+        logger.info(f"🔄 Calling OpenRouter API with model {config.model}")
+
+        response = await self.client.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {config.api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://resume-optimizer.app",
+                "X-Title": "Resume Optimizer"
+            },
+            json={
+                "model": config.model,
+                "messages": [
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": f"Here is the LaTeX resume to optimize:\n\n{tex_content}"}
+                ],
+                "temperature": 0.3
+            }
+        )
+
+        if response.status_code != 200:
+            raise Exception(f"OpenRouter API error: {response.status_code} - {response.text}")
+
+        data = response.json()
+        optimized_tex = data['choices'][0]['message']['content']
+
+        logger.info(f"✅ OpenRouter API response received - {len(optimized_tex)} characters")
+        return {'optimized_tex': optimized_tex}
+
     async def _test_custom(self, config: LLMConfig) -> LLMConnectionResponse:
         """Test custom endpoint connection"""
         if not config.custom_endpoint:

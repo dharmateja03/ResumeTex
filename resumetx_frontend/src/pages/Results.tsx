@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeftIcon, DownloadIcon, CheckCircleIcon, ClockIcon, AlertCircleIcon, EyeIcon, RefreshCwIcon, EditIcon, XIcon, PlayIcon } from 'lucide-react';
+import { ArrowLeftIcon, DownloadIcon, CheckCircleIcon, ClockIcon, AlertCircleIcon, EyeIcon, RefreshCwIcon, EditIcon, XIcon, PlayIcon, MailIcon, FileTextIcon } from 'lucide-react';
 
 interface OptimizationStatus {
   optimization_id: string;
@@ -20,6 +20,8 @@ interface OptimizationResult {
   company_name?: string;
   custom_instructions?: string;
   pdf_download_url?: string;
+  cold_email?: string;
+  cover_letter?: string;
   processing_stats: {
     processing_time_seconds?: number;
     input_chars?: number;
@@ -310,6 +312,64 @@ export function Results() {
           )}
         </div>
 
+        {/* Failed PDF Compilation - Show LaTeX Code */}
+        {result && status.status === 'failed' && result.optimized_tex && (
+          <div className="space-y-6">
+            {/* Helpful Message */}
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+              <div className="flex">
+                <AlertCircleIcon className="h-6 w-6 text-yellow-400" />
+                <div className="ml-3">
+                  <h3 className="text-lg font-medium text-yellow-800">PDF Compilation Unavailable</h3>
+                  <p className="text-sm text-yellow-700 mt-2">
+                    Our compilation resources are currently busy. However, your resume has been successfully optimized!
+                    Please use Overleaf to compile your LaTeX code and download the PDF.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* LaTeX Code Card */}
+            <div className="bg-white shadow rounded-lg p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900">Optimized LaTeX Code</h3>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(result.optimized_tex!);
+                      alert('LaTeX code copied to clipboard!');
+                    }}
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copy LaTeX Code
+                  </button>
+                  <button
+                    onClick={() => window.open('https://www.overleaf.com/project', '_blank')}
+                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  >
+                    <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                    </svg>
+                    Open in Overleaf
+                  </button>
+                </div>
+              </div>
+              <textarea
+                readOnly
+                value={result.optimized_tex}
+                className="w-full h-96 p-4 font-mono text-sm bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="mt-3 text-sm text-gray-600">
+                💡 <strong>How to use:</strong> Click "Copy LaTeX Code", then click "Open in Overleaf".
+                Create a new project in Overleaf, paste the code, and click "Recompile" to generate your PDF.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Results Card */}
         {result && status.status === 'completed' && (
           <div className="space-y-8">
@@ -381,6 +441,64 @@ export function Results() {
                 )}
               </div>
             </div>
+
+            {/* Cold Email Section */}
+            {result.cold_email && (
+              <div className="bg-white shadow rounded-lg p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center">
+                    <MailIcon className="h-6 w-6 text-blue-600 mr-2" />
+                    <h3 className="text-lg font-medium text-gray-900">Cold Email</h3>
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(result.cold_email!);
+                      alert('Cold email copied to clipboard!');
+                    }}
+                    className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Copy to Clipboard
+                  </button>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans">
+                    {result.cold_email}
+                  </pre>
+                </div>
+                <p className="mt-3 text-sm text-gray-600">
+                  💡 <strong>Tip:</strong> Personalize this email further with specific details about the company or hiring manager before sending.
+                </p>
+              </div>
+            )}
+
+            {/* Cover Letter Section */}
+            {result.cover_letter && (
+              <div className="bg-white shadow rounded-lg p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center">
+                    <FileTextIcon className="h-6 w-6 text-green-600 mr-2" />
+                    <h3 className="text-lg font-medium text-gray-900">Cover Letter</h3>
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(result.cover_letter!);
+                      alert('Cover letter copied to clipboard!');
+                    }}
+                    className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Copy to Clipboard
+                  </button>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans">
+                    {result.cover_letter}
+                  </pre>
+                </div>
+                <p className="mt-3 text-sm text-gray-600">
+                  💡 <strong>Tip:</strong> Review and customize the cover letter to match your personal writing style and add any specific examples.
+                </p>
+              </div>
+            )}
 
             {/* LaTeX Code Display */}
             {showLatex && result.optimized_tex && (

@@ -14,7 +14,7 @@ export function LLMSettings() {
       return;
     }
   }, [navigate]);
-  const [provider, setProvider] = useState('openai');
+  const [provider, setProvider] = useState('openrouter');
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState('');
   const [isProviderDropdownOpen, setIsProviderDropdownOpen] = useState(false);
@@ -37,6 +37,9 @@ export function LLMSettings() {
   }, {
     id: 'deepseek',
     name: 'DeepSeek'
+  }, {
+    id: 'openrouter',
+    name: 'OpenRouter'
   }, {
     id: 'custom',
     name: 'Custom Provider'
@@ -116,6 +119,22 @@ export function LLMSettings() {
       id: 'deepseek-coder',
       name: 'DeepSeek Coder'
     }],
+    openrouter: [{
+      id: 'x-ai/grok-code-fast-1',
+      name: 'Grok Code Fast 1'
+    }, {
+      id: 'anthropic/claude-3.5-sonnet',
+      name: 'Claude 3.5 Sonnet (via OpenRouter)'
+    }, {
+      id: 'openai/gpt-4o',
+      name: 'GPT-4o (via OpenRouter)'
+    }, {
+      id: 'google/gemini-2.0-flash-exp:free',
+      name: 'Gemini 2.0 Flash (Free)'
+    }, {
+      id: 'deepseek/deepseek-chat',
+      name: 'DeepSeek Chat (via OpenRouter)'
+    }],
     custom: [{
       id: 'custom',
       name: 'Custom Model'
@@ -134,15 +153,39 @@ export function LLMSettings() {
     const savedProvider = localStorage.getItem('llm_provider');
     const savedModel = localStorage.getItem('llm_model');
     const savedApiKey = localStorage.getItem('llm_api_key');
-    if (savedProvider && providers.some(p => p.id === savedProvider)) {
-      setProvider(savedProvider);
-    }
-    if (savedModel) {
-      setModel(savedModel);
-    }
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-      setIsConnected(true);
+
+    // If no saved settings, use defaults from environment
+    if (!savedProvider && !savedModel && !savedApiKey) {
+      const defaultProvider = import.meta.env.VITE_DEFAULT_LLM_PROVIDER || 'openrouter';
+      const defaultModel = import.meta.env.VITE_DEFAULT_LLM_MODEL || 'x-ai/grok-code-fast-1';
+      const defaultApiKey = import.meta.env.VITE_DEFAULT_LLM_API_KEY || '';
+
+      if (defaultProvider && providers.some(p => p.id === defaultProvider)) {
+        setProvider(defaultProvider);
+      }
+      if (defaultModel) {
+        setModel(defaultModel);
+      }
+      if (defaultApiKey) {
+        setApiKey(defaultApiKey);
+        // Auto-save defaults to localStorage
+        localStorage.setItem('llm_provider', defaultProvider);
+        localStorage.setItem('llm_model', defaultModel);
+        localStorage.setItem('llm_api_key', defaultApiKey);
+        setIsConnected(true);
+      }
+    } else {
+      // Use saved settings
+      if (savedProvider && providers.some(p => p.id === savedProvider)) {
+        setProvider(savedProvider);
+      }
+      if (savedModel) {
+        setModel(savedModel);
+      }
+      if (savedApiKey) {
+        setApiKey(savedApiKey);
+        setIsConnected(true);
+      }
     }
   }, []);
   const handleConnect = async () => {
@@ -175,12 +218,12 @@ export function LLMSettings() {
         localStorage.setItem('llm_model', model);
         localStorage.setItem('llm_api_key', apiKey);
         setIsConnected(true);
-        
+
         // Show success message and redirect
-        alert('✅ Connection successful! Redirecting to dashboard...');
+        alert('LLM Configuration saved successfully!');
         setTimeout(() => {
-          window.location.href = '/dashboard';
-        }, 1000);
+          window.location.href = '/workspace';
+        }, 800);
       } else {
         alert('Connection failed: ' + result.message);
       }
@@ -214,8 +257,8 @@ export function LLMSettings() {
               </Link>
             </div>
             <div className="flex items-center">
-              <Link to="/dashboard" className="text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
-                Back to Dashboard
+              <Link to="/workspace" className="text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
+                Back to Workspace
               </Link>
             </div>
           </div>

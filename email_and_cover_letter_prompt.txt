@@ -1,0 +1,105 @@
+CRITICAL INSTRUCTIONS FOR GENERATING COLD EMAIL AND COVER LETTER:
+
+You will generate BOTH a cold email AND a cover letter based on the candidate's resume and job description.
+
+STRICT OUTPUT FORMAT - YOU MUST FOLLOW EXACTLY:
+
+===BEGIN_COLD_EMAIL===
+[Cold email content here - max 250 words]
+===END_COLD_EMAIL===
+
+===BEGIN_COVER_LETTER===
+[Cover letter content here - max 500 words]
+===END_COVER_LETTER===
+
+IMPORTANT:
+- Use EXACTLY those delimiters (===BEGIN_COLD_EMAIL===, ===END_COLD_EMAIL===, etc.)
+- Include BOTH sections in your response
+- Do NOT add any text before ===BEGIN_COLD_EMAIL=== or after ===END_COVER_LETTER===
+
+---
+
+COLD EMAIL REQUIREMENTS:
+- Maximum 250 words (strictly enforce this limit)
+- Professional and personalized tone
+- Focus on value proposition and relevant experience
+- Include a clear call-to-action
+- No generic template language
+
+COLD EMAIL STRUCTURE:
+1. Strong opening hook (1-2 sentences)
+   - Reference something specific about the company or role
+2. Value proposition (2-3 sentences)
+   - Highlight 2-3 most relevant achievements from resume
+   - Connect your experience to their needs
+   - Use specific numbers/metrics when possible
+3. Why you're interested (1-2 sentences)
+4. Clear call-to-action (1 sentence)
+
+COLD EMAIL FORMAT:
+Subject: [Compelling subject line - max 8 words]
+
+[Email body - maximum 250 words]
+
+Best regards,
+[Name]
+
+---
+
+COVER LETTER REQUIREMENTS:
+- Maximum 500 words
+- Professional business letter format
+- Demonstrate deep understanding of role requirements
+- Connect resume experiences to job requirements
+- Show enthusiasm for company and position
+- Compelling narrative arc
+
+COVER LETTER STRUCTURE:
+1. Opening paragraph (2-3 sentences)
+   - State position applying for
+   - Brief hook about why you're ideal candidate
+
+2. Body paragraphs (2-3 paragraphs, 3-4 sentences each)
+   - Detailed examples from resume that match job requirements
+   - Quantifiable achievements
+   - Demonstrate understanding of company challenges
+   - Show how you can add value
+
+3. Closing paragraph (2-3 sentences)
+   - Express enthusiasm
+   - Call-to-action for next steps
+   - Thank them for consideration
+
+COVER LETTER FORMAT:
+Dear Hiring Manager,
+
+[Opening paragraph]
+
+[Body paragraph 1]
+
+[Body paragraph 2]
+
+[Body paragraph 3 - optional]
+
+[Closing paragraph]
+
+Sincerely,
+[Name]
+
+---
+
+TONE GUIDELINES (BOTH):
+- Confident but not arrogant
+- Enthusiastic but professional
+- Personal but not casual
+- Direct but not pushy
+
+WHAT TO AVOID (BOTH):
+- Generic phrases like "I am writing to express my interest"
+- Overly formal language
+- Excessive flattery
+- Long paragraphs
+- Repeating everything from the resume
+- Desperate or begging tone
+
+NOW GENERATE BOTH THE COLD EMAIL AND COVER LETTER USING THE EXACT DELIMITERS SPECIFIED ABOVE.

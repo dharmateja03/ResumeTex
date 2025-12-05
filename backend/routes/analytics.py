@@ -9,7 +9,7 @@ from collections import defaultdict, Counter
 
 from models.schemas import UserStats, OptimizationHistory, AnalyticsResponse
 from routes.auth import get_current_user, get_current_user_optional
-from routes.optimize import optimization_status_store
+from shared_state import optimization_status_store
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,21 @@ analytics_store: Dict[str, Dict[str, Any]] = {
         "llm_provider_usage": Counter(),
         "daily_optimizations": defaultdict(int),
         "start_time": datetime.now()
+    },
+    "login_analytics": {
+        "total_logins": 0,
+        "total_signups": 0,
+        "daily_logins": defaultdict(int),
+        "daily_signups": defaultdict(int),
+        "unique_users_today": set(),
+        "login_events": [],  # Recent login events
+        "auth_providers": Counter()
+    },
+    "token_usage": {
+        "daily_tokens": defaultdict(lambda: {"input": 0, "output": 0, "total": 0}),
+        "by_provider": defaultdict(lambda: {"tokens": 0, "model": ""}),
+        "user_tokens": defaultdict(lambda: defaultdict(lambda: {"input": 0, "output": 0, "total": 0})),
+        "recent_activity": []
     }
 }
 
@@ -83,6 +98,178 @@ def track_optimization_event(user_email: str, optimization_data: Dict[str, Any],
         
     except Exception as e:
         logger.error(f"❌ Error tracking analytics event: {str(e)}")
+
+def track_token_usage(user_email: str, provider: str, model: str, input_tokens: int, output_tokens: int, company_name: str = None):
+    """Track LLM token usage"""
+    try:
+        token_store = analytics_store["token_usage"]
+        today = datetime.now().date().isoformat()
+        total_tokens = input_tokens + output_tokens
+        
+        # Update daily totals
+        token_store["daily_tokens"][today]["input"] += input_tokens
+        token_store["daily_tokens"][today]["output"] += output_tokens
+        token_store["daily_tokens"][today]["total"] += total_tokens
+        
+        # Update by provider
+        token_store["by_provider"][provider]["tokens"] += total_tokens
+        token_store["by_provider"][provider]["model"] = model
+        
+        # Update user tokens
+        token_store["user_tokens"][user_email][today]["input"] += input_tokens
+        token_store["user_tokens"][user_email][today]["output"] += output_tokens
+        token_store["user_tokens"][user_email][today]["total"] += total_tokens
+        
+        # Add to recent activity (keep last 100)
+        activity = {
+            "user_email": user_email,
+            "timestamp": datetime.now().isoformat(),
+            "provider": provider,
+            "model": model,
+            "tokens": total_tokens,
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "company_name": company_name
+        }
+        token_store["recent_activity"].append(activity)
+        if len(token_store["recent_activity"]) > 100:
+            token_store["recent_activity"] = token_store["recent_activity"][-100:]
+        
+        logger.info(f"📊 Tracked {total_tokens} tokens for {user_email} ({provider}/{model})")
+        
+    except Exception as e:
+        logger.error(f"❌ Error tracking token usage: {str(e)}")
+
+@router.get("/usage")
+async def get_token_usage(current_user: Dict[str, Any] = Depends(get_current_user)):
+    """Get LLM token usage analytics (like Claude Console)"""
+    user_email = current_user.get('email', 'unknown')
+    logger.info(f"📊 Getting token usage for: {user_email}")
+
+    try:
+        token_store = analytics_store["token_usage"]
+        user_tokens = token_store["user_tokens"].get(user_email, {})
+
+        # Calculate totals
+        total_input = sum(day_data["input"] for day_data in user_tokens.values())
+        total_output = sum(day_data["output"] for day_data in user_tokens.values())
+        total_tokens = total_input + total_output
+
+        # Get last 7 days of usage
+        daily_usage = []
+        for i in range(6, -1, -1):  # Last 7 days, most recent last
+            day = (datetime.now().date() - timedelta(days=i)).isoformat()
+            day_data = user_tokens.get(day, {"input": 0, "output": 0, "total": 0})
+            daily_usage.append({
+                "date": day,
+                "tokens": day_data["total"],
+                "input_tokens": day_data["input"],
+                "output_tokens": day_data["output"]
+            })
+
+        # Get provider breakdown for this user
+        by_provider = {}
+        for activity in token_store["recent_activity"]:
+            if activity["user_email"] == user_email:
+                provider = activity["provider"]
+                if provider not in by_provider:
+                    by_provider[provider] = {
+                        "tokens": 0,
+                        "model": activity["model"]
+                    }
+                by_provider[provider]["tokens"] += activity["tokens"]
+
+        # Get user's recent activity
+        recent_activity = [
+            activity for activity in token_store["recent_activity"]
+            if activity["user_email"] == user_email
+        ][-10:]  # Last 10 activities
+
+        usage_data = {
+            "total_tokens": total_tokens,
+            "input_tokens": total_input,
+            "output_tokens": total_output,
+            "daily_usage": daily_usage,
+            "by_provider": by_provider,
+            "recent_activity": recent_activity
+        }
+
+        logger.info(f"📊 Token usage - Total: {total_tokens}, Daily entries: {len(daily_usage)}")
+        return usage_data
+
+    except Exception as e:
+        logger.error(f"❌ Error getting token usage: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get token usage"
+        )
+
+@router.get("/resume-stats")
+async def get_resume_stats(
+    period: str = "7d",
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get resume generation statistics with time period filtering"""
+    user_email = current_user.get('email', 'unknown')
+    logger.info(f"📊 Getting resume stats for: {user_email} (period: {period})")
+
+    try:
+        # Calculate date range based on period
+        end_date = datetime.now().date()
+        if period == "7d":
+            days = 7
+            start_date = end_date - timedelta(days=6)
+        elif period == "30d":
+            days = 30
+            start_date = end_date - timedelta(days=29)
+        elif period == "1yr":
+            days = 365
+            start_date = end_date - timedelta(days=364)
+        else:  # all
+            days = 365  # Show last year max for "all"
+            start_date = end_date - timedelta(days=364)
+
+        # Count resumes generated per day
+        daily_counts = defaultdict(int)
+        total_resumes = 0
+
+        for opt_id, opt_data in optimization_status_store.items():
+            if opt_data.get("user_email") == user_email:
+                created_at = opt_data.get("created_at")
+                if created_at:
+                    opt_date = created_at.date()
+                    if start_date <= opt_date <= end_date:
+                        date_str = opt_date.isoformat()
+                        daily_counts[date_str] += 1
+                        total_resumes += 1
+
+        # Build daily data array
+        daily_data = []
+        for i in range(days - 1, -1, -1):  # Most recent last
+            day = (end_date - timedelta(days=i)).isoformat()
+            count = daily_counts.get(day, 0)
+            daily_data.append({
+                "date": day,
+                "count": count
+            })
+
+        stats = {
+            "period": period,
+            "total_resumes": total_resumes,
+            "daily_data": daily_data,
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat()
+        }
+
+        logger.info(f"📊 Resume stats - Period: {period}, Total: {total_resumes}, Days: {len(daily_data)}")
+        return stats
+
+    except Exception as e:
+        logger.error(f"❌ Error getting resume stats: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get resume statistics"
+        )
 
 @router.get("/user-stats", response_model=UserStats)
 async def get_user_stats(current_user: Dict[str, Any] = Depends(get_current_user)):
@@ -379,3 +566,124 @@ def track_optimization_completed(user_email: str, optimization_data: Dict[str, A
 def track_optimization_failed(user_email: str, optimization_data: Dict[str, Any]):
     """Track when optimization fails"""
     track_optimization_event(user_email, optimization_data, "failed")
+
+# Login analytics tracking
+def track_login_event(user_email: str, user_id: str, event_type: str, metadata: Dict[str, Any] = {}):
+    """Track login or signup events"""
+    try:
+        login_analytics = analytics_store["login_analytics"]
+        today = datetime.now().date().isoformat()
+
+        # Create event record
+        event = {
+            "user_email": user_email,
+            "user_id": user_id,
+            "event_type": event_type,
+            "timestamp": datetime.now(),
+            "metadata": metadata
+        }
+
+        # Add to recent events (keep last 1000)
+        login_analytics["login_events"].append(event)
+        if len(login_analytics["login_events"]) > 1000:
+            login_analytics["login_events"] = login_analytics["login_events"][-1000:]
+
+        # Update counters
+        if event_type == "login":
+            login_analytics["total_logins"] += 1
+            login_analytics["daily_logins"][today] += 1
+            login_analytics["unique_users_today"].add(user_email)
+
+        elif event_type == "signup":
+            login_analytics["total_signups"] += 1
+            login_analytics["daily_signups"][today] += 1
+
+        # Track auth provider
+        auth_provider = metadata.get("auth_provider", "unknown")
+        login_analytics["auth_providers"][auth_provider] += 1
+
+        # Update global user set
+        analytics_store["global_metrics"]["total_users"].add(user_email)
+
+        logger.info(f"📊 Tracked {event_type} event for user {user_email}")
+
+    except Exception as e:
+        logger.error(f"❌ Error tracking login event: {str(e)}")
+
+@router.get("/login-stats")
+async def get_login_stats(current_user: Dict[str, Any] = Depends(get_current_user_optional)):
+    """Get login and signup statistics"""
+    logger.info("📊 Getting login statistics")
+
+    try:
+        login_analytics = analytics_store["login_analytics"]
+        today = datetime.now().date().isoformat()
+
+        # Get recent activity (last 7 days)
+        recent_days_logins = []
+        recent_days_signups = []
+
+        for i in range(7):
+            day = (datetime.now().date() - timedelta(days=i)).isoformat()
+            recent_days_logins.append({
+                "date": day,
+                "count": login_analytics["daily_logins"].get(day, 0)
+            })
+            recent_days_signups.append({
+                "date": day,
+                "count": login_analytics["daily_signups"].get(day, 0)
+            })
+
+        stats = {
+            "total_logins": login_analytics["total_logins"],
+            "total_signups": login_analytics["total_signups"],
+            "logins_today": login_analytics["daily_logins"].get(today, 0),
+            "signups_today": login_analytics["daily_signups"].get(today, 0),
+            "unique_users_today": len(login_analytics["unique_users_today"]),
+            "auth_providers": dict(login_analytics["auth_providers"]),
+            "recent_logins": recent_days_logins,
+            "recent_signups": recent_days_signups
+        }
+
+        logger.info(f"📊 Login stats - Total logins: {stats['total_logins']}, Signups: {stats['total_signups']}")
+        return stats
+
+    except Exception as e:
+        logger.error(f"❌ Error getting login stats: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get login statistics"
+        )
+
+@router.get("/recent-logins")
+async def get_recent_logins(
+    limit: int = 20,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get recent login events (admin only in production)"""
+    logger.info(f"📋 Getting recent login events (limit: {limit})")
+
+    try:
+        login_analytics = analytics_store["login_analytics"]
+        recent_events = login_analytics["login_events"][-limit:][::-1]  # Most recent first
+
+        events = [
+            {
+                "user_email": event["user_email"],
+                "user_id": event["user_id"],
+                "event_type": event["event_type"],
+                "timestamp": event["timestamp"].isoformat(),
+                "auth_provider": event["metadata"].get("auth_provider", "unknown")
+            }
+            for event in recent_events
+        ]
+
+        logger.info(f"📋 Returning {len(events)} recent login events")
+        return events
+
+    except Exception as e:
+        logger.error(f"❌ Error getting recent logins: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get recent logins"
+        )

@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeartIcon, GithubIcon, TwitterIcon, CoffeeIcon } from 'lucide-react';
+import { HeartIcon, GithubIcon, TwitterIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 export function Footer() {
   return <footer className="bg-gray-900 text-white py-12 relative overflow-hidden">
@@ -23,17 +23,6 @@ export function Footer() {
               <span className="text-gray-400 text-sm font-switzer-light">
                 by the community
               </span>
-            </div>
-            <div className="mt-4">
-              <a 
-                href="https://buymeacoffee.com/samudhar" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black text-sm font-switzer-bold rounded-md transition-colors duration-200"
-              >
-                <CoffeeIcon className="h-4 w-4 mr-2" />
-                Buy Me a Coffee
-              </a>
             </div>
           </div>
           <div className="opacity-0 animate-fade-in delay-100">
@@ -90,9 +79,6 @@ export function Footer() {
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <TwitterIcon className="h-5 w-5" />
               </a>
-              <a href="https://buymeacoffee.com/samudhar" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                <CoffeeIcon className="h-5 w-5" />
-              </a>
             </div>
           </div>
         </div>
@@ -101,8 +87,8 @@ export function Footer() {
             &copy; {new Date().getFullYear()} ResumeTex. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0 flex space-x-4">
-            <Link to="/dashboard" className="text-gray-400 hover:text-blue-400 text-sm font-switzer-light transition-colors">
-              Dashboard
+            <Link to="/workspace" className="text-gray-400 hover:text-blue-400 text-sm font-switzer-light transition-colors">
+              Workspace
             </Link>
             <Link to="/login" className="text-gray-400 hover:text-blue-400 text-sm font-switzer-light transition-colors">
               Login

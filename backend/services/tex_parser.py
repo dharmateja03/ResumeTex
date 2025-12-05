@@ -95,18 +95,53 @@ class LaTeXParser:
     def clean_latex_content(self, tex_content: str) -> str:
         """Clean and normalize LaTeX content"""
         logger.info("🧹 Cleaning LaTeX content")
-        
+
+        # Strip markdown code fences (```latex, ```, etc.)
+        tex_content = self._strip_markdown_fences(tex_content)
+
         # Remove excessive whitespace
         tex_content = re.sub(r'\n\s*\n\s*\n+', '\n\n', tex_content)
-        
+
         # Normalize indentation
         tex_content = re.sub(r'^[ \t]+', '', tex_content, flags=re.MULTILINE)
-        
+
         # Fix common LaTeX issues
         tex_content = self._fix_common_issues(tex_content)
-        
+
         logger.info("✅ LaTeX content cleaned")
         return tex_content.strip()
+
+    def _strip_markdown_fences(self, tex_content: str) -> str:
+        """Remove markdown code fences from LLM responses"""
+        logger.info("🔍 Checking for markdown code fences")
+
+        # Pattern for markdown code fences
+        # Matches: ```latex\n...\n``` or ```\n...\n```
+        fence_pattern = r'^```(?:latex|tex)?\s*\n(.*?)\n```\s*$'
+
+        match = re.match(fence_pattern, tex_content.strip(), re.DOTALL | re.MULTILINE)
+        if match:
+            logger.warning("⚠️ Found markdown code fences - stripping them")
+            cleaned = match.group(1).strip()
+            logger.info(f"✂️ Stripped fences: {len(tex_content)} → {len(cleaned)} chars")
+            return cleaned
+
+        # Also handle single backticks or incomplete fences
+        if tex_content.strip().startswith('```'):
+            logger.warning("⚠️ Content starts with ``` - attempting to clean")
+            lines = tex_content.split('\n')
+            # Remove first line if it's just ```
+            if lines[0].strip().startswith('```'):
+                lines = lines[1:]
+            # Remove last line if it's just ```
+            if lines and lines[-1].strip() == '```':
+                lines = lines[:-1]
+            cleaned = '\n'.join(lines).strip()
+            logger.info(f"✂️ Cleaned incomplete fences: {len(tex_content)} → {len(cleaned)} chars")
+            return cleaned
+
+        logger.info("✓ No markdown fences found")
+        return tex_content
     
     def extract_content_blocks(self, tex_content: str) -> Dict[str, str]:
         """Extract key content blocks for analysis"""

@@ -13,16 +13,6 @@ export function Dashboard() {
       navigate('/login');
       return;
     }
-
-    // Check if user has LLM configuration
-    const hasLLMConfig = localStorage.getItem('llm_provider') && 
-                       localStorage.getItem('llm_api_key');
-    
-    if (!hasLLMConfig) {
-      // Redirect to LLM settings if not configured
-      navigate('/llm_settings');
-      return;
-    }
   }, [navigate]);
 
   const handleLogout = () => {
@@ -110,10 +100,13 @@ export function Dashboard() {
             </p>
           </div>
           <div className="flex space-x-4">
+            <Link to="/history" className="text-gray-600 hover:text-gray-800 transition-colors">
+              History
+            </Link>
             <Link to="/llm_settings" className="text-gray-600 hover:text-gray-800 transition-colors">
               LLM Settings
             </Link>
-            <button 
+            <button
               onClick={handleLogout}
               className="text-red-600 hover:text-red-800 transition-colors"
             >

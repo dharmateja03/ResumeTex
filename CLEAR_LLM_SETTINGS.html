@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear LLM Settings - ResumeTex</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #991b1b;
+        }
+        .success {
+            background: #10b981;
+        }
+        .success:hover {
+            background: #059669;
+        }
+        .info {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #2563eb;
+        }
+        pre {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Clear LLM Settings</h1>
+
+        <div class="info">
+            <strong>Current Settings:</strong>
+            <pre id="current-settings">Loading...</pre>
+        </div>
+
+        <button onclick="clearSettings()">🗑️ Clear LLM Settings</button>
+        <button onclick="setOpenRouter()" class="success">✅ Set OpenRouter (Grok) as Default</button>
+
+        <div class="info" style="margin-top: 20px;">
+            <h3>📋 Instructions:</h3>
+            <ol>
+                <li>Click "Set OpenRouter (Grok) as Default" to use fast Grok model</li>
+                <li>Close this page and refresh your ResumeTex app</li>
+                <li>Your app will now use OpenRouter with Grok Code Fast 1</li>
+            </ol>
+        </div>
+
+        <div id="result" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        // Display current settings
+        function displayCurrentSettings() {
+            const provider = localStorage.getItem('llm_provider') || 'Not set';
+            const model = localStorage.getItem('llm_model') || 'Not set';
+            const apiKey = localStorage.getItem('llm_api_key');
+            const apiKeyDisplay = apiKey ? apiKey.substring(0, 10) + '...' : 'Not set';
+
+            document.getElementById('current-settings').textContent =
+                `Provider: ${provider}\nModel: ${model}\nAPI Key: ${apiKeyDisplay}`;
+        }
+
+        // Clear all LLM settings
+        function clearSettings() {
+            localStorage.removeItem('llm_provider');
+            localStorage.removeItem('llm_model');
+            localStorage.removeItem('llm_api_key');
+
+            document.getElementById('result').innerHTML =
+                '<div style="background: #10b981; color: white; padding: 15px; border-radius: 6px;">✅ Settings cleared! Refresh your app to use defaults.</div>';
+
+            displayCurrentSettings();
+        }
+
+        // Set OpenRouter with Grok
+        function setOpenRouter() {
+            localStorage.setItem('llm_provider', 'openrouter');
+            localStorage.setItem('llm_model', 'x-ai/grok-code-fast-1');
+            localStorage.setItem('llm_api_key', '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');
+
+            document.getElementById('result').innerHTML =
+                '<div style="background: #10b981; color: white; padding: 15px; border-radius: 6px;">' +
+                '✅ OpenRouter (Grok Code Fast 1) set as default!<br>' +
+                '<strong>Next step:</strong> Close this page and refresh your ResumeTex app.<br>' +
+                'Processing time should be <strong>10-15 seconds</strong> instead of 60-100 seconds!' +
+                '</div>';
+
+            displayCurrentSettings();
+        }
+
+        // Initialize
+        displayCurrentSettings();
+    </script>
+</body>
+</html>

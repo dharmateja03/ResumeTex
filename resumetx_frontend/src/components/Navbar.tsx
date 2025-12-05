@@ -56,9 +56,6 @@ export function Navbar() {
             <Link to="/login" className="text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
               Log in
             </Link>
-            <Link to="/dashboard" className="ml-4 px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium">
-              Dashboard
-            </Link>
           </div>
           <div className="flex md:hidden items-center">
             <button className="p-2 rounded-md text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(!isOpen)}>
@@ -95,9 +92,6 @@ export function Navbar() {
             </a>
             <Link to="/login" className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">
               Log in
-            </Link>
-            <Link to="/dashboard" className="block px-3 py-2 text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-md">
-              Dashboard
             </Link>
           </div>
         </div>}

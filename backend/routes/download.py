@@ -17,6 +17,60 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+@router.get("/{optimization_id}/latex")
+async def download_latex(
+    optimization_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user_optional)
+):
+    """Download raw LaTeX file (when PDF compilation fails)"""
+    user_email = current_user.get('email', 'anonymous') if current_user else 'anonymous'
+    logger.info(f"📥 LaTeX download request from {user_email} for optimization {optimization_id}")
+
+    try:
+        # Get file path from cache (could be .tex or .pdf)
+        file_path = await cache_service.get_pdf_path(optimization_id)
+
+        if not file_path:
+            logger.warning(f"❌ File not found in cache for optimization {optimization_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="LaTeX file not found or has expired"
+            )
+
+        # Check if file exists on disk
+        file = Path(file_path)
+        if not file.exists():
+            logger.error(f"❌ File not found on disk: {file_path}")
+            await cache_service.delete(f"pdf_result:{optimization_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="LaTeX file not found"
+            )
+
+        logger.info(f"📄 Serving LaTeX download: {file.name} ({file.stat().st_size} bytes)")
+
+        # Return file response for download
+        return FileResponse(
+            path=file_path,
+            media_type='text/plain',
+            filename=file.name,
+            headers={
+                "Content-Disposition": f"attachment; filename={file.name}",
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ LaTeX download error for optimization {optimization_id}: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"LaTeX download failed: {str(e)}"
+        )
+
 @router.get("/{optimization_id}/view")
 async def view_pdf_inline(
     optimization_id: str,

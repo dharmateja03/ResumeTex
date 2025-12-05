@@ -453,7 +453,7 @@ class PDFGenerator:
     def _fix_tectonic_compatibility(self, tex_content: str) -> str:
         """Fix known Tectonic compatibility issues"""
         original_content = tex_content
-        
+
         # Remove or replace pdfTeX-specific commands that Tectonic doesn't support
         tectonic_incompatible = [
             r'\\pdfgentounicode\s*=\s*1',  # pdfTeX Unicode generation
@@ -461,10 +461,10 @@ class PDFGenerator:
             r'\\pdfobjcompresslevel\s*=\s*\d+',  # Object compression
             r'\\pdfminorversion\s*=\s*\d+',  # PDF version
         ]
-        
+
         import re
         fixes_applied = []
-        
+
         for pattern in tectonic_incompatible:
             if re.search(pattern, tex_content):
                 tex_content = re.sub(pattern, '% Removed for Tectonic compatibility', tex_content)

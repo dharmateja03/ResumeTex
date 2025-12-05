@@ -1,153 +1,135 @@
 """
-Authentication routes for Google SSO and development bypass
+Authentication routes using Clerk
 """
 import logging
 import httpx
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from models.schemas import GoogleAuthRequest, AuthResponse, ErrorResponse
+from models.schemas import AuthResponse, ErrorResponse
 import os
 from typing import Optional, Dict, Any
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime
 from dotenv import load_dotenv
+from clerk_backend_api import Clerk
 
 logger = logging.getLogger(__name__)
 
-# Load environment variables explicitly
+# Load environment variables
 import pathlib
 backend_dir = pathlib.Path(__file__).parent.parent
 env_file = backend_dir / '.env.development'
 load_dotenv(env_file)
 logger.info(f"🔧 Loading .env from: {env_file}")
-logger.info(f"   Environment file exists: {env_file.exists()}")
 
 router = APIRouter()
 security = HTTPBearer(auto_error=False)
 
-# Configuration
-SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
+# Clerk Configuration
+CLERK_SECRET_KEY = os.getenv("CLERK_SECRET_KEY")
+CLERK_PUBLISHABLE_KEY = os.getenv("CLERK_PUBLISHABLE_KEY")
 
 # Development mode flag
 DEV_MODE = os.getenv("ENVIRONMENT", "development") == "development"
 
-# Google SSO Configuration
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+# Initialize Clerk client
+clerk_client = None
+if CLERK_SECRET_KEY:
+    clerk_client = Clerk(bearer_auth=CLERK_SECRET_KEY)
+    logger.info("✅ Clerk client initialized")
+else:
+    logger.warning("⚠️ CLERK_SECRET_KEY not set - authentication will not work")
 
-# Debug: Check if environment variables are loaded
-logger.info(f"🔧 Environment variables loaded:")
-logger.info(f"   GOOGLE_CLIENT_ID: {'✅ Set' if GOOGLE_CLIENT_ID else '❌ Not set'}")
-logger.info(f"   GOOGLE_CLIENT_SECRET: {'✅ Set' if GOOGLE_CLIENT_SECRET else '❌ Not set'}")
+logger.info(f"🔧 Clerk configuration:")
+logger.info(f"   CLERK_SECRET_KEY: {'✅ Set' if CLERK_SECRET_KEY else '❌ Not set'}")
+logger.info(f"   CLERK_PUBLISHABLE_KEY: {'✅ Set' if CLERK_PUBLISHABLE_KEY else '❌ Not set'}")
 logger.info(f"   DEV_MODE: {DEV_MODE}")
 
 class AuthService:
-    """Authentication service"""
-    
+    """Authentication service using Clerk"""
+
     @staticmethod
-    def create_access_token(user_data: Dict[str, Any]) -> str:
-        """Create JWT access token"""
-        to_encode = user_data.copy()
-        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        to_encode.update({"exp": expire})
-        
-        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-        logger.info(f"🔑 Created access token for user: {user_data.get('email', 'unknown')}")
-        return encoded_jwt
-    
-    @staticmethod
-    def verify_token(token: str) -> Optional[Dict[str, Any]]:
-        """Verify JWT token"""
+    async def verify_clerk_token(token: str) -> Optional[Dict[str, Any]]:
+        """Verify Clerk session token"""
         try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            return payload
-        except jwt.ExpiredSignatureError:
-            logger.warning("⚠️ Token expired")
-            return None
-        except jwt.JWTError:
-            logger.warning("⚠️ Invalid token")
-            return None
-    
-    @staticmethod
-    async def verify_google_token(id_token: str) -> Optional[Dict[str, Any]]:
-        """Verify Google ID token"""
-        
-        if DEV_MODE:
-            # Mock Google token verification for development
-            logger.info("🔧 DEV MODE: Mocking Google token verification")
-            return {
-                "email": "dev@example.com",
-                "name": "Development User",
-                "picture": "https://via.placeholder.com/100",
-                "sub": "dev-user-123"
-            }
-        
-        # Production Google token verification
-        try:
-            # Verify token with Google's tokeninfo endpoint
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"https://oauth2.googleapis.com/tokeninfo?id_token={id_token}"
-                )
-                
-                if response.status_code != 200:
-                    logger.error("❌ Google token verification failed")
+            if not clerk_client:
+                logger.error("❌ Clerk client not initialized")
+                return None
+
+            # Decode JWT to get user_id (Clerk tokens are standard JWTs)
+            # We'll verify the token by fetching the user from Clerk API
+            try:
+                # Decode without verification first to get user_id
+                unverified = jwt.decode(token, options={"verify_signature": False})
+                user_id = unverified.get("sub")
+
+                if not user_id:
+                    logger.error("❌ No user ID in token")
                     return None
-                
-                token_data = response.json()
-                
-                # Verify audience (client ID)
-                if token_data.get("aud") != GOOGLE_CLIENT_ID:
-                    logger.error("❌ Invalid Google token audience")
+
+                # Fetch full user details from Clerk to verify token is valid
+                user = clerk_client.users.get(user_id)
+
+                if not user:
+                    logger.warning("⚠️ User not found in Clerk")
                     return None
-                
-                # Verify issuer
-                if token_data.get("iss") not in ["accounts.google.com", "https://accounts.google.com"]:
-                    logger.error("❌ Invalid Google token issuer")
-                    return None
-                
-                # Extract user info
+
                 user_data = {
-                    "sub": token_data.get("sub"),
-                    "email": token_data.get("email"),
-                    "name": token_data.get("name"),
-                    "picture": token_data.get("picture"),
-                    "email_verified": token_data.get("email_verified", False)
+                    "user_id": user.id,
+                    "email": user.email_addresses[0].email_address if user.email_addresses else None,
+                    "name": f"{user.first_name or ''} {user.last_name or ''}".strip() or "User",
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "picture": user.image_url,
+                    "auth_provider": "clerk",
+                    "created_at": datetime.fromtimestamp(user.created_at / 1000).isoformat() if user.created_at else datetime.now().isoformat()
                 }
-                
-                logger.info(f"✅ Google token verified for user: {user_data['email']}")
+
+                logger.info(f"✅ Clerk token verified for user: {user_data['email']}")
                 return user_data
-                
+
+            except jwt.InvalidTokenError as e:
+                logger.error(f"❌ Invalid JWT token: {str(e)}")
+                return None
+
         except Exception as e:
-            logger.error(f"❌ Google token verification error: {str(e)}")
+            logger.error(f"❌ Clerk token verification error: {str(e)}")
+            logger.exception(e)
             return None
 
 # Dependency to get current user
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
-    """Get current authenticated user"""
-    
+    """Get current authenticated user from Clerk token"""
+
+    if not credentials:
+        logger.warning("❌ No credentials provided")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     # Development bypass
     if DEV_MODE and credentials.credentials.startswith("dev-token-"):
         logger.info("🔧 DEV MODE: Using development bypass token")
         return {
             "user_id": "dev-user",
             "email": "dev@example.com",
-            "name": "Development User"
+            "name": "Development User",
+            "auth_provider": "development"
         }
-    
-    # Verify JWT token
-    payload = AuthService.verify_token(credentials.credentials)
-    if payload is None:
-        logger.warning(f"❌ Invalid or expired token")
+
+    # Verify Clerk session token
+    user_data = await AuthService.verify_clerk_token(credentials.credentials)
+    if user_data is None:
+        logger.warning(f"❌ Invalid or expired Clerk token")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
+            detail="Invalid or expired authentication token",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    return payload
+
+    return user_data
 
 # Optional dependency (doesn't raise exception if no auth)
 async def get_current_user_optional(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)) -> Optional[Dict[str, Any]]:
@@ -160,198 +142,52 @@ async def get_current_user_optional(credentials: Optional[HTTPAuthorizationCrede
     except HTTPException:
         return None
 
-@router.post("/google", response_model=AuthResponse)
-async def google_auth(request: GoogleAuthRequest):
-    """Authenticate with Google SSO"""
-    logger.info("🔐 Google authentication attempt")
-    
-    try:
-        # Verify Google ID token
-        google_user = await AuthService.verify_google_token(request.id_token)
-        
-        if not google_user:
-            logger.error("❌ Invalid Google ID token")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid Google ID token"
-            )
-        
-        # Create user data
-        user_data = {
-            "user_id": google_user["sub"],
-            "email": google_user["email"],
-            "name": google_user["name"],
-            "picture": google_user.get("picture"),
-            "auth_provider": "google",
-            "created_at": datetime.utcnow().isoformat()
-        }
-        
-        # Create access token
-        access_token = AuthService.create_access_token(user_data)
-        
-        logger.info(f"✅ Google authentication successful for: {user_data['email']}")
-        
-        return AuthResponse(
-            access_token=access_token,
-            token_type="bearer",
-            user_info=user_data
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"❌ Google authentication error: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Authentication failed"
-        )
-
-@router.post("/logout")
-async def logout(current_user: Dict[str, Any] = Depends(get_current_user)):
-    """Logout user (client should discard token)"""
-    logger.info(f"👋 User logout: {current_user.get('email', 'unknown')}")
-    
-    return {"message": "Logged out successfully"}
-
-@router.get("/me")
-async def get_current_user_info(current_user: Dict[str, Any] = Depends(get_current_user)):
-    """Get current user information"""
+@router.get("/user")
+async def get_user_info(current_user: Dict[str, Any] = Depends(get_current_user)):
+    """Get authenticated user information"""
     logger.info(f"👤 User info request: {current_user.get('email', 'unknown')}")
-    
+
     return {
         "user": current_user,
         "authenticated": True,
-        "auth_provider": current_user.get("auth_provider", "unknown")
+        "auth_provider": current_user.get("auth_provider", "clerk")
     }
 
-@router.post("/dev/bypass", response_model=AuthResponse)
+@router.get("/me")
+async def get_current_user_info(current_user: Dict[str, Any] = Depends(get_current_user)):
+    """Get current user information (alias for /user)"""
+    logger.info(f"👤 User info request: {current_user.get('email', 'unknown')}")
+
+    return {
+        "user": current_user,
+        "authenticated": True,
+        "auth_provider": current_user.get("auth_provider", "clerk")
+    }
+
+@router.post("/dev/bypass")
 async def development_bypass():
     """Development authentication bypass (only works in dev mode)"""
-    
+
     if not DEV_MODE:
         logger.warning("⚠️ Development bypass attempted in production mode")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Development bypass not available in production"
         )
-    
-    logger.info("🔧 DEV MODE: Using authentication bypass")
-    
-    # Create mock user data
-    user_data = {
-        "user_id": "dev-user-123",
-        "email": "dev@example.com",
-        "name": "Development User",
-        "picture": "https://via.placeholder.com/100",
-        "auth_provider": "development",
-        "created_at": datetime.utcnow().isoformat()
-    }
-    
-    # Create access token
-    access_token = AuthService.create_access_token(user_data)
-    
-    return AuthResponse(
-        access_token=access_token,
-        token_type="bearer",
-        user_info=user_data
-    )
 
-@router.post("/google/callback", response_model=AuthResponse)
-async def google_oauth_callback(request: dict):
-    """Handle Google OAuth callback"""
-    logger.info("🔐 Google OAuth callback received")
-    
-    try:
-        code = request.get("code")
-        redirect_uri = request.get("redirect_uri")
-        
-        if not code:
-            logger.error("❌ No authorization code provided")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="No authorization code provided"
-            )
-        
-        # Log the request details for debugging
-        logger.info(f"🔄 Exchanging code for tokens:")
-        logger.info(f"   Client ID: {GOOGLE_CLIENT_ID}")
-        logger.info(f"   Redirect URI: {redirect_uri}")
-        logger.info(f"   Code (first 10 chars): {code[:10]}...")
-        
-        # Exchange authorization code for tokens
-        async with httpx.AsyncClient() as client:
-            token_data = {
-                "client_id": GOOGLE_CLIENT_ID,
-                "client_secret": GOOGLE_CLIENT_SECRET,
-                "code": code,
-                "grant_type": "authorization_code",
-                "redirect_uri": redirect_uri
-            }
-            
-            token_response = await client.post(
-                "https://oauth2.googleapis.com/token",
-                data=token_data,
-                headers={"Content-Type": "application/x-www-form-urlencoded"}
-            )
-            
-            if token_response.status_code != 200:
-                error_details = token_response.text
-                logger.error(f"❌ Token exchange failed: {token_response.status_code}")
-                logger.error(f"❌ Google error response: {error_details}")
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Failed to exchange authorization code: {error_details}"
-                )
-            
-            token_data = token_response.json()
-            id_token = token_data.get("id_token")
-            
-            if not id_token:
-                logger.error("❌ No ID token in response")
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="No ID token received"
-                )
-            
-            # Verify the ID token
-            google_user = await AuthService.verify_google_token(id_token)
-            
-            if not google_user:
-                logger.error("❌ Invalid Google ID token")
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid Google ID token"
-                )
-            
-            # Create user data
-            user_data = {
-                "user_id": google_user["sub"],
-                "email": google_user["email"],
-                "name": google_user["name"],
-                "picture": google_user.get("picture"),
-                "auth_provider": "google",
-                "created_at": datetime.utcnow().isoformat()
-            }
-            
-            # Create access token
-            access_token = AuthService.create_access_token(user_data)
-            
-            logger.info(f"✅ Google OAuth authentication successful for: {user_data['email']}")
-            
-            return AuthResponse(
-                access_token=access_token,
-                token_type="bearer",
-                user_info=user_data
-            )
-            
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"❌ Google OAuth callback error: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="OAuth authentication failed"
-        )
+    logger.info("🔧 DEV MODE: Using authentication bypass")
+
+    return {
+        "access_token": "dev-token-bypass",
+        "token_type": "bearer",
+        "user_info": {
+            "user_id": "dev-user-123",
+            "email": "dev@example.com",
+            "name": "Development User",
+            "picture": "https://via.placeholder.com/100",
+            "auth_provider": "development"
+        }
+    }
 
 @router.get("/health")
 async def auth_health():
@@ -359,5 +195,71 @@ async def auth_health():
     return {
         "status": "healthy",
         "dev_mode": DEV_MODE,
-        "token_expiry_minutes": ACCESS_TOKEN_EXPIRE_MINUTES
+        "auth_provider": "clerk",
+        "clerk_configured": CLERK_SECRET_KEY is not None
     }
+
+# Clerk webhook endpoint for tracking user events
+@router.post("/webhooks/clerk")
+async def clerk_webhook(request: Request):
+    """Handle Clerk webhooks for user events (login, signup, etc.)"""
+    try:
+        payload = await request.json()
+        event_type = payload.get("type")
+
+        logger.info(f"📊 Clerk webhook received: {event_type}")
+
+        # Import analytics tracking
+        from routes.analytics import track_login_event
+
+        if event_type == "session.created":
+            # User logged in
+            user_data = payload.get("data", {})
+            user_id = user_data.get("user_id")
+
+            if user_id and clerk_client:
+                try:
+                    user = clerk_client.users.get(user_id)
+                    email = user.email_addresses[0].email_address if user.email_addresses else "unknown"
+
+                    # Track login event
+                    track_login_event(
+                        user_email=email,
+                        user_id=user_id,
+                        event_type="login",
+                        metadata={
+                            "auth_provider": "clerk",
+                            "session_id": user_data.get("id"),
+                            "created_at": user_data.get("created_at")
+                        }
+                    )
+                    logger.info(f"✅ Tracked login for user: {email}")
+                except Exception as e:
+                    logger.error(f"❌ Error tracking login: {str(e)}")
+
+        elif event_type == "user.created":
+            # New user signed up
+            user_data = payload.get("data", {})
+            email = user_data.get("email_addresses", [{}])[0].get("email_address", "unknown")
+            user_id = user_data.get("id")
+
+            # Track signup event
+            track_login_event(
+                user_email=email,
+                user_id=user_id,
+                event_type="signup",
+                metadata={
+                    "auth_provider": "clerk",
+                    "created_at": user_data.get("created_at")
+                }
+            )
+            logger.info(f"✅ Tracked signup for user: {email}")
+
+        return {"status": "success", "event_type": event_type}
+
+    except Exception as e:
+        logger.error(f"❌ Webhook error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Webhook processing failed"
+        )

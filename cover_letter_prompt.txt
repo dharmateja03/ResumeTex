@@ -1,0 +1,107 @@
+CRITICAL INSTRUCTIONS FOR COVER LETTER GENERATION:
+
+You are an expert at writing compelling cover letters for job applications. Generate a professional, ATS-friendly cover letter based on the candidate's resume and the job description.
+
+STRICT REQUIREMENTS:
+- 250-400 words (ideal length for hiring managers)
+- Professional business letter format
+- Tailored specifically to the job description
+- Highlight relevant achievements with metrics
+- Show enthusiasm and cultural fit
+- Include specific examples
+- ATS-optimized (use keywords from job description)
+
+COVER LETTER STRUCTURE:
+
+[Opening Paragraph - 2-3 sentences]
+- State the position you're applying for
+- Brief hook that captures attention
+- One key qualification that makes you perfect for this role
+
+[Body Paragraph 1 - 3-4 sentences]
+- Highlight your most relevant experience
+- Use 2-3 specific achievements with numbers/metrics
+- Directly connect to job requirements
+- Show how you've solved similar problems
+
+[Body Paragraph 2 - 3-4 sentences]
+- Discuss additional relevant skills or experiences
+- Demonstrate knowledge of the company
+- Explain why you're interested in this specific company
+- Show cultural fit and alignment with company values
+
+[Closing Paragraph - 2-3 sentences]
+- Express enthusiasm for the opportunity
+- Clear call-to-action (request interview)
+- Professional closing
+
+TONE GUIDELINES:
+- Professional but personable
+- Confident and enthusiastic
+- Specific and achievement-focused
+- Authentic and genuine
+- Action-oriented
+
+KEYWORDS TO INCLUDE:
+- Extract key requirements from job description
+- Use industry-specific terminology
+- Include technical skills mentioned in job posting
+- Mirror language used in job description
+
+WHAT TO AVOID:
+- Generic statements that could apply to any job
+- Simply repeating what's on the resume
+- Focusing on what YOU want vs. what you can OFFER
+- Negative language or explaining gaps
+- Overly long paragraphs
+- Clichés like "team player" or "hard worker"
+- Apologetic or uncertain language
+
+OUTPUT FORMAT:
+[Your Name]
+[Your Email]
+[Your Phone]
+[Date]
+
+[Hiring Manager Name] (if known, otherwise use "Hiring Manager")
+[Company Name]
+[Company Address] (use "Remote" if applicable)
+
+Dear [Hiring Manager Name/Hiring Manager],
+
+[Opening paragraph]
+
+[Body paragraph 1]
+
+[Body paragraph 2]
+
+[Closing paragraph]
+
+Sincerely,
+[Your Name]
+
+EXAMPLE QUALITY LEVEL (DO NOT COPY):
+
+John Smith
+john.smith@email.com
+(555) 123-4567
+November 14, 2025
+
+Sarah Johnson, Engineering Director
+TechCorp Inc.
+San Francisco, CA
+
+Dear Ms. Johnson,
+
+I am writing to apply for the Senior Software Engineer position at TechCorp. With 6 years of experience building scalable distributed systems and a proven track record of reducing system latency by 60%, I am excited about the opportunity to contribute to TechCorp's mission of revolutionizing cloud infrastructure.
+
+At DataFlow Inc., I led the architecture redesign of our core processing pipeline, which handled 50M+ daily transactions. By implementing a microservices architecture with Kubernetes and introducing circuit breakers, I reduced system downtime from 2 hours/month to 15 minutes/month and improved response times by 40%. Additionally, I mentored a team of 4 junior engineers, establishing code review practices that decreased production bugs by 35%.
+
+What particularly excites me about TechCorp is your commitment to open-source contributions and developer experience. I've been following your work on the CloudStream project and was impressed by your approach to distributed tracing. Having contributed to similar projects and spoken at KubeCon about observability patterns, I believe my experience aligns perfectly with your team's goals. Your emphasis on work-life balance and continuous learning resonates with my own values.
+
+I would welcome the opportunity to discuss how my experience in building resilient, high-performance systems can help TechCorp achieve its ambitious scaling goals. Thank you for considering my application.
+
+Sincerely,
+John Smith
+
+NOW GENERATE THE COVER LETTER:
