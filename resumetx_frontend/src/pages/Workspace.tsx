@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FileTextIcon, UploadIcon, CheckCircleIcon, XIcon, SendIcon, DownloadIcon, EditIcon, PlayIcon, AlertCircleIcon, ChevronDownIcon, ServerIcon, KeyIcon, CheckIcon, MailIcon, ClockIcon, BarChart3Icon, User, History, LogOut, Settings, Share2, Moon, Sun, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { trackEvent } from '../lib/posthog';
+import { trackEvent, resetUser } from '../lib/posthog';
+import { useClerk } from '@clerk/clerk-react';
 
 interface OptimizationResult {
   optimization_id: string;
@@ -37,6 +38,7 @@ interface OptimizationStatus {
 export function Workspace() {
   const navigate = useNavigate();
   const resultsRef = useRef<HTMLDivElement>(null);
+  const { signOut } = useClerk();
 
   // Auth & Resume state
   const [isDragging, setIsDragging] = useState(false);
@@ -393,9 +395,6 @@ export function Workspace() {
           const resultResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/optimize/${optimizationId}/result`);
           if (resultResponse.ok) {
             const resultData = await resultResponse.json();
-            console.log('📧 RESULT DATA:', resultData);
-            console.log('📧 Has cold_email:', !!resultData.cold_email, 'Length:', resultData.cold_email?.length);
-            console.log('📄 Has cover_letter:', !!resultData.cover_letter, 'Length:', resultData.cover_letter?.length);
             setResult(resultData);
             if (resultData.optimized_tex) setEditableLatexCode(resultData.optimized_tex);
             if (resultData.original_tex) setOriginalLatexCode(resultData.original_tex);
@@ -525,8 +524,17 @@ export function Workspace() {
                   <hr className={`my-2 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`} />
 
                   <button
-                    onClick={() => {
+                    onClick={async () => {
+                      // Clear all local storage items
                       localStorage.removeItem('auth_token');
+                      localStorage.removeItem('user_info');
+                      localStorage.removeItem('llm_provider');
+                      localStorage.removeItem('llm_model');
+                      localStorage.removeItem('llm_api_key');
+                      // Reset PostHog user
+                      resetUser();
+                      // Sign out from Clerk
+                      await signOut();
                       navigate('/login');
                     }}
                     className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"

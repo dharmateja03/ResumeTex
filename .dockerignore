@@ -5,6 +5,9 @@
 !Dockerfile
 !railway.json
 !latex_system_prompt.txt
+!email_and_cover_letter_prompt.txt
+!cold_email_prompt.txt
+!cover_letter_prompt.txt
 
 # Backend ignores
 backend/__pycache__/

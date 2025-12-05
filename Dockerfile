@@ -1,7 +1,10 @@
 FROM python:3.9-slim
 
-# Copy system prompt file to root
+# Copy all prompt files to root
 COPY latex_system_prompt.txt /latex_system_prompt.txt
+COPY email_and_cover_letter_prompt.txt /email_and_cover_letter_prompt.txt
+COPY cold_email_prompt.txt /cold_email_prompt.txt
+COPY cover_letter_prompt.txt /cover_letter_prompt.txt
 
 WORKDIR /app
 

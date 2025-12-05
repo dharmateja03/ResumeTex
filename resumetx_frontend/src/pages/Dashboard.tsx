@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FileTextIcon, UploadIcon, CheckCircleIcon, XIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useClerk } from '@clerk/clerk-react';
+import { resetUser } from '../lib/posthog';
 
 export function Dashboard() {
   const navigate = useNavigate();
+  const { signOut } = useClerk();
 
   useEffect(() => {
     // Check if user is authenticated
@@ -15,14 +18,20 @@ export function Dashboard() {
     }
   }, [navigate]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Clear all auth and config data
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_info');
     localStorage.removeItem('llm_provider');
     localStorage.removeItem('llm_model');
     localStorage.removeItem('llm_api_key');
-    
+
+    // Reset PostHog user
+    resetUser();
+
+    // Sign out from Clerk
+    await signOut();
+
     // Redirect to login
     navigate('/login');
   };
