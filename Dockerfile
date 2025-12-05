@@ -19,8 +19,11 @@ RUN apt-get update && apt-get install -y \
 COPY backend/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application
+# Copy application (ensure all subdirectories are copied)
 COPY backend/ .
+
+# Verify database directory was copied
+RUN ls -la /app && ls -la /app/database || echo "Warning: database directory not found"
 
 
 # Create directories

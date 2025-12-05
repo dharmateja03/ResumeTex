@@ -1,14 +1,17 @@
 # Ignore everything except backend
 *
 !backend/
+!backend/**
 !Dockerfile
 !railway.json
 !latex_system_prompt.txt
 
 # Backend ignores
 backend/__pycache__/
+backend/**/__pycache__/
 backend/*.pyc
-backend/*.pyo  
+backend/**/*.pyc
+backend/*.pyo
 backend/*.pyd
 backend/.Python
 backend/env/
