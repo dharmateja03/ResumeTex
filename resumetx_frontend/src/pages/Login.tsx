@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ArrowLeftIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SignIn, useUser } from '@clerk/clerk-react';
-import { trackEvent, identifyUser } from '../lib/posthog';
 
 export function Login() {
   const navigate = useNavigate();
   const { isSignedIn, isLoaded } = useUser();
-  const [devLoading, setDevLoading] = useState(false);
 
   useEffect(() => {
     // Redirect if already signed in
@@ -16,48 +14,6 @@ export function Login() {
       navigate('/workspace');
     }
   }, [isSignedIn, isLoaded, navigate]);
-
-  // Development bypass login
-  const handleDevLogin = async () => {
-    setDevLoading(true);
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/dev/bypass`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-
-        // Store auth token and user info
-        localStorage.setItem('auth_token', data.access_token);
-        localStorage.setItem('user_info', JSON.stringify(data.user_info));
-
-        // Track login
-        identifyUser(data.user_info.email || 'anonymous', {
-          email: data.user_info.email,
-          name: data.user_info.name,
-        });
-        trackEvent('user_logged_in', {
-          method: 'dev_bypass',
-        });
-
-        // Redirect to workspace
-        navigate('/workspace');
-      } else {
-        alert('Dev login failed');
-      }
-    } catch (error) {
-      console.error('Dev login error:', error);
-      alert('Dev login failed: ' + error.message);
-    } finally {
-      setDevLoading(false);
-    }
-  };
-
-  const isDevelopment = import.meta.env.MODE === 'development';
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -72,20 +28,6 @@ export function Login() {
             Sign in to optimize your resume
           </p>
         </div>
-
-        {/* Development Bypass Button */}
-        {isDevelopment && (
-          <div className="mb-6 text-center">
-            <button
-              onClick={handleDevLogin}
-              disabled={devLoading}
-              className="px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg shadow-md transition-colors disabled:opacity-50"
-            >
-              {devLoading ? '🔧 Logging in...' : '🔧 Dev Login (Bypass)'}
-            </button>
-            <p className="text-xs text-gray-500 mt-2">Development mode only</p>
-          </div>
-        )}
 
         {/* Clerk SignIn Component */}
         <div className="flex justify-center">

@@ -52,9 +52,12 @@ export function Navbar() {
               </a>
             </div>
           </div>
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center space-x-4">
             <Link to="/login" className="text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
               Log in
+            </Link>
+            <Link to="/signup" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors">
+              Sign up
             </Link>
           </div>
           <div className="flex md:hidden items-center">
@@ -92,6 +95,9 @@ export function Navbar() {
             </a>
             <Link to="/login" className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">
               Log in
+            </Link>
+            <Link to="/signup" className="block px-3 py-2 mt-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-center">
+              Sign up
             </Link>
           </div>
         </div>}
