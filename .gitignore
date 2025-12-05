@@ -173,9 +173,12 @@ dump.rdb
 *.pdf
 resume_pdfs/
 
-# Backend runtime data and database
+# Backend runtime data
 backend/data/
-backend/database/
+# Database files (but NOT the database Python module)
+*.db
+*.sqlite
+*.sqlite3
 
 # LaTeX auxiliary files
 *.aux
