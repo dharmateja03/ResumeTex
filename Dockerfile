@@ -22,9 +22,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application (ensure all subdirectories are copied)
 COPY backend/ .
 
-# Verify database directory was copied
-RUN ls -la /app && ls -la /app/database || echo "Warning: database directory not found"
+# Verify database directory was copied and show full structure
+RUN echo "=== /app directory ===" && ls -laR /app | head -100
 
+# Set Python path to include /app
+ENV PYTHONPATH=/app:$PYTHONPATH
 
 # Create directories
 RUN mkdir -p /tmp/resume_pdfs
