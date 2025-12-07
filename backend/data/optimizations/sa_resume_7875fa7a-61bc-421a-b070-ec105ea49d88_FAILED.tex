@@ -1,0 +1,161 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+New York, NY 14221 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Data Analytics Engineer} with 3+ years of experience building scalable data platforms and pipelines in \textbf{analytics, healthcare, retail, and logistics}. Expertise in \textbf{dbt, BigQuery, Dagster, Python, Snowflake,} and \textbf{analytics engineering}. Proven track record of delivering \textbf{production-grade analytics infrastructure} on \textbf{AWS, GCP, and Snowflake}. Passionate about empowering data-driven decision making across organizations.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{NewYork,USA}
+{Data Analytics Engineer}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Built and maintained scalable \textbf{dbt models and pipelines}, optimizing BigQuery costs through incremental model design, clustering, and partition management.}
+\resumeItem{Developed \textbf{data quality frameworks} using dbt tests and Great Expectations to ensure 99\%+ data reliability, driving KPI reporting for key stakeholders.}
+\resumeItem{Migrated ETL pipelines from Airflow to \textbf{Dagster} for improved modularity and CI/CD integration, reducing DAG complexity by 40\%.}
+\resumeItem{Implemented \textbf{dbt semantic layer}, metrics, and exposures for a unified business logic layer, reducing KPI discrepancies by 60\%.}
+\resumeItem{Architected self-service BI layer in \textbf{Hex}, optimizing query performance and empowering stakeholders with governed data access.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Data Analytics Engineer}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Optimized \textbf{dbt Cloud} performance through refactoring, testing, and documentation, reducing model runtime by 30\%.}
+\resumeItem{Implemented \textbf{data contract testing} using dbt and Great Expectations for financial data pipelines, ensuring 98\%+ data quality.}
+\resumeItem{Built \textbf{Dagster pipelines} for orchestrating dbt jobs and data quality checks, improving maintainability and observability.}
+\resumeItem{Integrated \textbf{Snowflake, Fivetran, and dbt} for ELT workflows, delivering analytics-ready data for reporting and ML use cases.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{AWS Data Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Designed and implemented \textbf{Snowflake data warehouse} to centralize \textasciitilde2–3 TB of siloed data across business units, enabling unified reporting and analytics.}
+\resumeItem{Built and maintained \textbf{dbt models} for core insurance analytics, covering customer behavior, policy performance, and claims trends.}
+\resumeItem{Developed \textbf{data quality} checks using dbt tests and Snowflake streams to ensure 99\%+ data reliability across 100+ tables.}
+\resumeItem{Optimized \textbf{Snowflake query performance} through clustering, partitioning, and materialized views, reducing dashboard load times by 45\%.}
+\resumeItem{Automated data ingestion and transformation using \textbf{Airflow and dbt}, processing 5–10 GB of daily incremental data.}
+\resumeItem{Migrated legacy analytics infrastructure to \textbf{Snowflake and dbt}, reducing data processing time by 60\% and enabling self-service analytics.}
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubheading{Catalog}{India}
+{Machine Learning Intern}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Designed and built \textbf{analytics engineering} workflow using PySpark, dbt, and Airflow to enable ML experimentation on blockchain data at scale.}
+\resumeItem{Developed \textbf{Python and SQL data pipelines} to preprocess and transform raw blockchain data for effective model training and evaluation.}
+\resumeItem{Integrated \textbf{dbt models} with ML pipelines for efficient feature engineering and standardized input data for downstream model consumption.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Analytics Engineering:} & dbt (Cloud \& Core), Snowflake, BigQuery, SQL, Python, Airflow, Dagster \\
+\textbf{Data Warehousing:} & Snowflake (clustering, partitioning, streams), BigQuery, Redshift \\
+\textbf{Data Quality \& Observability:} & dbt tests, Great Expectations, Snowflake streams, data contracts \\
+\textbf{ETL/ELT \& Orchestration:} & Airflow, Dagster, dbt, Fivetran, Spark, AWS (S3, Glue, EMR), Docker \\
+\textbf{BI \& Data Governance:} & Looker, Hex, dbt exposures/metrics, OpenLineage, data catalogs (Amundsen, Atlan) \\
+\end{tabularx}
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\textbf{Blockchain Analytics Platform | PySpark,dbt, Airflow, Snowflake}{}
+\resumeItemListStart
+\resumeItem{Developed end-to-end analytics platform for blockchain data using PySpark for distributed processing, dbt for data modeling, and Airflow for orchestration.}
+\resumeItem{Built dbt models to transform raw blockchain data into analytics-ready schemas, enabling efficient querying and reporting on Snowflake.}
+\resumeItem{Implemented data quality checks using dbt tests and Great Expectations, ensuring 99\%+ data reliability across the pipeline.}
+\resumeItem{Automated model training and deployment with Airflow, reducing manual intervention and enabling rapid experimentation.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+\resumeSubHeadingListEnd
+
+\end{document}

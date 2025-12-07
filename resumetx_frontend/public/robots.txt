@@ -1,0 +1,15 @@
+# robots.txt for ResumeTex
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://resumetex.tech/sitemap.xml
+
+# Disallow private/auth pages from indexing
+Disallow: /workspace
+Disallow: /dashboard
+Disallow: /optimize
+Disallow: /results
+Disallow: /history
+Disallow: /analytics
+Disallow: /llm_settings

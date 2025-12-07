@@ -1,0 +1,159 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+Rochester, NY 14621 \\ \vspace{2pt}
+\small
++1 (857) 398-3456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Software Engineer} with 3+ years of experience designing and developing scalable, data-driven applications across \textbf{healthcare, biomedical research, and technology}. Proficient in Python, JavaScript, cloud platforms (GCP, Azure), and AI/ML frameworks. Proven track record of delivering impactful solutions leveraging modern technologies like FastAPI, LangChain, React, and GCP services.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{NewYork,USA}
+{Software Engineer}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Design and develop scalable software solutions and automation systems using Python, JavaScript, and Go to streamline \textbf{clinical workflows} and \textbf{biomedical research} at Mayo Clinic.}
+\resumeItem{Collaborate with data scientists, clinicians, product owners, and architects to translate complex healthcare requirements into technical solutions; own individual services and features end-to-end (\textbf{API, LangChain, UI}).}
+\resumeItem{Implement secure and scalable solutions on \textbf{Google Cloud Platform (Compute, AI APIs, IAM)} following DevOps best practices; build \textbf{CI/CD pipelines in Azure DevOps} to ensure reliable deployments.}
+\resumeItem{Leverage modern frameworks like \textbf{FastAPI, LangChain, and React} to build intelligent, data-driven applications that improve patient care and advance medical research.}
+\resumeItem{Contribute to the design and maintenance of robust \textbf{data platforms} that power advanced biomedical, clinical, and translational research initiatives at Mayo Clinic.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Software Engineer Intern}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Developed and optimized \textbf{PySpark ETL pipelines} on \textbf{AWS EMR} for financial data processing, reducing execution time by 60\% through DataFrame optimizations and data structure refactoring.}
+\resumeItem{Implemented serverless \textbf{APIs using AWS API Gateway and Lambda}, enabling efficient integration of internal services; conducted comprehensive load testing to validate scalability and performance.}
+\resumeItem{Designed and developed \textbf{data pipelines using Apache Airflow}, creating DAGs with proper task dependencies and error handling to ensure reliable data ingestion and processing.}
+\resumeItem{Evaluated \textbf{AWS Neptune Graph Database} for potential use in modeling complex team workflows, analyzing performance and scalability compared to traditional relational databases.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{Data Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Developed and maintained \textbf{ETL pipelines using PySpark} to process and transform large volumes (3-5 GB daily) of insurance data from various sources (\textbf{S3, RDS, APIs}) on \textbf{AWS}.}
+\resumeItem{Designed and implemented \textbf{data models} in \textbf{Snowflake and Redshift} to support efficient querying and reporting on terabytes of customer, policy, and claims data.}
+\resumeItem{Built \textbf{Airflow DAGs} to orchestrate complex ETL workflows with dependencies, retries, and monitoring; automated recurring jobs and reduced manual effort by 30\%.}
+\resumeItem{Optimized \textbf{SQL queries} for data extraction, aggregation, and analysis, improving reporting efficiency by 40\% and supporting daily business intelligence needs.}
+\resumeItem{Implemented \textbf{data quality checks} and audit logging in pipelines to ensure data consistency and identify anomalies, achieving 99\% accuracy between source and target systems.}
+\resumeItem{Leveraged \textbf{AWS services (S3, EMR, Lambda, Athena)} to build scalable and cost-effective data infrastructure; reduced query times by 25\% through partitioning and compression techniques.}
+\resumeItemListEnd
+
+\resumeSubheading{Catalog}{India}
+{Machine Learning Intern}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Conducted large-scale distributed data analysis using \textbf{PySpark} to experiment with ML model scalability and performance on high-volume blockchain transaction datasets.}
+\resumeItem{Developed \textbf{ETL pipelines in Python and SQL} to preprocess raw blockchain data for machine learning workflows, ensuring data quality and integrity.}
+\resumeItem{Built end-to-end model training and evaluation pipelines using \textbf{Airflow}, enabling automated retraining and performance tracking; deployed ML models as scalable \textbf{FastAPI} microservices.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages \& Frameworks:} & Python, JavaScript, SQL, Go, FastAPI, Flask, React, Node.js \\
+\textbf{Data Engineering:} & PySpark, Airflow, Kafka, AWS (S3, EMR, Lambda, Athena), Snowflake, Redshift \\
+\textbf{Machine Learning:} & LangChain, scikit-learn, PyTorch, TensorFlow, GCP AI Platform, AWS SageMaker \\
+\textbf{Cloud \& DevOps:} & Google Cloud Platform (GCP), Azure DevOps, CI/CD, Docker, Kubernetes \\
+\textbf{Databases:} & PostgreSQL, MongoDB, Cassandra, Neo4j, AWS Neptune, BigQuery, Hive 
+\end{tabularx}
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\textbf{Microservices Communication Framework | Go, gRPC, Docker, Kubernetes}{}
+\resumeItemListStart
+\resumeItem{Architected 3 gRPC microservices (User, Order, Payment) with Envoy sidecar proxies; implemented mTLS, circuit breakers, and retry policies for resilient inter-service communication.}
+\resumeItem{Built observability pipeline using Prometheus, Grafana, and Jaeger; automated deployment with Docker Compose and Helm charts; benchmarked latency across 100K+ requests.}
+\resumeItem{Reduced P99 latency by 24\% via load balancing; canary routing cut deployment risk by 40\%; quantified service mesh overhead at 8\% for informed adoption decisions.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+\resumeItemListEnd
+
+\end{document}

@@ -1,100 +1,78 @@
 import React from 'react';
-import { HeartIcon, GithubIcon, TwitterIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { FileText, Twitter, Linkedin, Github } from 'lucide-react';
+
 export function Footer() {
-  return <footer className="bg-gray-900 text-white py-12 relative overflow-hidden">
-      {/* Grid background with low opacity */}
-      <div className="absolute inset-0 grid-bg opacity-10 radial-blur"></div>
-      {/* Backdrop blur */}
-      <div className="absolute inset-0 backdrop-blur-40"></div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="opacity-0 animate-fade-in">
-            <h3 className="text-lg resume-feature-title mb-4">ResumeTex</h3>
-            <p className="text-gray-400 text-sm font-switzer-light">
-              Optimize your LaTeX resume for job applications with AI-powered
-              tools.
-            </p>
-            <div className="mt-4 flex items-center">
-              <span className="text-gray-400 text-sm font-switzer-light">
-                Made with
-              </span>
-              <HeartIcon className="h-4 w-4 text-red-500 mx-1" />
-              <span className="text-gray-400 text-sm font-switzer-light">
-                by the community
-              </span>
+    return (
+        <footer className="relative pt-32 pb-10 overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-300">
+            {/* Gradient Fade In - Blends from theme background to dark slate */}
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-50 dark:from-slate-950 via-slate-900/90 to-slate-900 pointer-events-none -z-10 transition-colors duration-300"></div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                    <div className="col-span-1 md:col-span-1">
+                        <a href="#" className="flex items-center space-x-2 mb-4">
+                            <FileText className="text-white h-6 w-6" />
+                            <span className="text-xl font-bold text-white">ResumeTeX</span>
+                        </a>
+                        <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                            Empowering professionals to achieve their career goals with advanced AI technology.
+                        </p>
+
+                        {/* Social Links */}
+                        <div className="flex space-x-4">
+                            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Twitter size={20} /></a>
+                            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Linkedin size={20} /></a>
+                            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Github size={20} /></a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 className="text-white font-bold mb-4">Product</h4>
+                        <ul className="space-y-2 text-sm text-slate-400">
+                            <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
+                            <li><a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
+                            <li><a href="/docs" className="hover:text-white transition-colors">Docs</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 className="text-white font-bold mb-4">Company</h4>
+                        <ul className="space-y-2 text-sm text-slate-400">
+                            <li><a href="#" className="hover:text-white transition-colors">About</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 className="text-white font-bold mb-4">Legal</h4>
+                        <ul className="space-y-2 text-sm text-slate-400">
+                            <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <p className="text-slate-500 text-sm">&copy; {new Date().getFullYear()} ResumeTeX Inc. All rights reserved.</p>
+
+                    <div className="flex items-center gap-6">
+                        {/* All Systems Operational Badge */}
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span className="text-xs font-medium text-slate-300">All systems operational</span>
+                        </div>
+
+                        <a href="/signup" className="text-sm font-semibold text-slate-900 bg-white hover:bg-slate-200 px-4 py-2 rounded-lg transition-colors">
+                            Start for free
+                        </a>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div className="opacity-0 animate-fade-in delay-100">
-            <h3 className="text-lg font-switzer-bold mb-4">Resources</h3>
-            <ul className="space-y-2 text-gray-400 text-sm font-switzer-light">
-              <li className="hover:text-blue-400 transition-colors">
-                <a href="#">Documentation</a>
-              </li>
-              {/* <li className="hover:text-blue-400 transition-colors">
-                <a href="#">LaTeX Templates</a>
-              </li> */}
-              <li className="hover:text-blue-400 transition-colors">
-                <a href="#">API Reference</a>
-              </li>
-              <li className="hover:text-blue-400 transition-colors">
-                <a href="#">Resume Tips</a>
-              </li>
-            </ul>
-          </div>
-          <div className="opacity-0 animate-fade-in delay-200">
-            <h3 className="text-lg font-switzer-bold mb-4">Company</h3>
-            <ul className="space-y-2 text-gray-400 text-sm font-switzer-light">
-              <li className="hover:text-blue-400 transition-colors">
-                <a href="#">About Us</a>
-              </li>
-              <li className="hover:text-blue-400 transition-colors">
-                <a href="#">Blog</a>
-              </li>
-              <li className="hover:text-blue-400 transition-colors">
-                <a href="#">Careers</a>
-              </li>
-              <li className="hover:text-blue-400 transition-colors">
-                <a href="#">Contact</a>
-              </li>
-            </ul>
-          </div>
-          <div className="opacity-0 animate-fade-in delay-300">
-            <h3 className="text-lg font-switzer-bold mb-4">Legal</h3>
-            <ul className="space-y-2 text-gray-400 text-sm font-switzer-light">
-              <li className="hover:text-blue-400 transition-colors">
-                <a href="#">Privacy Policy</a>
-              </li>
-              <li className="hover:text-blue-400 transition-colors">
-                <a href="#">Terms of Service</a>
-              </li>
-              <li className="hover:text-blue-400 transition-colors">
-                <a href="#">Cookie Policy</a>
-              </li>
-            </ul>
-            <div className="mt-6 flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <GithubIcon className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <TwitterIcon className="h-5 w-5" />
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center opacity-0 animate-fade-in delay-400">
-          <p className="text-gray-400 text-sm font-switzer-light">
-            &copy; {new Date().getFullYear()} ResumeTex. All rights reserved.
-          </p>
-          <div className="mt-4 md:mt-0 flex space-x-4">
-            <Link to="/workspace" className="text-gray-400 hover:text-blue-400 text-sm font-switzer-light transition-colors">
-              Workspace
-            </Link>
-            <Link to="/login" className="text-gray-400 hover:text-blue-400 text-sm font-switzer-light transition-colors">
-              Login
-            </Link>
-          </div>
-        </div>
-      </div>
-    </footer>;
+        </footer>
+    );
 }

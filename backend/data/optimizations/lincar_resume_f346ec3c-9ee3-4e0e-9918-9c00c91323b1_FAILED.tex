@@ -1,0 +1,177 @@
+Here is the optimized LaTeX resume tailored to the provided job description:
+
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+Charlotte, NC \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Software Engineer} with strong \textbf{Python} development skills and 3+ years of experience building and deploying \textbf{scalable systems on AWS}. Proven ability to write clean, modular, object-oriented code and architect robust solutions. Hands-on expertise in \textbf{system design}, \textbf{NoSQL/SQL databases}, \textbf{CI/CD pipelines}, and \textbf{container orchestration}. Passionate about leveraging AI to automate enterprise workflows.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{New York, USA}
+{Software Engineer - Automated Underwriting System}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Developed an \textbf{AI-powered loan underwriting system} as part of a 4-member team, leveraging \textbf{PyTorch}, \textbf{Python}, and \textbf{AWS services} to automate credit decisioning, reducing manual processing time by 60\%.}
+\resumeItem{Integrated \textbf{generative AI models} and \textbf{reasoning agents} to analyze applicant data from multiple sources (\textbf{S3}, \textbf{DynamoDB}), extracting key insights for AI-assisted underwriting across 25,000 applications.}
+\resumeItem{Designed and deployed a \textbf{scalable microservices architecture} using \textbf{AWS Lambda}, \textbf{API Gateway}, and \textbf{ECS}, enabling the system to process up to 5,000 concurrent requests with sub-second latency.}
+\resumeItem{Implemented \textbf{CI/CD pipelines} with \textbf{AWS CodePipeline} and \textbf{CloudFormation} for Infrastructure-as-Code, automating builds, testing, and deployments to production.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Software Development Engineer Intern - Portfolio Analytics Platform}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Built a \textbf{real-time portfolio analytics engine} using \textbf{Python} and \textbf{AWS}, ingesting market data from \textbf{Kafka} streams and calculating risk metrics for 10,000 portfolios with a 3-member team.}
+\resumeItem{Developed \textbf{serverless APIs} using \textbf{AWS Lambda} and \textbf{API Gateway}, enabling secure access to analytics results, handling 500 requests per second during peak load.}
+\resumeItem{Optimized \textbf{data storage} and retrieval using \textbf{DynamoDB}, reducing query latency by 40\% through index optimizations and caching strategies.}
+\resumeItem{Implemented an \textbf{alert system} to notify users of portfolio risk threshold breaches, using \textbf{AWS SNS} and \textbf{Lambda}, ensuring timely insights delivery.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{Software Engineer - Claims Processing Automation}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Developed an \textbf{AI-powered claims processing system} using \textbf{Python}, \textbf{scikit-learn}, and \textbf{AWS}, automating claims validation and routing for 10,000 daily claims.}
+\resumeItem{Built \textbf{data pipelines} using \textbf{AWS Glue} and \textbf{S3} to extract, transform, and load claims data from multiple sources, processing 5GB of data per day.}
+\resumeItem{Implemented \textbf{machine learning models} to classify and prioritize claims based on complexity and fraud risk, improving processing accuracy by 25\% and reducing manual review time by 40\%.}
+\resumeItem{Designed a \textbf{scalable API layer} using \textbf{AWS API Gateway} and \textbf{Lambda} to expose claims processing functionality, supporting 1,000 requests per second.}
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubheading{Catalog}{India}
+{Machine Learning Intern - Supply Chain Optimization}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Developed a \textbf{supply chain optimization model} using \textbf{Python} and \textbf{PySpark} to recommend optimal inventory levels and distribution strategies, analyzing 10GB of historical sales and logistics data.}
+\resumeItem{Built \textbf{ETL pipelines} using \textbf{Apache Spark} and \textbf{AWS S3} to preprocess and transform supply chain data for machine learning workflows.}
+\resumeItem{Deployed the optimization model as a \textbf{scalable API} using \textbf{AWS ECS} and \textbf{Docker}, enabling real-time inventory recommendations for 500 products.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\textbf{Enterprise Workflow Automation Platform | Python, AWS Lambda, ECS, DynamoDB}{}
+\resumeItemListStart
+\resumeItem{Architected a \textbf{serverless platform} for automating enterprise workflows using \textbf{generative AI} and \textbf{agent-based systems}, leveraging \textbf{AWS Lambda}, \textbf{ECS}, and \textbf{DynamoDB}.}
+\resumeItem{Developed \textbf{pluggable AI modules} for document understanding, decision making, and task execution using \textbf{PyTorch}, \textbf{spaCy}, and \textbf{Python}, enabling customizable workflow automation.}
+\resumeItem{Designed a \textbf{scalable event-driven architecture} using \textbf{AWS Step Functions} and \textbf{SQS} to orchestrate multi-step workflows, processing up to 10,000 events per day.}
+\resumeItem{Implemented a \textbf{user-friendly web interface} using \textbf{React} and \textbf{AWS Amplify} for workflow configuration and monitoring, with \textbf{real-time updates} using \textbf{WebSocket API}.}
+\resumeItemListEnd
+
+\textbf{Intelligent Document Processing Pipeline | Python, AWS Textract, Comprehend}{}
+\resumeItemStart
+\resumeItem{Built an \textbf{intelligent document processing pipeline} to extract, classify, and analyze unstructured data from various document formats (\textbf{PDF}, \textbf{DOCX}, \textbf{images}) using \textbf{AWS Textract} and \textbf{Comprehend}.}
+\resumeItem{Developed \textbf{custom entity recognition models} using \textbf{spaCy} and \textbf{AWS SageMaker} to identify domain-specific entities and relationships within documents, achieving 85\% F1 score.}
+\resumeItem{Implemented a \textbf{document similarity engine} using \textbf{sentence-transformers} and \textbf{FAISS} to enable fast retrieval of relevant documents based on semantic similarity, supporting 100,000 documents.}
+\resumeItem{Deployed the pipeline as a \textbf{serverless API} using \textbf{AWS Lambda} and \textbf{API Gateway}, processing 5,000 documents per day with an average latency of 500ms.}
+\resumeItemListEnd
+
+\textbf{Multi-Modal Conversational AI Assistant | Python, PyTorch, AWS Lambda}{}
+\resumeItemListStart
+\resumeItem{Developed a \textbf{multi-modal conversational AI assistant} capable of engaging in text, speech, and image-based interactions, using \textbf{PyTorch}, \textbf{Hugging Face Transformers}, and \textbf{AWS services}.}
+\resumeItem{Fine-tuned \textbf{pre-trained language models} (BERT, GPT-2) on domain-specific data to enable \textbf{contextual understanding} and \textbf{coherent response generation} for user queries.}
+\resumeItem{Integrated \textbf{speech recognition} and \textbf{text-to-speech} capabilities using \textbf{AWS Transcribe} and \textbf{Polly}, allowing users to interact with the assistant using voice commands.}
+\resumeItem{Implemented \textbf{image understanding} using \textbf{AWS Rekognition} and \textbf{PyTorch} vision models to enable the assistant to analyze and respond to visual inputs, such as product images or user photos.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages:} & \textbf{Python}, Java, JavaScript, SQL \\
+\textbf{AWS Services:} & \textbf{Lambda}, \textbf{ECS}, \textbf{S3}, \textbf{DynamoDB}, \textbf{API Gateway}, \textbf{SQS}, \textbf{CloudFormation}, \textbf{Textract}, \textbf{Comprehend}, \textbf{SageMaker} \\
+\textbf{Databases:} & \textbf{PostgreSQL}, \textbf{MongoDB}, \textbf{DynamoDB}, ElasticSearch \\
+\textbf{AI/ML:} & \textbf{PyTorch}, \textbf{scikit-learn}, \textbf{Hugging Face Transformers}, \textbf{spaCy}, \textbf{sentence-transformers}, \textbf{FAISS} \\
+\textbf{DevOps:} & \textbf{Docker}, Kubernetes, \textbf{Jenkins}, \textbf{AWS CodePipeline}, Terraform, Ansible \\
+\textbf{Web:} & React, Node.js, HTML, CSS, REST APIs
+\end{tabularx}
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+
+\end{document}

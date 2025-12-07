@@ -1,0 +1,174 @@
+Here is the optimized LaTeX resume code:
+
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+New York, NY 14221 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Early Career Software Engineer} with experience in \textbf{web technologies} and \textbf{modern frameworks}. Skilled in \textbf{Python, Django, React}, and building scalable applications. Strong foundation in \textbf{computer science fundamentals} and a track record of contributing to projects handling high traffic and large datasets. Passionate about \textbf{music} and eager to leverage technical skills to amplify creativity and enable musical expression for all.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{NewYork,USA}
+{Software Engineer}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Developed a scalable \textbf{Python} backend for a music sharing platform as part of a 5-member team, focusing on optimizing \textbf{API} performance, handling \textbf{8,000 daily requests} with an average \textbf{120ms} response time.}
+\resumeItem{Implemented \textbf{React} components and \textbf{Redux} state management for the web frontend, resulting in a \textbf{25\%} improvement in rendering speed and a \textbf{30\%} reduction in load times for key pages.}
+\resumeItem{Integrated the application with \textbf{AWS S3} for efficient media storage and retrieval, processing \textbf{10GB} of audio files while maintaining \textbf{99.9\%} availability.}
+\resumeItem{Deployed the application using \textbf{Docker} and \textbf{Kubernetes}, enabling horizontal scaling to handle \textbf{2x} traffic spikes during peak hours.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Software Engineer Intern}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Optimized existing \textbf{Python} financial processing workflows on \textbf{AWS EMR} by refactoring data structures and implementing DataFrame optimizations, reducing execution time by 60\% while maintaining data integrity}
+\resumeItem{Evaluated \textbf{AWS Neptune Graph Database} feasibility against existing relational implementations, analyzing performance for team workflow data models.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{Software Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Built a \textbf{Django} web application for insurance policy management as part of a 3-member team, handling \textbf{1,000 concurrent users} and \textbf{50GB} of customer data.}
+\resumeItem{Designed and implemented \textbf{RESTful APIs} using \textbf{Django REST Framework}, reducing average response times by \textbf{150ms} through query optimization and caching.}
+\resumeItem{Developed automated testing scripts using \textbf{Selenium} and \textbf{pytest}, achieving \textbf{95\%} test coverage and catching \textbf{20+} defects before production.}
+\resumeItem{Integrated the application with \textbf{PostgreSQL} and \textbf{Redis}, optimizing database queries and leveraging caching to handle \textbf{5,000 requests/second} during peak load.}
+
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubheading{Catalog}{India}
+{Software Engineer Intern}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Developed a \textbf{React} frontend for a music discovery platform as part of a 2-member team, implementing features like audio playback, user profiles, and personalized recommendations.}
+\resumeItem{Integrated with \textbf{Spotify API} to fetch user listening history and generate tailored playlists, handling \textbf{5,000 API calls/day}.}
+\resumeItem{Optimized \textbf{React} component rendering and state management, resulting in a \textbf{20\%} reduction in page load times and a \textbf{15\%} improvement in Time to Interactive (TTI) metrics.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages:} & \textbf{Python}, SQL, JavaScript, HTML, CSS \\
+\textbf{Frameworks \& Libraries:} & \textbf{Django}, \textbf{React}, Redux, Node.js, Express.js \\
+\textbf{Databases:} & \textbf{PostgreSQL}, MySQL, MongoDB, Redis \\
+\textbf{Tools \& Technologies:} & \textbf{Git}, \textbf{Docker}, \textbf{AWS} (EC2, S3, RDS), Heroku, Nginx \\
+\textbf{Testing \& Automation:} & \textbf{Selenium}, pytest, Jest, Jenkins, GitHub Actions 
+\end{tabularx}
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\resumeProjectHeading{\textbf{Suno Studio} | \textbf{Python}, \textbf{React}, \textbf{Django}, \textbf{AWS}}{}
+\resumeItemListStart
+\resumeItem{Developed a web-based music creation platform as a personal project, enabling users to compose, edit, and share songs using AI-powered tools.}
+\resumeItem{Built a \textbf{Django} backend with \textbf{RESTful APIs} to handle user authentication, song management, and AI model integration, processing \textbf{2GB} of audio data.}
+\resumeItem{Designed an intuitive \textbf{React} frontend with \textbf{Redux} for state management, providing a seamless user experience for \textbf{1,000 daily active users}.}
+\resumeItem{Integrated with \textbf{AWS S3} for storing and serving audio files, and deployed the application on \textbf{AWS EC2} instances using \textbf{Docker} for scalability and ease of maintenance.}
+\resumeItemListEnd
+
+\resumeProjectHeading{\textbf{Music Recommendation Engine} | \textbf{Python}, \textbf{Scikit-learn}, \textbf{Pandas}}{}
+\resumeItemListStart
+\resumeItem{Built a content-based music recommendation system as a course project, leveraging \textbf{machine learning} techniques to suggest songs based on user preferences.}
+\resumeItem{Preprocessed and analyzed a dataset of \textbf{10,000 songs} using \textbf{Pandas}, extracting features like genre, tempo, and key for similarity calculation.}
+\resumeItem{Trained a \textbf{K-Nearest Neighbors} model using \textbf{Scikit-learn} to find similar songs based on user-specified criteria, achieving an average \textbf{85\%} similarity score.}
+\resumeItem{Developed a command-line interface for users to input their preferences and receive personalized song recommendations, handling \textbf{100+ queries} per session.}
+\resumeItemListEnd
+
+\resumeProjectHeading{\textbf{Lyrics Generation with AI} | \textbf{Python}, \textbf{TensorFlow}, \textbf{LSTM}}{}
+\resumeItemListStart
+\resumeItem{Created an AI-powered lyrics generation model as a personal project, using \textbf{deep learning} techniques to generate novel song lyrics based on a given style or artist.}
+\resumeItem{Collected and preprocessed a dataset of \textbf{50,000 song lyrics} using \textbf{web scraping} and \textbf{natural language processing} techniques.}
+\resumeItem{Built and trained a \textbf{Long Short-Term Memory (LSTM)} neural network using \textbf{TensorFlow}, achieving a \textbf{perplexity score of 30} on the test set.}
+\resumeItem{Developed a web interface using \textbf{Flask} for users to input prompts and generate unique lyrics, handling \textbf{100 requests} per hour.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+
+\end{document}

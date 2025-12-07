@@ -1,0 +1,167 @@
+Here is the optimized LaTeX resume tailored to the job description:
+
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+New York, NY 14221 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Data Engineer} with 3+ years of experience developing scalable \textbf{cloud data platforms} using \textbf{Apache Spark, modern data warehouses} (Redshift, Snowflake, BigQuery), and \textbf{streaming technologies} (Kafka, Kinesis) for \textbf{AI/ML, analytics, and data products}. Skilled in \textbf{Python, Java, SQL}, and cloud platforms (\textbf{AWS, Azure, GCP}). Proven track record of delivering \textbf{high-quality, performant data pipelines} in collaborative, fast-paced environments.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{NewYork,USA}
+{Data Engineer}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Engineered a \textbf{real-time fraud detection pipeline} in a 4-member team using \textbf{Kafka, PySpark, and AWS EMR}, processing 35GB of transaction data daily with sub-200ms latency, serving as the lead developer.}
+\resumeItem{Built an \textbf{ETL framework} using \textbf{Apache Airflow} on \textbf{AWS}, streamlining ingestion from 7 sources and reducing manual effort by 55\%; integrated \textbf{data quality checks} that caught 92\% of errors pre-deployment.}
+\resumeItem{Optimized \textbf{Redshift} warehouse, reducing query times by 40\% for 10TB+ of financial data through \textbf{strategic distribution keys, sort keys, and compression encodings}.}
+\resumeItem{Created a metadata-driven \textbf{data catalog} using \textbf{AWS Glue} for 200+ datasets; automated schema inference and lineage tracking, enabling 30\% faster onboarding of new datasets.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Data engineer}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Developed an \textbf{anomaly detection system} using \textbf{PySpark} on \textbf{AWS EMR}, monitoring 500K daily trading events; reduced false positives by 45\% using statistical models and business rules.}
+\resumeItem{Evaluated \textbf{AWS Neptune graph database} for an investment research platform; loaded and queried 10M nodes/edges, demonstrating 5x faster traversals over traditional RDBMS.}
+\resumeItem{Built \textbf{serverless APIs} with \textbf{AWS Lambda} and \textbf{API Gateway}, enabling secure, scalable access to financial data; performed load tests simulating 5000 requests/sec.}
+\resumeItem{Created \textbf{Airflow DAGs} for 12 ETL jobs, ensuring reliable, scheduled execution; implemented error handling, alerting, and self-healing for 99.9\% uptime.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{AWS Data Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Managed 3TB+ of insurance data in \textbf{AWS S3}, \textbf{designing partitioning schemes} that reduced Athena query times by 30\% and storage costs by 18\%.}
+\resumeItem{Built \textbf{ETL pipelines} using \textbf{PySpark} to process 2.5GB of daily claims data from \textbf{RDS, MongoDB}, and flat files; automated ingestion and transformations via \textbf{AWS Lambda} triggers.}
+\resumeItem{Optimized \textbf{Snowflake} warehouse for a 600M row claims dataset, reducing processing time by 25\% through \textbf{clustering, materialized views}, and query tuning.}
+\resumeItem{Deployed \textbf{CI/CD pipelines} using \textbf{AWS CodePipeline, Bitbucket}, and \textbf{Jenkins} to automate testing and deployment of Spark ETL jobs, increasing developer productivity by 40\%.}
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubHeadingListEnd
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\resumeProjectHeading{\textbf{Real-time Log Analytics Platform} | \small{\textbf{Kafka, PySpark, HBase, Streamlit}}}{Mar 2023}
+\resumeItemListStart
+\resumeItem{Built a \textbf{real-time distributed log processing system} in a 2-member team, ingesting 5000 events/sec from \textbf{Kafka}, transforming data using \textbf{PySpark}, and serving insights via \textbf{Streamlit} dashboards.}
+\resumeItem{Implemented \textbf{streaming aggregations} and \textbf{stateful processing} using \textbf{Spark Structured Streaming}, ensuring exactly-once semantics and sub-second end-to-end latency.}
+\resumeItem{Performed \textbf{sessionization} and funnel analysis on clickstream data, storing state in \textbf{HBase} for fast lookups; optimized storage with \textbf{Snappy compression}, reducing size by 40\%.}
+\resumeItem{Automated deployment on \textbf{AWS EKS} with \textbf{Terraform} and \textbf{Docker}; scaled Spark jobs to process 2x data volume with \textless10\% cost increase via dynamic allocation.}
+\resumeItemListEnd
+
+\resumeProjectHeading{\textbf{Serverless Data Pipeline} | \small{\textbf{AWS S3, Lambda, DynamoDB, Serverless Framework}}}{Feb 2023}
+\resumeItemListStart
+\resumeItem{Developed a \textbf{serverless data ingestion pipeline} to process 5GB of daily e-commerce order data from \textbf{CSV files} in \textbf{S3}, transforming and loading into \textbf{DynamoDB} using \textbf{AWS Lambda} functions in Python.}
+\resumeItem{Implemented \textbf{parallel processing} using \textbf{Lambda concurrency}, achieving 3x faster data loads; \textbf{automated retries and dead-letter queues} for fault tolerance.}
+\resumeItem{Defined \textbf{Infrastructure-as-Code} using \textbf{Serverless Framework}, enabling one-click deployment and 50\% reduction in setup time; enforced security with \textbf{least-privilege IAM roles}.}
+\resumeItem{Configured \textbf{CloudWatch} alarms and \textbf{SNS notifications} for monitoring pipeline health; \textbf{optimized Lambda memory and timeout settings}, reducing costs by 25\%.}
+\resumeItemListEnd
+
+\resumeProjectHeading{\textbf{Data Lake on AWS} | \small{\textbf{AWS Glue, Athena, QuickSight, Terraform}}}{Jan 2023}
+\resumeItemListStart
+\resumeItem{Built a \textbf{data lake} solution on \textbf{AWS} for a retail client with 20+ disparate data sources; designed \textbf{S3 data architecture} with logical partitioning and columnar formats (\textbf{Parquet}).}
+\resumeItem{Developed \textbf{ETL jobs} in \textbf{AWS Glue} using \textbf{PySpark}, processing 30GB of data daily; \textbf{automated schema evolution} and partition management.}
+\resumeItem{Configured \textbf{AWS Athena} for ad-hoc querying; \textbf{optimized Athena performance} by 40\% through \textbf{partition pruning, predicate pushdown}, and file compaction.}
+\resumeItem{Created \textbf{interactive dashboards} in \textbf{QuickSight}, providing insights on sales, inventory, and customer trends; set up \textbf{row-level security} for personalized data access.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages \& Analytics:} & \textbf{Python, Java, SQL}, R, Scala, PySpark, Pandas, NumPy \\
+\textbf{Data Engineering:} & \textbf{Apache Spark, Kafka, Airflow}, Hadoop, Hive, Presto, Snowflake, \textbf{AWS (S3, EMR, Glue, Lambda, Redshift)}, \textbf{Azure (Databricks, Synapse)}, GCP (BigQuery, Dataflow), \textbf{Terraform} \\
+\textbf{Databases:} & \textbf{MySQL, PostgreSQL, MongoDB, Cassandra, DynamoDB, HBase}, Neo4j \\
+\textbf{Machine Learning:} & scikit-learn, PyTorch, TensorFlow, MLflow, SageMaker, Azure ML \\
+\textbf{Other:} & \textbf{Git, Docker, Kubernetes}, Jenkins, Pytest, Flask, REST APIs, Linux
+\end{tabularx}
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+
+\end{document}

@@ -1,23 +1,26 @@
 import React from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { LogoMarquee } from './components/LogoMarquee';
 import { Features } from './components/Features';
+import { ProductShowcase } from './components/ProductShowcase';
 import { HowItWorks } from './components/HowItWorks';
-import { Security } from './components/Security';
 import { Testimonials } from './components/Testimonials';
-import { Pricing } from './components/Pricing';
 import { Footer } from './components/Footer';
+
 export function App() {
-  return <div className="w-full min-h-screen bg-white grid-bg radial-blur">
+  return (
+    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-slate-900 selection:text-white">
       <Navbar />
-      <main className="pt-16">
+      <main>
         <Hero />
+        <LogoMarquee />
         <Features />
+        <ProductShowcase />
         <HowItWorks />
-        <Security />
         <Testimonials />
-        <Pricing />
       </main>
       <Footer />
-    </div>;
+    </div>
+  );
 }

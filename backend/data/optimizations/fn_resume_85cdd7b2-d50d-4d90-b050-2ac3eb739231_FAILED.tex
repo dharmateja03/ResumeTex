@@ -1,0 +1,161 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+Austin, TX 78701 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Data Engineer} with 3+ years of experience designing and delivering high-quality data solutions leveraging \textbf{Python, AWS (ECS, Lambdas, SQS, DynamoDB, Step Functions, RDS), Snowflake, NoSQL}, and \textbf{ETL tools}. Skilled in collaborating with agile teams to build scalable \textbf{data pipelines} and \textbf{architectures}. Passionate about using data engineering to drive innovative solutions in the \textbf{automotive industry}.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{NewYork,USA}
+{Data Engineer - Retail Banking}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Engineered and deployed 20+ \textbf{AWS ECS}-based \textbf{ETL pipelines} processing 25 GB of banking data daily across 8+ sources, reducing manual effort by 40\% for a 2-member team.}
+\resumeItem{Developed event-driven \textbf{Lambda functions} to process real-time transactions via \textbf{SQS}, handling 5,000 messages/day and enabling sub-second fraud detection, serving as technical lead.}
+\resumeItem{Optimized \textbf{Snowflake} queries and table designs, reducing query runtime by 30\% for datasets up to 10 GB and enabling faster reporting for 20+ users.}
+\resumeItem{Automated CI/CD workflows using \textbf{AWS CodePipeline}, running 50+ daily builds and deployments with a 95\% success rate.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Data engineer}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Optimized \textbf{PySpark} financial processing workflows on \textbf{AWS EMR}, reducing execution time by 60\% for 5 GB datasets while maintaining data integrity.}
+\resumeItem{Evaluated \textbf{AWS Neptune Graph Database} for team workflow data models, benchmarking performance against PostgreSQL for 100K nodes and edges.}
+\resumeItem{Implemented serverless APIs using \textbf{AWS API Gateway} and \textbf{Lambda}, conducting load testing for 25+ internal APIs to validate scalability up to 10,000 requests/day.}
+\resumeItem{Developed and maintained data pipelines using \textbf{Apache Airflow}, creating DAGs for 10+ ETL jobs with proper task dependencies and monitoring.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{AWS Data Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Configured and maintained \textbf{Amazon S3} buckets storing 1.5 TB of insurance data; implemented partitioning to improve \textbf{Athena} query time by 20\%.}
+\resumeItem{Built and maintained \textbf{MySQL} and \textbf{DynamoDB} databases supporting analytics for 100K customer records, ensuring 99.9\% uptime.}
+\resumeItem{Developed \textbf{PySpark ETL pipelines} on \textbf{AWS EMR} to transform 5 GB of daily transactional data from S3 and RDS sources.}
+\resumeItem{Orchestrated \textbf{Airflow DAGs} for 8 ETL workflows with 500+ daily tasks, implementing retries and alerts to maintain 98\% success rate.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages \& Frameworks:} & Python, \textbf{SQL}, PySpark, Shell Scripting, NumPy, Pandas \\
+\textbf{Databases \& Data Warehouses:} & \textbf{Snowflake}, MySQL, PostgreSQL, \textbf{DynamoDB}, Redshift, Cassandra \\
+\textbf{Cloud \& Big Data:} & \textbf{AWS (ECS, Lambda, SQS, API Gateway, S3, EMR, RDS)}, \textbf{Apache Airflow}, Kafka, Hadoop \\
+\textbf{DevOps \& Tools:} & \textbf{Git}, Jenkins, \textbf{Docker}, Kubernetes, Jira, Confluence, Bitbucket, Agile/Scrum \\
+\textbf{AI/ML Exposure:} & Data preparation for ML models, AWS SageMaker, MLOps \\
+\end{tabularx}
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\resumeProjectHeading{\textbf{Automotive Inventory Analysis} $|$ \textit{Python, AWS Lambda, DynamoDB, QuickSight}}{Aug 2023}
+\resumeItemListStart
+\resumeItem{Built an \textbf{AWS Lambda}-based pipeline to process 10 GB of daily automotive inventory data, storing results in \textbf{DynamoDB} for a 2-person project.}
+\resumeItem{Implemented data transformation logic in \textbf{Python} to calculate key inventory metrics like days-to-turn and price distribution.}
+\resumeItem{Designed \textbf{DynamoDB} tables to efficiently store and query inventory analysis results, supporting 5,000 reads/sec.}
+\resumeItem{Created interactive dashboards in \textbf{AWS QuickSight} to visualize inventory trends and KPIs for 50+ dealers.}
+\resumeItemListEnd
+\resumeProjectHeading{\textbf{Dealership Sales Forecasting} $|$ \textit{PySpark, AWS EMR, S3, Redshift, Prophet}}{Apr 2023}
+\resumeItemListStart
+\resumeItem{Developed a \textbf{PySpark}-based batch job on \textbf{AWS EMR} to process 50 GB of historical dealership sales data from \textbf{S3}.}
+\resumeItem{Engineered features related to seasonality, promotions, and economic indicators to train a sales forecasting model.}
+\resumeItem{Implemented the \textbf{Prophet} forecasting model in \textbf{PySpark}, tuning hyperparameters to achieve a MAPE of 10\% on test data.}
+\resumeItem{Stored model results in \textbf{AWS Redshift} and built a Power BI dashboard to display 6-month sales forecasts for 20+ dealerships.}
+\resumeItemListEnd
+\resumeProjectHeading{\textbf{Vehicle Auction Data Pipeline} $|$ \textit{AWS Kinesis, Lambda, S3, Athena, Tableau}}{Feb 2023}
+\resumeItemListStart
+\resumeItem{Architected a near-real-time data pipeline using \textbf{AWS Kinesis} and \textbf{Lambda} to ingest and process 10,000 vehicle auction events per hour.}
+\resumeItem{Implemented \textbf{Lambda} functions in \textbf{Python} to perform data validation, enrichment, and transformation before loading to \textbf{S3}.}
+\resumeItem{Designed a partitioned \textbf{S3} data lake to store processed auction data, optimized for querying with \textbf{AWS Athena}.}
+\resumeItem{Built a \textbf{Tableau} dashboard to analyze auction metrics like sale price, conversion rate, and dealer performance, refreshed hourly.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025 (Expected)}
+\resumeItemListStart
+\resumeItem{Coursework: Big Data Analytics, Cloud Computing, Data Mining, Database Systems}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\end{document}

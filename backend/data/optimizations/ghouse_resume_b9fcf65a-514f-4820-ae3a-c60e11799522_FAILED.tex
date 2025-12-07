@@ -1,0 +1,178 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+New York, NY 14221 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Data Engineer} with 3+ years of experience building scalable data pipelines and products using \textbf{Python}, \textbf{SQL}, \textbf{Snowflake}, \textbf{dbt}, \textbf{Airflow}, and \textbf{Kubernetes}. Expertise in architecting ETL processes, data modeling for stakeholder-driven decisions, and leveraging AI to enhance data solutions. Proven track record in developing high-quality datasets, debugging ETLs across systems, and collaborating cross-functionally to deliver impactful data products.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{NewYork,USA}
+{Data Engineer}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Developed a banking analytics application for customer transaction insights as part of a 3-member team, focusing on data quality and performance, where I served as the lead data engineer.}
+\resumeItem{Built and tested ETL pipelines using \textbf{Python}, \textbf{SQL}, and \textbf{Airflow} to process 5GB of daily transaction data, ensuring 99\% data accuracy and reducing bugs by 40\% through rigorous testing.}
+\resumeItem{Designed reporting schemas and data models in \textbf{Snowflake} for stakeholder decision-making, optimizing queries to handle 100K records with sub-200ms response times.}
+\resumeItem{Leveraged AI tools to accelerate pipeline development, integrating machine learning capabilities for anomaly detection in 10K daily events, improving overall solution impact by 25\%.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Data engineer}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Optimized existing PySpark financial processing workflows on AWS EMR by refactoring data structures and implementing DataFrame optimizations, reducing execution time by 60\% while maintaining data integrity
+}
+\resumeItem{Evaluated AWS Neptune Graph Database feasibility against existing relational implementations, analyzing performance for team workflow data models.}
+\resumeItem{Implemented serverless APIs using AWS API Gateway and Lambda functions, while conducting comprehensive load testing for 25+ internal APIs using performance testing tools to validate scalability}
+\resumeItem{Developed and maintained data pipelines using Apache Airflow, creating DAGs with proper task dependencies }
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{AWS Data Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Developed an insurance claims data pipeline for policy analytics as part of a 4-member team, focusing on cross-system ETL debugging, where I served as the primary engineer.}
+\resumeItem{Architected and debugged ETL processes using \textbf{Python}, \textbf{SQL}, and \textbf{Airflow} across multiple systems, processing 2GB of daily data and achieving 99\% consistency.}
+\resumeItem{Built data models in \textbf{Snowflake} and \textbf{dbt} for stakeholder-driven decisions, handling 50K records and reducing query latency by 30\% through optimized schemas.}
+\resumeItem{Integrated \textbf{Kubernetes} for deploying scalable data tools, leveraging AI to enhance machine learning workflows and delivering high-value data products with real business impact.}
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubheading{Catalog}{India}
+{Machine Learning Intern}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Conducted large-scale distributed data analysis using PySpark to experiment with model scalability and performance on high-volume blockchain data.}
+\resumeItem{Developed supporting Python + SQL ETL pipelines to preprocess raw blockchain transaction data for ML workflows and effective model training.}
+\resumeItem{Automated end-to-end training and evaluation pipelines with 10+ Airflow DAGs and deployed scalable FastAPI microservices to serve ML models.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages \& Analytics:} & \textbf{Python}, \textbf{SQL}, R, SAS, Pandas, NumPy, SciPy, GeoPandas \\
+\textbf{Machine Learning:} & scikit-learn, XGBoost, ARIMA/SARIMA, Reinforcement Learning, Decision Trees \\
+\textbf{Data Engineering \& Cloud:} & AWS (S3, Lambda, EMR), Azure Synapse, Databricks, \textbf{Airflow}, \textbf{Snowflake}, \textbf{dbt}, \textbf{Kubernetes}, Docker, Git/GitLab CI/CD \\
+\textbf{Visualization \& BI:} & Power BI (DAX), Tableau, Matplotlib, Plotly, Dash \\
+\textbf{Web \& Automation:} & Selenium, BeautifulSoup, REST/JSON APIs, HTML, CSS 
+\end{tabularx}
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\resumeProjectHeading{Data Pipeline for Customer Analytics (Snowflake, dbt, Airflow)}{}
+\resumeItemListStart
+\resumeItem{Developed a customer-focused data pipeline as part of a 2-member team, focusing on data quality and testing to build performant schemas, where I served as the lead developer.}
+\resumeItem{Built ETL processes using \textbf{Python}, \textbf{SQL}, \textbf{Snowflake}, and \textbf{dbt} to ingest and transform 10GB of data, implementing quality checks that caught 95\% of bugs pre-deployment.}
+\resumeItem{Orchestrated workflows with \textbf{Airflow} DAGs for automated reporting, handling 5K daily requests and reducing manual effort by 40\% through dependencies and retries.}
+\resumeItem{Leveraged AI for data modeling optimizations, creating easy-to-use schemas that improved stakeholder decision-making with 25\% faster query times.}
+\resumeItemListEnd
+
+\resumeProjectHeading{ML-Enhanced Data Product (Python, Kubernetes, Airflow)}{}
+\resumeItemListStart
+\resumeItem{Created a machine learning data tool as part of a 1-member project, focusing on evolving data products from pipelines to ML capabilities, where I handled all development.}
+\resumeItem{Implemented data pipelines using \textbf{Python} and \textbf{Airflow} to process 3GB of data, integrating \textbf{Kubernetes} for scalable deployment and ensuring high reliability.}
+\resumeItem{Developed analytical models with AI acceleration, processing 2K events and achieving 30\% performance improvement in model training and inference.}
+\resumeItem{Ensured cross-functional usability by building tools that support data scientists and analysts, with features for real-time data access and visualization.}
+\resumeItemListEnd
+
+\resumeProjectHeading{ETL Debugging Framework (SQL, dbt, Airflow)}{}
+\resumeItemListStart
+\resumeItem{Built a debugging tool for ETL workflows as part of a 3-member team, focusing on finding bugs before stakeholders and ensuring data trust, where I contributed to architecture.}
+\resumeItem{Designed ETL scripts in \textbf{SQL} and \textbf{dbt} to run across systems, handling 1K requests in load testing and maintaining 99\% data consistency.}
+\resumeItem{Automated testing with \textbf{Airflow} for anomaly detection, reducing debugging time by 35\% through integrated checks and alerting.}
+\resumeItem{Collaborated on data products that had business impact, incorporating AI for predictive quality assurance and delivering clean, high-value datasets.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%-----------Achievements / Certifications-----------
+
+\resumeItemListEnd
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+
+\end{document}

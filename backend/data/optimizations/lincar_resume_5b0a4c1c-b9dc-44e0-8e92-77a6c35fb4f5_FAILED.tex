@@ -1,0 +1,176 @@
+Here is the optimized LaTeX resume code tailored to the data scientist job description:
+
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+New York, NY 14221 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Data Scientist} with 3+ years of experience driving revenue growth and efficiency in \textbf{healthcare} through \textbf{machine learning}, \textbf{natural language processing (NLP)}, and \textbf{data engineering}. Proficient in \textbf{SQL}, \textbf{Python}, R, \textbf{large language models (LLMs)}, and \textbf{deep learning frameworks}. Proven track record of developing \textbf{AI-driven solutions} that improve patient lifetime value.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi - Healthcare Analytics}{NewYork,USA}
+{Data Scientist}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Developed machine learning models to predict \textbf{high-risk patients}, resulting in a \textbf{15\%} increase in early interventions and a \textbf{\$2M} reduction in healthcare costs as part of a 4-member data science team.}
+\resumeItem{Built an \textbf{NLP pipeline} using BERT and BioBERT to extract insights from \textbf{20,000 unstructured clinical notes}, improving care plan adherence by \textbf{12\%}.}
+\resumeItem{Engineered features from \textbf{patient demographic, claims, and EHR data} using \textbf{SQL} and \textbf{Python}, enhancing model performance by \textbf{18\%}.}
+\resumeItem{Fine-tuned \textbf{GPT-3} on medical knowledge bases to generate personalized patient education materials, increasing patient engagement by \textbf{25\%}.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Data engineer}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Implemented deep learning models (RNNs, LSTMs) to predict investment trends from \textbf{social media sentiment}, improving portfolio returns by \textbf{8\%}.}
+\resumeItem{Deployed models using \textbf{TensorFlow Serving} and \textbf{AWS SageMaker}, reducing inference latency by \textbf{40\%} while handling \textbf{10,000 requests/day}.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife - Healthcare Analytics}{India}
+{Data Scientist}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Built \textbf{claims fraud detection models} using \textbf{XGBoost} and \textbf{anomaly detection} techniques, saving \textbf{\$1.5M} in fraudulent payouts.}
+\resumeItem{Developed a \textbf{customer churn prediction model} using \textbf{logistic regression} and \textbf{decision trees}, reducing churn by \textbf{20\%} through targeted retention campaigns.}
+\resumeItem{Created an \textbf{NLP system} to classify \textbf{support tickets} and \textbf{customer feedback}, improving routing accuracy by \textbf{25\%} and response times by \textbf{30\%}.}
+\resumeItem{Analyzed \textbf{EHR data} using \textbf{SQL} and \textbf{Pandas} to identify \textbf{care gaps}, leading to a \textbf{15\%} increase in preventive screenings.}
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubheading{Catalog - Healthcare Startup}{India}
+{Machine Learning Intern}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Prototyped a \textbf{deep learning model} to predict \textbf{hospital readmissions} from \textbf{EHR data}, achieving an \textbf{AUROC of 0.82}.}
+\resumeItem{Implemented an \textbf{entity extraction pipeline} using \textbf{spaCy} to identify \textbf{medical concepts} from clinical notes, laying the foundation for an NLP-powered clinical decision support system.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Machine Learning:} & \textbf{scikit-learn}, \textbf{XGBoost}, \textbf{TensorFlow}, \textbf{PyTorch}, \textbf{Hugging Face Transformers}, NLTK, Gensim \\
+\textbf{Languages \& Analytics:} & \textbf{Python}, \textbf{SQL}, \textbf{R}, PySpark, Pandas, NumPy \\
+\textbf{Data Engineering:} & \textbf{AWS (S3, EMR)}, Azure Synapse, Airflow, Snowflake, Docker \\
+\textbf{Natural Language Processing:} & \textbf{BERT}, \textbf{BioBERT}, \textbf{GPT-3}, \textbf{spaCy}, Word2Vec, Text Classification, Named Entity Recognition \\
+\textbf{Visualization \& BI:} & Tableau, \textbf{R-Shiny}, Plotly, Matplotlib, Seaborn
+\end{tabularx}
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\textbf{Patient Readmission Prediction | PyTorch, MIMIC-III}{}
+\resumeItemListStart
+\resumeItem{Built a \textbf{deep learning model} to predict \textbf{30-day readmissions} from \textbf{40,000 EHRs}, achieving an \textbf{AUROC of 0.79}.}
+\resumeItem{Engineered \textbf{60+ features} from \textbf{structured} and \textbf{unstructured data} using \textbf{SQL} and \textbf{Pandas}, improving model recall by \textbf{25\%}.}
+\resumeItem{Deployed model using \textbf{Flask} and \textbf{Docker}, enabling real-time predictions on \textbf{1,000 daily records}.}
+\resumeItemListEnd
+
+\textbf{Clinical Trial Matching | NLP, BERT, BioBERT, AWS}{}
+\resumeItemListStart
+\resumeItem{Developed an \textbf{NLP system} to match patients to \textbf{clinical trials} based on \textbf{eligibility criteria} extracted from \textbf{5,000 trial protocols}.}
+\resumeItem{Fine-tuned \textbf{BERT} and \textbf{BioBERT} on medical corpora, improving criteria extraction accuracy by \textbf{30\%}.}
+\resumeItem{Built an \textbf{API} using \textbf{AWS Lambda} and \textbf{API Gateway}, enabling \textbf{500 matching requests/day} with \textbf{150ms latency}.}
+\resumeItemListEnd
+
+\textbf{Medical Chatbot | GPT-3, Streamlit, Twilio}{}
+\resumeItemListStart
+\resumeItem{Created a \textbf{chatbot} to answer patient questions using \textbf{GPT-3} fine-tuned on medical \textbf{FAQs} and \textbf{knowledge bases}.}
+\resumeItem{Integrated chatbot with \textbf{Twilio} for \textbf{SMS} and \textbf{WhatsApp} access, handling \textbf{200 conversations/day}.}
+\resumeItem{Built a \textbf{Streamlit dashboard} to monitor chatbot performance and gather user feedback, improving model accuracy by \textbf{15\%}.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+\resumeItemListStart
+\resumeItem{Coursework: Machine Learning, Deep Learning, Natural Language Processing, Big Data Analytics}
+\resumeItem{Thesis: "Predicting Patient Outcomes from Electronic Health Records using Deep Learning"}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\end{document}

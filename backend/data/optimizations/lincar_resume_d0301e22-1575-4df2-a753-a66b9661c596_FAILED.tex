@@ -1,0 +1,163 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+New York, NY 14221 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Data Engineer} with 3+ years of experience building scalable data infrastructure on cloud platforms like \textbf{AWS, Azure, Snowflake}. Skilled in \textbf{Python, SQL, PySpark, Airflow} to design and deploy production-grade data pipelines. Proven track record in healthcare, retail, and logistics domains.
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Data Engineering:} & Python, SQL, PySpark, Airflow, AWS (S3, Lambda, EMR, Glue), Azure Synapse, Databricks, Snowflake\\
+\textbf{Databases:} & MySQL, PostgreSQL, MongoDB, Cassandra, HBase, Amazon Redshift, BigQuery \\
+\textbf{Data Streaming \& Processing:} & Kafka, Flume, Zookeeper, Spark Streaming, MapReduce \\
+\textbf{CI/CD \& Monitoring:} & Jenkins, AWS CodePipeline, Prometheus, Grafana, Docker, Kubernetes \\
+\textbf{Other:} & APIs, Data Modeling, Git, Agile Methodologies, Linux, Regex
+\end{tabularx}
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{NewYork,USA}
+{Data Engineer}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Designed and deployed 25+ scalable \textbf{ETL/ELT pipelines} using \textbf{Airflow, PySpark, AWS Glue}, automating ingestion from 10+ sources and reducing manual processing time by 45\%.}
+\resumeItem{Built \textbf{real-time streaming} infrastructure leveraging \textbf{Kafka, Flume, Zookeeper} to process over 600K events/day with sub-second latency, improving data freshness by 80\%.}
+\resumeItem{Optimized data storage and querying across \textbf{Amazon S3, Redshift, Snowflake, BigQuery} using partitioning and compression, reducing query latency by 38\% and costs by 27\%.}
+\resumeItem{Integrated and maintained 8+ heterogeneous data sources (\textbf{MySQL, PostgreSQL, MongoDB, Cassandra, HBase}) into unified \textbf{AWS S3 and Snowflake} warehouses, achieving 99.9\% pipeline uptime.}
+\resumeItem{Implemented \textbf{CI/CD and monitoring} using \textbf{Jenkins, AWS CodePipeline, Airflow}, introducing automated data quality checks that caught 95\% of anomalies pre-deployment.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Data engineer}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Optimized \textbf{PySpark} financial processing on \textbf{AWS EMR} by refactoring data structures and DataFrame optimizations, reducing execution time by 60\%.}
+\resumeItem{Evaluated \textbf{AWS Neptune Graph Database} feasibility against relational implementations for team workflow data models.}
+\resumeItem{Implemented \textbf{serverless APIs} using \textbf{AWS API Gateway and Lambda}, conducting load testing for 25+ APIs to validate scalability.}
+\resumeItem{Developed and maintained \textbf{Airflow} data pipelines, creating DAGs with proper task dependencies.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{AWS Data Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Configured and maintained \textbf{Amazon S3} buckets storing 2–3 TB of data; implemented partitioning, improving \textbf{Athena} query time by 25\%.}
+\resumeItem{Built and maintained \textbf{MySQL, PostgreSQL, MongoDB} databases supporting daily analytics for \textasciitilde150K customer and policy records.}
+\resumeItem{Wrote and optimized \textbf{SQL queries} for extraction, aggregation, and reporting, cutting manual reporting time by 40\%.}
+\resumeItem{Developed \textbf{PySpark ETL pipelines} to transform and enrich 1–5 GB of transactional and log data daily from multiple AWS sources.}
+\resumeItem{Designed and orchestrated \textbf{Airflow DAGs} for ETL workflows, automating 5–10 recurring jobs with dependencies, retries, and alerting.}
+\resumeItem{Configured \textbf{AWS Lambda triggers} for event-driven ingestion on S3 uploads and SQS messages, reducing manual pipeline runs by 30\%.}
+\resumeItem{Integrated data from APIs, CSVs, AWS RDS using \textbf{PySpark}; performed cleaning, validation, deduplication across 100K+ records per batch.}
+\resumeItem{Implemented \textbf{data quality checks} and audit logs in pipelines, flagging anomalies and ensuring 99\% consistency.}
+\resumeItem{Deployed ETL scripts through \textbf{CI/CD pipelines (Jenkins, GitLab Actions)}; automated packaging and version control to cut deployment effort by 35\%.}
+\resumeItem{Managed \textbf{Snowflake and Redshift} data warehouses (0.5–1 TB); optimized query plans and compression to reduce compute costs by 20\%.}
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubheading{Catalog}{India}
+{Machine Learning Intern}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Conducted large-scale distributed data analysis using \textbf{PySpark} on high-volume blockchain data to evaluate model scalability.}
+\resumeItem{Developed supporting \textbf{Python + SQL ETL} pipelines to preprocess raw blockchain data for ML training.}
+\resumeItem{Automated end-to-end training and evaluation with \textbf{10+ Airflow DAGs} and deployed scalable \textbf{FastAPI microservices} for ML models.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\textbf{Microservices Communication Framework | Go, gRPC,Docker, Kubernetes}{}
+\resumeItemListStart
+\resumeItem{Architected 3 \textbf{gRPC microservices} (User, Order, Payment) with Envoy sidecar proxies; implemented \textbf{mTLS, circuit breakers, retry policies} for resilient inter-service communication.}
+\resumeItem{Built observability pipeline using \textbf{Prometheus, Grafana, Jaeger}; automated deployment with \textbf{Docker Compose and Helm}; benchmarked latency across 100K+ requests.}
+\resumeItem{Reduced P99 latency by 24\% via load balancing; canary routing cut deployment risk by 40\%; quantified service mesh overhead at 8\% for informed adoption.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+
+\end{document}

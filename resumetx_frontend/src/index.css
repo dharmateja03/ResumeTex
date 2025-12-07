@@ -132,3 +132,110 @@ h1 {
 .shadow-glow-amber {
   box-shadow: 0 0 15px rgba(217, 119, 6, 0.5);
 }
+
+/* New UI Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shooting {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(0) rotate(-45deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-200px) translateY(200px) rotate(-45deg);
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-shooting {
+  animation: shooting 4s linear infinite;
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.hover\:pause:hover {
+  animation-play-state: paused;
+}
+
+/* Mask for logo marquee */
+.mask-linear-gradient {
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+/* Font display */
+.font-display {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+}
+
+/* Primary color */
+.text-primary {
+  color: #0f172a;
+}
+
+.bg-primary {
+  background-color: #0f172a;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .dark\:text-primary {
+    color: #ffffff;
+  }
+  .dark\:bg-primary {
+    background-color: #ffffff;
+  }
+}

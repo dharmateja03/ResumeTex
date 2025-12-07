@@ -1,105 +1,130 @@
-import React, { useEffect, useState } from 'react';
-import { MenuIcon, XIcon, BookOpenIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Button } from './Button';
+
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+    const [isOpen, setIsOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const [isDark, setIsDark] = useState(false);
+
+    useEffect(() => {
+        // Check initial theme
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            setIsDark(true);
+            document.documentElement.classList.add('dark');
+        } else {
+            setIsDark(false);
+            document.documentElement.classList.remove('dark');
+        }
+
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const toggleTheme = () => {
+        const newIsDark = !isDark;
+        setIsDark(newIsDark);
+        if (newIsDark) {
+            document.documentElement.classList.add('dark');
+            localStorage.theme = 'dark';
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.theme = 'light';
+        }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-  return <nav className={`bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'shadow-md' : ''}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <span className="text-2xl font-gambarino text-blue-600">
-                ResumeTex
-              </span>
-            </div>
-            <div className="hidden md:ml-10 md:flex md:space-x-8">
-              <a href="#features" className="text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
-                Features
-              </a>
-              <a href="#how-it-works" className="text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
-                How It Works
-              </a>
-              <a href="#security" className="text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
-                Security
-              </a>
-              <a href="#pricing" className="text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
-                Pricing
-              </a>
-              <a 
-                href="#documentation" 
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 font-medium flex items-center"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.open('/docs', '_blank');
-                }}
-              >
-                <BookOpenIcon size={16} className="mr-1" />
-                Docs
-              </a>
-            </div>
-          </div>
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login" className="text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
-              Log in
-            </Link>
-            <Link to="/signup" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors">
-              Sign up
-            </Link>
-          </div>
-          <div className="flex md:hidden items-center">
-            <button className="p-2 rounded-md text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
-            </button>
-          </div>
-        </div>
-      </div>
-      {isOpen && <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <a href="#features" className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">
-              Features
-            </a>
-            <a href="#how-it-works" className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">
-              How It Works
-            </a>
-            <a href="#security" className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">
-              Security
-            </a>
-            <a href="#pricing" className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">
-              Pricing
-            </a>
-            <a 
-              href="#documentation" 
-              className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium flex items-center"
-              onClick={(e) => {
-                e.preventDefault();
-                window.open('/docs', '_blank');
-                setIsOpen(false);
-              }}
+
+    const navLinks = [
+        { label: 'Features', href: '#features' },
+        { label: 'How It Works', href: '#how-it-works' },
+    ];
+
+    return (
+        <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 px-4 transition-all duration-300 pointer-events-none">
+            <nav
+                className={`
+                    pointer-events-auto relative flex items-center justify-between transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]
+                    ${scrolled
+                        ? 'w-full max-w-2xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.1)] rounded-full py-2.5 px-6'
+                        : 'w-full max-w-7xl bg-transparent border-transparent py-4 px-2'
+                    }
+                `}
             >
-              <BookOpenIcon size={16} className="mr-2" />
-              Documentation
-            </a>
-            <Link to="/login" className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">
-              Log in
-            </Link>
-            <Link to="/signup" className="block px-3 py-2 mt-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-center">
-              Sign up
-            </Link>
-          </div>
-        </div>}
-    </nav>;
+                {/* Logo */}
+                <a href="#" className="flex items-center gap-2 shrink-0 group">
+                    <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">ResumeTeX.</span>
+                </a>
+
+                {/* Desktop Menu */}
+                <div className={`hidden md:flex items-center transition-all duration-500 ${scrolled ? 'gap-6' : 'gap-10'}`}>
+                    {navLinks.map((link) => (
+                        <a
+                            key={link.label}
+                            href={link.href}
+                            className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
+                        >
+                            {link.label}
+                        </a>
+                    ))}
+                </div>
+
+                {/* Right Actions */}
+                <div className="hidden md:flex items-center gap-4">
+                     <button
+                        onClick={toggleTheme}
+                        className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
+                        aria-label="Toggle theme"
+                     >
+                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                     </button>
+                     <a href="/login" className="text-sm font-medium text-slate-900 hover:text-slate-600 dark:text-white dark:hover:text-slate-300 transition-colors">Log in</a>
+                     <Button
+                        href="/signup"
+                        size="sm"
+                        className={`transition-all duration-300 ${scrolled ? 'h-9 px-5 text-sm' : 'h-10 px-6'}`}
+                    >
+                        Get Started Free
+                    </Button>
+                </div>
+
+                {/* Mobile Toggle */}
+                <div className="flex md:hidden items-center gap-2">
+                    <button
+                        onClick={toggleTheme}
+                        className="p-2 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                    >
+                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                    </button>
+                    <button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="text-slate-900 dark:text-white p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                    >
+                        {isOpen ? <X size={20} /> : <Menu size={20} />}
+                    </button>
+                </div>
+            </nav>
+
+            {/* Mobile Menu Dropdown (Floating Glass Card) */}
+            {isOpen && (
+                <div className="pointer-events-auto absolute top-[calc(100%+0.5rem)] left-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl p-6 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl flex flex-col gap-4 animate-[fadeInUp_0.2s_ease-out_forwards] origin-top z-40">
+                     {navLinks.map((link) => (
+                        <a
+                            key={link.label}
+                            href={link.href}
+                            onClick={() => setIsOpen(false)}
+                            className="block text-lg font-medium text-slate-900 dark:text-white py-3 border-b border-slate-100 dark:border-slate-800 last:border-0"
+                        >
+                            {link.label}
+                        </a>
+                    ))}
+                    <div className="pt-2 space-y-3">
+                        <a href="/login" className="block w-full text-center py-3 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors">Log in</a>
+                        <Button href="/signup" className="w-full justify-center py-3">Get Started Free</Button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }

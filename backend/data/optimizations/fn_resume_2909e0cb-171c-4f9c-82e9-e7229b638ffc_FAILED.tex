@@ -1,0 +1,163 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhf}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+Austin, TX 78701 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+\section{Summary}
+\textbf{Data Engineer} with expertise in building scalable data pipelines using \textbf{Python, AWS services, and cloud-native technologies}. Passionate about designing high-performance data solutions with strong skills in \textbf{ETL processes, MLOps, and cloud infrastructure}. Proven ability to develop robust data architectures and collaborate effectively in agile environments.
+
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Cox Automotive}{Austin, TX}
+{Data Engineer I}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Developed scalable \textbf{Python-based data pipelines} using \textbf{AWS services} including \textbf{ECS, Lambda, SQS, DynamoDB, and Step Functions} to process diverse automotive industry data sources with high reliability.}
+\resumeItem{Implemented \textbf{ETL workflows} in \textbf{Snowflake} and \textbf{NoSQL databases}, designing efficient data models that support real-time analytics and machine learning preprocessing requirements.}
+\resumeItem{Collaborated with cross-functional teams to design and deploy data solutions, applying \textbf{object-oriented design patterns} and maintaining robust, maintainable code architecture.}
+\resumeItem{Contributed to \textbf{CI/CD operations}, creating automated data quality checks and monitoring frameworks that ensure pipeline integrity and minimize data processing errors.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Data Engineer}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Optimized \textbf{PySpark} financial data workflows on \textbf{AWS EMR}, implementing advanced DataFrame transformations that reduced processing time by 45\% while maintaining data integrity.}
+\resumeItem{Developed serverless \textbf{AWS Lambda} APIs with \textbf{API Gateway}, conducting comprehensive load testing to validate scalability and performance of internal data services.}
+\resumeItem{Designed \textbf{Apache Airflow} data pipelines with complex task dependencies, ensuring robust workflow management and reliable data processing.}
+\resumeItem{Evaluated emerging database technologies like \textbf{AWS Neptune Graph Database} for potential implementation in team's data modeling strategies.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{AWS Data Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Configured \textbf{Amazon S3} data lakes with intelligent partitioning strategies, managing 2-3 TB of structured and semi-structured data with enhanced query performance.}
+\resumeItem{Developed \textbf{PySpark ETL pipelines} to transform and enrich daily transactional data from multiple AWS sources, processing 1-5 GB of data with robust data quality checks.}
+\resumeItem{Orchestrated \textbf{Airflow DAGs} for automated ETL workflows, implementing sophisticated job dependencies, retry mechanisms, and comprehensive alerting systems.}
+\resumeItem{Implemented event-driven data ingestion using \textbf{AWS Lambda} triggers on \textbf{S3} uploads and \textbf{SQS} messages, reducing manual pipeline interventions by 30\%.}
+\resumeItemListEnd
+
+\resumeSubheading{Catalog}{India}
+{Machine Learning Intern}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Conducted distributed data analysis using \textbf{PySpark} for scalable machine learning workflows on blockchain transaction datasets.}
+\resumeItem{Developed \textbf{Python and SQL ETL pipelines} to preprocess raw blockchain data, enabling effective model training and feature engineering.}
+\resumeItem{Automated machine learning workflows using \textbf{Apache Airflow}, creating modular DAGs for model training, evaluation, and deployment.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages:} & Python, SQL \\
+\textbf{Cloud \& Data Engineering:} & AWS (S3, Lambda, ECS, SQS, DynamoDB), Snowflake, Airflow, Docker, Kubernetes \\
+\textbf{Databases:} & PostgreSQL, MySQL, MongoDB, NoSQL Databases \\
+\textbf{Big Data \& ML:} & PySpark, Apache Kafka, MLOps, Vector Databases \\
+\textbf{Tools:} & Git, CI/CD, Jenkins, GitHub Copilot
+\end{tabularx}
+
+\section{Projects}
+\resumeSubHeadingListStart
+\resumeProjectHeading{AI/ML Data Preparation Pipeline}{Personal Project}
+\resumeItemListStart
+\resumeItem{Designed end-to-end \textbf{MLOps} pipeline for preparing diverse datasets, implementing automated data validation and transformation using \textbf{Python} and \textbf{Apache Airflow}.}
+\resumeItem{Integrated \textbf{vector database} technologies for efficient machine learning model training, demonstrating advanced data preprocessing techniques.}
+\resumeItem{Implemented robust \textbf{data governance} practices, ensuring ethical AI data management and comprehensive feature tracking.}
+\resumeItem{Developed modular data transformation scripts compatible with various AI model training frameworks like \textbf{PyTorch} and \textbf{TensorFlow}.}
+\resumeItemListEnd
+
+\resumeProjectHeading{Microservices Communication Framework}{Personal Project}
+\resumeItemListStart
+\resumeItem{Architected distributed microservices using \textbf{gRPC}, \textbf{Docker}, and \textbf{Kubernetes}, implementing advanced networking patterns for resilient system design.}
+\resumeItem{Established comprehensive observability infrastructure with \textbf{Prometheus}, \textbf{Grafana}, and \textbf{Jaeger} for performance monitoring and tracing.}
+\resumeItem{Implemented security features including mutual TLS, circuit breakers, and intelligent request routing.}
+\resumeItem{Benchmarked and optimized microservices architecture, quantifying performance improvements and system overhead.}
+\resumeItemListEnd
+
+\resumeProjectHeading{Prompt Engineering \& LLM Integration}{Personal Project}
+\resumeItemListStart
+\resumeItem{Developed experimental framework for evaluating large language model performance using advanced prompting techniques.}
+\resumeItem{Implemented custom evaluation metrics and comparative analysis of different prompting strategies.}
+\resumeItem{Explored ethical AI practices and potential bias mitigation in language models.}
+\resumeItem{Created reproducible research environment using \textbf{Jupyter Notebooks} and version control best practices.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+\resumeSubHeadingListEnd
+
+\end{document}

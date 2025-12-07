@@ -1,0 +1,179 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{empty}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+New York, NY 14221 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Data Scientist} with 3+ years of experience in \textbf{machine learning} and \textbf{data science} projects, specializing in \textbf{financial crimes compliance} and \textbf{digital assets}. Proficient in \textbf{Python}, \textbf{SQL}, \textbf{LLM frameworks} like \textbf{LangChain}, and libraries such as \textbf{scikit-learn}, \textbf{pandas}, \textbf{tensorflow}, and \textbf{pytorch}. Skilled in designing \textbf{ML pipelines}, \textbf{anomaly detection}, and \textbf{rules-based solutions} for identifying suspicious transactions.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{NewYork,USA}
+{Data Scientist}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Developed a \textbf{machine learning} application for financial transaction analysis as part of a 4-member team, focusing on anomaly detection, where I served as the primary model developer using \textbf{Python} and \textbf{scikit-learn}.}
+\resumeItem{Implemented \textbf{exploratory data analysis} and \textbf{data preprocessing} on 10GB of transaction data, employing \textbf{pandas} and \textbf{numpy} to clean and annotate datasets, reducing noise by 25\% for better model accuracy.}
+\resumeItem{Built and evaluated \textbf{supervised} and \textbf{unsupervised} models including \textbf{decision trees} and \textbf{autoencoders} using \textbf{tensorflow} and \textbf{pytorch}, achieving 85\% precision in detecting suspicious activities on 50K records.}
+\resumeItem{Integrated \textbf{LLM-powered solutions} with \textbf{LangChain} for text analysis on customer data, fine-tuning prompts to improve response accuracy by 30\% in identifying potential fraud patterns.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Data Scientist}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Optimized existing PySpark financial processing workflows on AWS EMR by refactoring data structures and implementing DataFrame optimizations, reducing execution time by 60\% while maintaining data integrity
+}
+\resumeItem{Evaluated AWS Neptune Graph Database feasibility against existing relational implementations, analyzing performance for team workflow data models.}
+\resumeItem{Conducted \textbf{exploratory data analysis} on digital assets data using \textbf{Spacy} and \textbf{NLTK} for text wrangling, identifying key patterns in 20GB of unstructured data to support \textbf{anomaly detection} models.}
+\resumeItem{Developed \textbf{rules-based solutions} integrated with \textbf{ML algorithms} like \textbf{isolation forests}, processing 15K customer records and flagging 90\% of potential suspicious transactions accurately.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{Data Scientist}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Designed a \textbf{data science} application for policy analytics as part of a 3-member team, focusing on rare event modeling, where I served as the lead analyst using \textbf{Python} and \textbf{SQL}.}
+\resumeItem{Performed \textbf{exploratory analysis} and \textbf{data cleaning} on 5GB of customer data, utilizing \textbf{pandas} and \textbf{scikit-learn} for preprocessing, improving data quality by 35\% for downstream \textbf{ML pipelines}.}
+\resumeItem{Developed \textbf{supervised learning} models including \textbf{logistic regression} and \textbf{clustering} algorithms with \textbf{tensorflow}, evaluating performance on 100K records to predict policy risks with 80\% accuracy.}
+\resumeItem{Implemented \textbf{big data manipulation} using \textbf{Spark} and \textbf{snowpark} for handling 10GB datasets, optimizing \textbf{dimensionality reduction} techniques to reduce processing time by 40\%.}
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubheading{Catalog}{India}
+{Machine Learning Intern}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Conducted \textbf{exploratory data analysis} on blockchain data as part of a 2-member team, focusing on scalability testing, where I served as the intern developer using \textbf{PySpark} and \textbf{Python}.}
+\resumeItem{Developed ETL pipelines with \textbf{SQL} and \textbf{Python} to preprocess 2GB of transaction data, enabling effective training of \textbf{ML models} for anomaly detection.}
+\resumeItem{Automated training pipelines using \textbf{Airflow} DAGs and deployed models via \textbf{FastAPI}, handling 5K requests with 95\% uptime for internal testing.}
+\resumeItem{Experimented with \textbf{language modeling} and \textbf{word embeddings} on text data, using \textbf{NLTK} to enhance model performance by 20\% in classifying suspicious activities.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages \& Analytics:} & Python, SQL, R, SAS, Pandas, NumPy, SciPy, GeoPandas \\
+\textbf{Machine Learning:} & scikit-learn, XGBoost, ARIMA/SARIMA, Reinforcement Learning, Decision Trees, TensorFlow, Keras, PyTorch, Spacy, NLTK, Stanford NER \\
+\textbf{Data Engineering \& Cloud:} & AWS (S3, Lambda, EMR), Azure Synapse, Databricks, Airflow, Snowflake, Docker, Git/GitLab CI/CD, Spark, Snowpark \\
+\textbf{LLM \& AI:} & LangChain, DeepEval, RAG Architectures, Prompt Engineering, Fine-Tuning Techniques \\
+\textbf{Visualization \& BI:} & Power BI (DAX), Tableau, Matplotlib, Plotly, Dash \\
+\textbf{Web \& Automation:} & Selenium, BeautifulSoup, REST/JSON APIs, HTML, CSS, Pytest, DBT 
+\end{tabularx}
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\textbf{Anomaly Detection System for Financial Transactions | Python, scikit-learn, pandas, PyTorch}{}
+\resumeItemListStart
+\resumeItem{Developed an anomaly detection application for transaction monitoring as part of a 2-member team, focusing on identifying suspicious activities, where I served as the model engineer.}
+\resumeItem{Conducted exploratory data analysis and preprocessing on 5GB of simulated transaction data using pandas and numpy, cleaning and normalizing features to prepare for ML training.}
+\resumeItem{Implemented unsupervised algorithms like isolation forests and autoencoders with PyTorch, evaluating models on 20K records to achieve 88\% accuracy in detecting anomalies.}
+\resumeItem{Integrated rules-based logic with ML predictions, reducing false positives by 25\% and processing 10K transactions per batch with sub-200ms latency.}
+\resumeItemListEnd
+
+\textbf{LLM-Powered Customer Risk Assessment | Python, LangChain, TensorFlow, RAG}{}
+\resumeItemListStart
+\resumeItem{Built an LLM application for risk assessment as part of a 1-member project, focusing on generative AI for compliance, where I served as the sole developer.}
+\resumeItem{Utilized LangChain and RAG architectures to fine-tune prompts on 1GB of text data, incorporating prompt engineering techniques for better context understanding.}
+\resumeItem{Integrated TensorFlow for hybrid ML-LLM pipelines, processing 5K customer profiles and generating risk scores with 85\% relevance to financial crimes detection.}
+\resumeItem{Deployed the solution with automated testing using pytest, ensuring 95\% consistency in outputs and handling up to 2K concurrent requests.}
+\resumeItemListEnd
+
+\textbf{Text Wrangling and Sentiment Analysis for Digital Assets | Python, NLTK, Spacy, scikit-learn}{}
+\resumeItemListStart
+\resumeItem{Created a text analysis tool for digital assets data as part of a 3-member team, focusing on sentiment modeling, where I served as the NLP specialist.}
+\resumeItem{Performed text wrangling and preprocessing on 3GB of unstructured data using NLTK and Spacy, applying dimensionality reduction to optimize for ML workflows.}
+\resumeItem{Developed supervised models for sentiment classification with scikit-learn, training on 50K labeled samples to achieve 82\% accuracy in detecting negative sentiments.}
+\resumeItem{Implemented word embeddings and statistical analysis, reducing model training time by 30\% and enabling real-time processing of 8K text inputs.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%-----------Achievements / Certifications-----------
+
+\resumeItemListEnd
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+
+\end{document}

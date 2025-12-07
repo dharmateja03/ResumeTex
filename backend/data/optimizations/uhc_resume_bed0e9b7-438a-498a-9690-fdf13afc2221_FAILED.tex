@@ -1,0 +1,194 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+New York, NY 14221 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Data Analyst} with 3+ years of experience in \textbf{data analysis}, \textbf{reporting}, and \textbf{data manipulation} across \textbf{healthcare}, retail, and logistics domains. Proficient in \textbf{relational database management systems} like \textbf{Microsoft SQL Server} and \textbf{Oracle}, with advanced \textbf{MS Office} skills in \textbf{Excel}, \textbf{Word}, and \textbf{Outlook}. Expertise in preparing \textbf{datasets}, performing \textbf{exploratory data analysis}, and creating \textbf{dashboards} using \textbf{Power BI} and \textbf{SSRS} to support \textbf{data-driven decision-making}.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{NewYork,USA}
+{Data Engineer}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Developed a healthcare claims processing application for analyzing insurance data as part of a 3-member team, focusing on data quality and reliability, where I served as the primary data analyst.}
+\resumeItem{Prepared and cleaned datasets using statistical and data manipulation techniques in Python and SQL, organizing and filtering data to identify patterns and trends in medical billing records.}
+\resumeItem{Maintained and enhanced existing data pipelines and routines, ensuring data quality and reliability across systems by implementing automated checks for claims, CPT/DX, and NDC data.}
+\resumeItem{Supported the development and maintenance of dashboards and reports using Power BI and SSRS, documenting data sources and flows to improve data transparency and usability.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Data engineer}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Optimized existing PySpark financial processing workflows on AWS EMR by refactoring data structures and implementing DataFrame optimizations, reducing execution time by 60\% while maintaining data integrity.}
+\resumeItem{Evaluated AWS Neptune Graph Database feasibility against existing relational implementations, analyzing performance for team workflow data models.}
+\resumeItem{Assisted in exploratory data analysis tasks by organizing and filtering data from relational databases like Microsoft SQL Server, contributing to pattern identification in insurance claims data.}
+\resumeItem{Developed data pipelines using Apache Airflow, creating DAGs with dependencies while documenting data sources and flows for improved transparency in pharmacy data reporting.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{AWS Data Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Built an insurance data analysis application for processing claims data as part of a 4-member team, focusing on exploratory data analysis and reporting needs, where I served as the lead data analyst.}
+\resumeItem{Prepared and cleaned datasets using advanced MS Office tools like Excel for data manipulation, organizing and filtering medical billing and pharmacy data to identify trends in CPT/DX and NDC records.}
+\resumeItem{Maintained and enhanced data pipelines and routines, ensuring data quality and reliability by applying analytic methods to solve business problems in healthcare reporting.}
+\resumeItem{Supported dashboards and reports using Power BI, documenting data sources and flows to contribute to data dictionaries and metadata repositories for better usability.}
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubheading{Catalog}{India}
+{Machine Learning Intern}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Conducted large-scale distributed data analysis using PySpark to experiment with model scalability and performance on high-volume blockchain data.}
+\resumeItem{Developed supporting Python + SQL ETL pipelines to preprocess raw blockchain transaction data for ML workflows and effective model training.}
+\resumeItem{Automated end-to-end training and evaluation pipelines with 10+ Airflow DAGs and deployed scalable FastAPI microservices to serve ML models.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages \& Analytics:} & Python, SQL, R, SAS, Pandas, NumPy, SciPy, GeoPandas \\
+\textbf{Machine Learning:} & scikit-learn, XGBoost, ARIMA/SARIMA, Reinforcement Learning, Decision Trees \\
+\textbf{Data Engineering \& Cloud:} & AWS (S3, Lambda, EMR), Azure Synapse, Databricks, Airflow, Snowflake, Docker, Git/GitLab CI/CD \\
+\textbf{Visualization \& BI:} & \textbf{Power BI (DAX)}, \textbf{Tableau}, Matplotlib, Plotly, Dash, \textbf{SSRS} \\
+\textbf{Web \& Automation:} & Selenium, BeautifulSoup, REST/JSON APIs, HTML, CSS \\
+\textbf{Databases \& Tools:} & \textbf{Microsoft SQL Server}, \textbf{Oracle}, MySQL, PostgreSQL, MongoDB, \textbf{MS Office (Excel, Word, Outlook)}, \textbf{Medical Billing/Insurance Data (Claims, CPT/DX, NDC)}
+\end{tabularx}
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\textbf{Microservices Communication Framework | Go, gRPC,Docker, Kubernetes}{}
+\resumeItemListStart
+\resumeItem{Architected 3 gRPC microservices (User, Order, Payment) with Envoy sidecar proxies; implemented mTLS, circuit breakers, and retry policies for resilient inter-service communication.}
+\resumeItem{Built observability pipeline using Prometheus, Grafana, and Jaeger; automated deployment with Docker Compose and Helm charts; benchmarked latency across 100K+ requests.}
+\resumeItem{Reduced P99 latency by 24 percent via load balancing; canary routing cut deployment risk by 40 percent; service mesh overhead quantified at 8 percent for informed adoption decisions.}
+\resumeItemListEnd
+
+\textbf{Healthcare Claims Data Analysis Dashboard | Python, SQL, Power BI}{}
+\resumeItemListStart
+\resumeItem{Developed a data analysis application for processing medical billing data as part of a 2-member team, focusing on exploratory data analysis and reporting, where I served as the primary analyst.}
+\resumeItem{Prepared and cleaned datasets using statistical techniques in Python and SQL, organizing and filtering insurance claims data to identify patterns in CPT/DX and NDC records across 20GB of data.}
+\resumeItem{Maintained data pipelines and routines, ensuring data quality and reliability by implementing checks that flagged 95\% of anomalies in pharmacy data processing.}
+\resumeItem{Supported the creation of interactive dashboards using Power BI, documenting data sources and flows to enhance data transparency and usability for data-driven decision-making.}
+\resumeItemListEnd
+
+\textbf{Insurance Data Pipeline Optimization | PySpark, Airflow, SQL Server}{}
+\resumeItemListStart
+\resumeItem{Built a data pipeline application for enriching transactional data as part of a 3-member team, focusing on data manipulation and analytic methods, where I served as the data engineer.}
+\resumeItem{Organized and filtered data from relational databases like Microsoft SQL Server, performing exploratory data analysis on 15GB of claims data to uncover trends in medical billing.}
+\resumeItem{Enhanced existing routines using PySpark ETL pipelines, improving data quality and reliability by reducing processing errors by 30\% through automated validation.}
+\resumeItem{Collaborated on business intelligence reports using SSRS, documenting data flows and contributing to metadata repositories for better data usability in healthcare reporting.}
+\resumeItemListEnd
+
+\textbf{Pharmacy Data Reporting Tool | Excel, Power BI, SQL}{}
+\resumeItemListStart
+\resumeItem{Created a reporting tool for pharmacy data analysis as part of a 2-member team, focusing on data-driven decision-making and documentation, where I served as the analyst.}
+\resumeItem{Prepared datasets using advanced MS Office Excel for data manipulation, filtering and organizing NDC data to identify patterns in prescription trends across 5GB of records.}
+\resumeItem{Maintained data routines by applying analytic methods to solve reporting needs, ensuring reliability and reducing manual processing time by 25\% in insurance data workflows.}
+\resumeItem{Developed dashboards using Power BI, interpreting data sources and flows to create data dictionaries that improved transparency and usability for stakeholders.}
+\resumeItemListEnd
+
+\textbf{Retail Logistics Data Cleaning Framework | Python, Pandas, SQL}{}
+\resumeItemListStart
+\resumeItem{Designed a data cleaning application for logistics datasets as part of a 1-member project, focusing on data manipulation and quality assurance, where I served as the sole developer.}
+\resumeItem{Organized and filtered raw data using statistical techniques in Pandas, identifying trends in supply chain records and reducing inconsistencies by 35\% across 10GB of data.}
+\resumeItem{Enhanced data pipelines by implementing routines for exploratory data analysis, ensuring reliability and supporting reporting needs with automated checks.}
+\resumeItem{Documented data sources and flows, contributing to metadata repositories that improved data transparency and usability for business intelligence tasks.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Achievements / Certifications-----------
+
+\resumeItemListEnd
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+
+\end{document}

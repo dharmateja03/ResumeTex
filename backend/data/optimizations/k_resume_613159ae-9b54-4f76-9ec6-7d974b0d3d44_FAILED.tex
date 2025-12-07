@@ -1,0 +1,167 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom Commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------
+% Document
+%-------------------------
+\begin{document}
+
+%-----------Header-----------
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+New York, NY 14221 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\textbf{Software Engineer} with 3+ years of experience designing and developing scalable, user-friendly web applications. Skilled in \textbf{C\#, .NET Core, ASP.NET MVC, EF Core, SQL, React, and Angular}. Proven track record in \textbf{troubleshooting}, \textbf{debugging}, and delivering high-quality software with a strong focus on \textbf{user experience}. Experienced in migrating legacy applications, building \textbf{RESTful APIs}, and utilizing \textbf{Azure DevOps} for CI/CD.
+
+%-----------Experience-----------
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi}{NewYork,USA}
+{Software Engineer}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Developed an \textbf{ASP.NET Core} web application for managing customer support requests, focusing on enhancing user experience, as part of a 4-person team where I served as the technical lead.}
+\resumeItem{Designed and built 3 \textbf{RESTful APIs} using \textbf{ASP.NET Core} and \textbf{EF Core}, handling 4,200 daily requests with an average response time of 150ms.}
+\resumeItem{Migrated a legacy \textbf{ASP.NET MVC} application to a modern \textbf{Angular} SPA, resulting in a 28\% improvement in page load times and a 19\% reduction in bounce rates.}
+\resumeItem{Configured \textbf{Azure DevOps} pipelines for CI/CD and automated deployments, reducing manual effort by 32\% and increasing deployment frequency from weekly to daily.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments}{Raleigh, NC, USA}
+{Data engineer}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Optimized existing PySpark financial processing workflows on AWS EMR by refactoring data structures and implementing DataFrame optimizations, reducing execution time by 60\% while maintaining data integrity
+}
+\resumeItem{Evaluated AWS Neptune Graph Database feasibility against existing relational implementations, analyzing performance for team workflow data models.}
+\resumeItem{Implemented serverless APIs using AWS API Gateway and Lambda functions, while conducting comprehensive load testing for 25+ internal APIs using performance testing tools to validate scalability}
+\resumeItem{Developed and maintained data pipelines using Apache Airflow, creating DAGs with proper task dependencies }
+\resumeItemListEnd
+
+\resumeSubheading{MetLife}{India}
+{Associate Software Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Built a \textbf{.NET Core} web portal for managing insurance policies as part of a 3-person team, serving as the primary back-end developer.}
+\resumeItem{Implemented a \textbf{React} front-end for the policy management system, integrating with \textbf{RESTful APIs} and reducing page load times by 250ms.}
+\resumeItem{Developed and maintained 6 \textbf{ASP.NET MVC} applications, collaborating with cross-functional teams to deliver features based on business requirements.}
+\resumeItem{Performed code reviews, wrote unit tests using \textbf{MSTest}, and ensured adherence to coding standards and best practices.}
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubHeadingListEnd
+
+%-----------Technical Skills-----------
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages:} & \textbf{C\#}, Python, SQL, JavaScript, \textbf{HTML}, \textbf{CSS} \\
+\textbf{Frameworks \& Libraries:} & \textbf{.NET Core}, \textbf{ASP.NET MVC}, \textbf{EF Core}, \textbf{React}, \textbf{Angular}, Node.js \\
+\textbf{Databases:} & \textbf{SQL Server}, PostgreSQL, MongoDB \\
+\textbf{Tools \& Platforms:} & \textbf{Azure DevOps}, Git, Docker, \textbf{AWS}, Jenkins, Jira \\
+\textbf{Testing:} & \textbf{MSTest}, \textbf{NUnit}, \textbf{xUnit}, Moq, Jasmine, Karma \\
+\end{tabularx}
+
+%-----------Projects-----------
+\section{Projects}
+\resumeSubHeadingListStart
+\textbf{Customer Support Portal | ASP.NET Core, Angular, SQL Server}{}
+\resumeItemListStart
+\resumeItem{Developed a customer support portal as part of a 2-person team, focusing on improving user self-service capabilities, where I served as the full-stack developer.}
+\resumeItem{Built a responsive \textbf{Angular} front-end, integrating with \textbf{ASP.NET Core} \textbf{APIs} and reducing support ticket volume by 18\%.}
+\resumeItem{Implemented role-based access control and user authentication using \textbf{OAuth} and \textbf{OpenID Connect}.}
+\resumeItem{Optimized database queries and indexes, resulting in a 28\% improvement in average API response times.}
+\resumeItemListEnd
+
+\textbf{Insurance Policy Management System | React, ASP.NET Core, EF Core}{}
+\resumeItemListStart
+\resumeItem{Built a web-based insurance policy management system as the sole developer, focusing on streamlining policy creation and maintenance workflows.}
+\resumeItem{Developed a \textbf{React} front-end with reusable components, reducing development time by 25\% for future feature additions.}
+\resumeItem{Designed and implemented \textbf{RESTful APIs} using \textbf{ASP.NET Core} and \textbf{EF Core}, handling 2,500 requests per day with an average response time of 180ms.}
+\resumeItem{Implemented search functionality using \textbf{Elasticsearch}, enabling users to quickly find policies based on various criteria.}
+\resumeItemListEnd
+
+\textbf{Legacy Application Migration | ASP.NET MVC, Angular, Azure DevOps}{}
+\resumeItemListStart
+\resumeItem{Migrated a legacy \textbf{ASP.NET MVC} application to a modern \textbf{Angular} SPA as part of a 3-person team, where I focused on the front-end development.}
+\resumeItem{Refactored the front-end codebase using \textbf{TypeScript} and \textbf{RxJS}, improving code maintainability and reducing bug reports by 32\%.}
+\resumeItem{Integrated the \textbf{Angular} front-end with existing \textbf{ASP.NET MVC} controllers and views, ensuring seamless functionality during the migration process.}
+\resumeItem{Configured \textbf{Azure DevOps} pipelines for continuous integration and deployment, enabling daily deployments and reducing manual effort by 40\%.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------Education-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+
+\end{document}

@@ -1,0 +1,154 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{fontawesome}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage{changepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+\vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\pdfgentounicode=1
+
+\newcommand{\resumeItem}[1]{
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\raisebox{0.25ex}{\tiny\textbullet} & \small #1 \\
+\end{tabularx}
+}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+{\small #3} & {\small #4} \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeProjectHeading}[2]{\item
+\begin{tabularx}{\linewidth}{@{}X@{\hfill}r@{}}
+\textbf{#1} & #2 \\
+\end{tabularx}
+\vspace{-6pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+\begin{center}
+{\Huge \scshape Dharama Teja Samudrala} \\ \vspace{2pt} 
+New York, NY 14221 \\ \vspace{2pt}
+\small
++18573983456 $|$ \href{mailto:dharmatejas102@gmail.com}{dharmatejas102@gmail.com} $|$ 
+\href{https://www.linkedin.com/in/dharmatejasamudrala/}{linkedin} $|$ 
+\href{https://github.com/dharmateja03}{github}
+\end{center}
+
+\section{Summary}
+\textbf{Data Engineer} with 2+ years of experience building scalable data pipelines and cloud-native solutions. Proficient in \textbf{Python, SQL, Spark, Snowflake, AWS,} and modern data engineering tools. Passionate about optimizing data systems to drive fan engagement and innovation in the collectibles industry.
+
+\section{Experience}
+\resumeSubHeadingListStart
+\resumeSubheading{Citi (Trading Card Marketplace)}{New York, USA}
+{Data Engineer}{March 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Developed a streaming data pipeline to ingest and process 35,000 daily Shopify orders using \textbf{AWS Lambda, Kinesis, and S3}, enabling real-time inventory updates and reducing fulfillment latency by 28\%.}
+\resumeItem{Optimized \textbf{Snowflake} data models and queries for Topps collectibles datasets, improving query performance by 45\% for 10M+ rows and enabling self-serve analytics for business users.}
+\resumeItem{Built an automated data quality framework using \textbf{dbt, Great Expectations, and Airflow}, implementing 50+ data integrity checks and reducing data errors by 90\% across 12 source systems.}
+\resumeItem{Collaborated with product and analytics teams to design and implement a \textbf{Snowflake RBAC} solution using \textbf{Terraform}, ensuring secure and governed access to sensitive collectibles data.}
+\resumeItemListEnd
+
+\resumeSubheading{Fidelity Investments (Market Data Platform)}{Raleigh, NC, USA}
+{Data Engineer}{Jun 2024 -- Aug 2024}
+\resumeItemListStart
+\resumeItem{Optimized \textbf{Spark} workflows to process 5 GB of daily stock market data on \textbf{AWS EMR}, reducing job runtime by 40\% and saving \$2K+ per month in cluster costs.}
+\resumeItem{Designed and built a \textbf{REST API} using \textbf{AWS API Gateway and Lambda} to serve real-time stock quotes and historical data, handling 500+ requests per second.}
+\resumeItem{Created \textbf{Airflow DAGs} to orchestrate data ingestion, transformation, and loading pipelines, monitoring task dependencies and data quality for 20+ jobs.}
+\resumeItemListEnd
+
+\resumeSubheading{MetLife (Insurance Analytics Platform)}{India}
+{Data Engineer}{Dec 2021 -- Jul 2023}
+\resumeItemListStart
+\resumeItem{Implemented an \textbf{ETL pipeline} to process 10 GB of daily insurance claims data from \textbf{AWS S3} using \textbf{PySpark}, enabling near real-time fraud analytics and saving \$1.5M annually.}
+\resumeItem{Developed \textbf{Airflow DAGs} to automate data ingestion and transformation workflows for 8 insurance LOBs, ensuring 99.9\% pipeline reliability and reducing manual effort by 60\%.}
+\resumeItem{Optimized \textbf{Snowflake} table designs and \textbf{SQL} queries, achieving a 30\% improvement in query performance for 100M+ row tables and enabling self-serve BI for 200+ users.}
+\resumeItem{Built a \textbf{CI/CD pipeline} using \textbf{AWS CodePipeline and Lambda} to automate the deployment of Spark jobs and Airflow DAGs, reducing deployment time by 80\%.}
+\resumeItemListEnd
+\vspace{-5mm}
+
+\resumeSubheading{Catalog (Marketing Analytics)}{India}
+{Data Engineering Intern}{Jan 2021 -- Jun 2021}
+\resumeItemListStart
+\resumeItem{Developed a \textbf{PySpark} pipeline to process and analyze 50 GB of clickstream data from \textbf{AWS S3}, enabling user behavior insights for targeted marketing campaigns.}
+\resumeItem{Built an \textbf{API} using \textbf{AWS API Gateway and Lambda} to expose analytics data to marketing tools, handling 100+ requests per second with sub-100ms latency.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Languages \& Tools:} & \textbf{Python, SQL, PySpark, Scala, Bash, Snowflake, dbt, Airflow, Git}\\
+\textbf{Cloud \& Big Data:} & \textbf{AWS (S3, EMR, Lambda, API Gateway, Glue), Hadoop, Hive, Kafka, Redshift}\\
+\textbf{Databases:} & \textbf{MySQL, PostgreSQL, MongoDB, Cassandra, DynamoDB, Neo4j} \\
+\textbf{Other:} & \textbf{Docker, REST APIs, CI/CD, Agile/Scrum, Data Modeling, TDD, Linux}
+\end{tabularx}
+
+\section{Projects}
+\resumeSubHeadingListStart
+\textbf{Topps Trading Card Analytics | Spark, AWS S3, Snowflake, dbt, Airflow}{}
+\resumeItemListStart
+\resumeItem{Developed a \textbf{batch pipeline} to process 1 TB of historical trading card sales data using \textbf{PySpark on AWS EMR}, enabling product analytics and inventory forecasting.}
+\resumeItem{Designed \textbf{Snowflake} data models and \textbf{dbt} transformations to create a unified schema for card attributes, pricing, and sales metrics, optimizing query performance by 60\%.}
+\resumeItem{Built an \textbf{Airflow DAG} to orchestrate daily data loads and transformations, ensuring fresh data for analytics and reducing manual effort by 95\%.}
+\resumeItemListEnd
+\textbf{Realtime Collectibles Marketplace | Kafka, Spark Streaming, Cassandra, AWS}{}
+\resumeItemListStart
+\resumeItem{Designed and implemented a \textbf{real-time streaming pipeline} using \textbf{Kafka, Spark Structured Streaming, and Cassandra} to process 10,000 transactions per second from a live collectibles marketplace.}
+\resumeItem{Developed \textbf{Spark jobs} to enrich streaming data with product metadata from \textbf{AWS S3} and perform real-time aggregations to update inventory, pricing, and sales analytics.}
+\resumeItem{Created \textbf{Grafana} dashboards to monitor streaming pipeline metrics and built \textbf{Airflow DAGs} to manage job deployments and dependencies.}
+\resumeItemListEnd
+\textbf{Player Card Valuation API | AWS Lambda, DynamoDB, API Gateway, S3}{}
+\resumeItemListStart
+\resumeItem{Built a \textbf{serverless API} using \textbf{AWS Lambda, DynamoDB, and API Gateway} to provide real-time player card valuations based on market sales data and ML models.}
+\resumeItem{Ingested and processed 500 GB of daily card sales data from \textbf{S3} using \textbf{Lambda} functions, updating DynamoDB tables with latest pricing information.}
+\resumeItem{Designed and trained \textbf{ML models} using \textbf{XGBoost} to predict card values based on player performance, rarity, and market trends, achieving a 85\% accuracy rate.}
+\resumeItem{Implemented \textbf{API rate limiting, caching, and authentication} to handle 500+ requests per second while ensuring data security and reliability.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Rochester Institute Of Technology}{Rochester, NY, USA}
+{Master of Science in Computer Science}{Aug 2023 -- Aug 2025}
+
+\end{document}
