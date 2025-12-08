@@ -1,10 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-/* Import custom fonts */
+/* Import custom fonts - must be at the top */
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap'); /* Substitute for Gambarino */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap'); /* Substitute for Switzer */
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap'); /* Substitute for Volkart */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* Font Classes */
 .font-gambarino {
   font-family: 'DM Serif Display', serif;

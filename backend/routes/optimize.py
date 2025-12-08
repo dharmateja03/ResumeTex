@@ -335,14 +335,13 @@ async def process_optimization_background(optimization_id: str, request: Optimiz
         # Update progress
         optimization_status_store[optimization_id]["progress"] = 40
         optimization_status_store[optimization_id]["message"] = "Calling LLM API..."
-        
-        # Load system prompt
-        system_prompt = await load_system_prompt()
 
-        # Add custom instructions if provided
-        if request.custom_instructions and request.custom_instructions.strip():
-            logger.info(f"➕ Adding custom instructions: {len(request.custom_instructions)} chars")
-            system_prompt = f"{system_prompt}\n\nADDITIONAL USER INSTRUCTIONS:\n{request.custom_instructions.strip()}"
+        # Load system prompt with character constraints and custom instructions injected
+        system_prompt = await load_system_prompt(
+            tex_content=request.tex_content,
+            custom_instructions=request.custom_instructions
+        )
+        logger.info(f"📜 System prompt prepared with character constraints")
 
         # Call LLM service - RUN IN PARALLEL with email/letter generation if requested
         logger.info(f"📤 Sending to LLM for optimization {optimization_id}")
@@ -732,19 +731,40 @@ async def get_optimization_result(optimization_id: str):
         processing_stats=processing_stats
     )
 
-async def load_system_prompt() -> str:
-    """Load system prompt from file"""
+def calculate_content_chars(latex_content: str) -> int:
+    """Extract only human-readable content from LaTeX, ignore commands"""
+    import re
+    # Remove LaTeX commands like \section{}, \textbf{}, etc.
+    text_only = re.sub(r'\\[a-zA-Z]+\{[^}]*\}|\\[a-zA-Z]+|\{|\}|%.*', '', latex_content)
+    # Remove extra whitespace
+    text_only = ' '.join(text_only.split())
+    return len(text_only.strip())
+
+def get_character_constraints(tex_content: str, tolerance: float = 0.03) -> dict:
+    """Calculate character count constraints for the prompt"""
+    input_chars = calculate_content_chars(tex_content)
+    min_chars = int(input_chars * (1 - tolerance))
+    max_chars = int(input_chars * (1 + tolerance))
+
+    return {
+        "input_char_count": input_chars,
+        "min_chars": min_chars,
+        "max_chars": max_chars,
+        "tolerance_percent": int(tolerance * 100)
+    }
+
+async def load_system_prompt(tex_content: str = None, custom_instructions: str = None) -> str:
+    """Load system prompt from file and inject character constraints"""
     try:
         prompt_path = Path(__file__).parent.parent.parent / "latex_system_prompt.txt"
-        
+
         if prompt_path.exists():
             with open(prompt_path, 'r', encoding='utf-8') as f:
                 prompt = f.read().strip()
-                logger.info(f"📜 Loaded system prompt ({len(prompt)} chars)")
-                return prompt
+                logger.info(f"📜 Loaded system prompt template ({len(prompt)} chars)")
         else:
             logger.warning("⚠️ System prompt file not found, using default")
-            return """
+            prompt = """
 CRITICAL INSTRUCTIONS:
 - Output ONLY valid, compilable LaTeX code
 - No explanations, comments, or markdown
@@ -752,12 +772,31 @@ CRITICAL INSTRUCTIONS:
 
 OPTIMIZATION REQUIREMENTS:
 1. Update experience descriptions for job relevance
-2. Reorder technical skills matching job requirements  
+2. Reorder technical skills matching job requirements
 3. Incorporate ATS-friendly keywords
 4. Maintain professional LaTeX formatting
 5. Ensure proper page fitting
 """.strip()
-            
+
+        # If tex_content provided, inject character constraints
+        if tex_content:
+            constraints = get_character_constraints(tex_content)
+            logger.info(f"📏 Character constraints: {constraints['input_char_count']} chars (±3% = {constraints['min_chars']}-{constraints['max_chars']})")
+
+            # Replace placeholders in prompt
+            prompt = prompt.replace("{input_char_count}", str(constraints["input_char_count"]))
+            prompt = prompt.replace("{min_chars}", str(constraints["min_chars"]))
+            prompt = prompt.replace("{max_chars}", str(constraints["max_chars"]))
+            prompt = prompt.replace("{section_budgets}", "Not calculated for this optimization.")
+
+        # Replace custom instructions placeholder
+        if custom_instructions and custom_instructions.strip():
+            prompt = prompt.replace("{custom_instructions}", custom_instructions.strip())
+        else:
+            prompt = prompt.replace("{custom_instructions}", "None provided - use job description as primary guide")
+
+        return prompt
+
     except Exception as e:
         logger.error(f"❌ Error loading system prompt: {str(e)}")
         raise
