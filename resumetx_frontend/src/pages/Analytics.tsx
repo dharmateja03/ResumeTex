@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3Icon, ArrowLeftIcon, FileTextIcon } from 'lucide-react';
+import { useAuth } from '@clerk/clerk-react';
 
 interface DailyData {
   date: string;
@@ -19,6 +20,7 @@ type TimePeriod = '7d' | '30d' | '1yr' | 'all';
 
 export function Analytics() {
   const navigate = useNavigate();
+  const { getToken, isSignedIn, isLoaded } = useAuth();
   const [stats, setStats] = useState<ResumeStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,16 +29,18 @@ export function Analytics() {
   const fetchStats = async (period: TimePeriod) => {
     try {
       setLoading(true);
-      const authToken = localStorage.getItem('auth_token');
-      if (!authToken) {
+
+      // Get Clerk session token
+      const token = await getToken();
+      if (!token) {
         navigate('/login');
         return;
       }
 
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
       const response = await fetch(`${apiUrl}/analytics/resume-stats?period=${period}`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -56,8 +60,15 @@ export function Analytics() {
   };
 
   useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!isSignedIn) {
+      navigate('/login');
+      return;
+    }
+
     fetchStats(selectedPeriod);
-  }, [selectedPeriod, navigate]);
+  }, [selectedPeriod, navigate, isLoaded, isSignedIn]);
 
   const handlePeriodChange = (period: TimePeriod) => {
     setSelectedPeriod(period);
@@ -74,7 +85,7 @@ export function Analytics() {
     return { month, day };
   };
 
-  if (loading) {
+  if (!isLoaded || loading) {
     return (
       <div className="w-full min-h-screen bg-gray-50 flex flex-col">
         <header className="bg-white shadow">
