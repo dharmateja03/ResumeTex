@@ -141,14 +141,13 @@ export function Hero() {
                 </h1>
 
                 <p className="text-xl md:text-2xl text-slate-500 dark:text-slate-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] opacity-0">
-                    <span className="text-slate-900 dark:text-white font-semibold">One resume, infinite versions.</span>{' '}
-                    The professional standard for resume optimization.
-                    Target top-tier roles with AI-driven precision.
+                    <span className="text-slate-900 dark:text-white font-semibold">Stop paying for resume tools.</span>{' '}
+                    Get ATS-optimized, job-tailored resumes in 30 seconds. Free forever.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-5 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards] opacity-0 w-full mb-12">
                     <Button href="/signup" size="lg" className="min-w-[200px] h-14 text-lg shadow-[0_0_20px_rgba(2,6,23,0.15)] dark:shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-                        Start Optimizing for Free
+                        Start Free Forever
                     </Button>
                     <Button href="#how-it-works" variant="ghost" size="lg" className="min-w-[200px] h-14 text-lg group text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
                         See how it works <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
