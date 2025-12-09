@@ -131,13 +131,14 @@ export function Hero() {
 
                 <h1 className="text-6xl md:text-7xl lg:text-9xl font-bold tracking-tight text-primary dark:text-white mb-8 leading-[1] animate-[fadeInUp_0.8s_ease-out_forwards] opacity-0 font-display">
                     Your resume, <br className="hidden md:block"/>
+                    powered by AI. <br className="hidden md:block"/>
                     <span className="text-slate-400 dark:text-slate-500 relative inline-block">
-                        engineered
+                        Always free
                         {/* Underline decoration */}
                         <svg className="absolute w-full h-3 -bottom-1 left-0 text-indigo-500/50 dark:text-indigo-400/50" viewBox="0 0 100 10" preserveAspectRatio="none">
                             <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
                         </svg>
-                    </span> to hire.
+                    </span>.
                 </h1>
 
                 <p className="text-xl md:text-2xl text-slate-500 dark:text-slate-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] opacity-0">
