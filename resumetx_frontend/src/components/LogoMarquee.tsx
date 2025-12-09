@@ -1,16 +1,16 @@
 import React from 'react';
 
 const LOGOS = [
-    { name: "Google", url: "https://cdn.simpleicons.org/google/64748b" },
-    { name: "Amazon", url: "https://cdn.simpleicons.org/amazon/64748b" },
-    { name: "Netflix", url: "https://cdn.simpleicons.org/netflix/64748b" },
-    { name: "Apple", url: "https://cdn.simpleicons.org/apple/64748b" },
-    { name: "Meta", url: "https://cdn.simpleicons.org/meta/64748b" },
-    { name: "Microsoft", url: "https://cdn.simpleicons.org/microsoft/64748b" },
-    { name: "Nvidia", url: "https://cdn.simpleicons.org/nvidia/64748b" },
-    { name: "Tesla", url: "https://cdn.simpleicons.org/tesla/64748b" },
-    { name: "OpenAI", url: "https://cdn.simpleicons.org/openai/64748b" },
-    { name: "Stripe", url: "https://cdn.simpleicons.org/stripe/64748b" }
+    { name: "Google" },
+    { name: "Amazon" },
+    { name: "Netflix" },
+    { name: "Apple" },
+    { name: "Meta" },
+    { name: "Microsoft" },
+    { name: "Nvidia" },
+    { name: "Tesla" },
+    { name: "OpenAI" },
+    { name: "Stripe" }
 ];
 
 export const LogoMarquee: React.FC = () => {
@@ -30,9 +30,8 @@ export const LogoMarquee: React.FC = () => {
                 <div className="flex w-[200%] animate-scroll hover:pause gap-24 items-center">
                     {/* First set of logos */}
                     {LOGOS.map((logo, idx) => (
-                        <div key={`l1-${idx}`} className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-default shrink-0">
-                            <img src={logo.url} alt={logo.name} className="h-6 w-auto" />
-                            <span className="text-xl font-bold text-slate-400 dark:text-slate-500 font-sans tracking-tight">
+                        <div key={`l1-${idx}`} className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-default shrink-0">
+                            <span className="text-2xl font-bold text-slate-400 dark:text-slate-500 font-sans tracking-tight">
                                 {logo.name}
                             </span>
                         </div>
@@ -40,9 +39,8 @@ export const LogoMarquee: React.FC = () => {
 
                     {/* Duplicate set for infinite loop */}
                     {LOGOS.map((logo, idx) => (
-                        <div key={`l2-${idx}`} className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-default shrink-0">
-                            <img src={logo.url} alt={logo.name} className="h-6 w-auto" />
-                            <span className="text-xl font-bold text-slate-400 dark:text-slate-500 font-sans tracking-tight">
+                        <div key={`l2-${idx}`} className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-default shrink-0">
+                            <span className="text-2xl font-bold text-slate-400 dark:text-slate-500 font-sans tracking-tight">
                                 {logo.name}
                             </span>
                         </div>

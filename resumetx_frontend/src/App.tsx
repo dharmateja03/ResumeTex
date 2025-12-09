@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { LogoMarquee } from './components/LogoMarquee';
 import { Features } from './components/Features';
 import { ProductShowcase } from './components/ProductShowcase';
 import { HowItWorks } from './components/HowItWorks';
@@ -13,6 +14,7 @@ export function App() {
       <Navbar />
       <main>
         <Hero />
+        <LogoMarquee />
         <Features />
         <ProductShowcase />
         <HowItWorks />
