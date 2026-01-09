@@ -40,9 +40,15 @@ export function Analytics() {
       const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
       const response = await fetch(`${apiUrl}/analytics/resume-stats?period=${period}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
+
+      if (response.status === 401) {
+        console.error('Auth token rejected by server. Token:', token?.substring(0, 20) + '...');
+        throw new Error('Authentication failed. Please try logging out and back in.');
+      }
 
       if (!response.ok) {
         throw new Error('Failed to fetch analytics data');

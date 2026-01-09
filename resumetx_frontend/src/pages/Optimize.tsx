@@ -229,7 +229,8 @@ export function Optimize() {
         },
         body: JSON.stringify({
           tex_content: editableLatexCode,
-          optimization_id: optimizationId
+          optimization_id: optimizationId,
+          company_name: result?.company_name || companyName || 'resume'
         })
       });
 

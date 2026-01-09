@@ -206,6 +206,7 @@ async def generate_cover_letter(resume_text: str, job_description: str, company_
 class CompileLatexRequest(BaseModel):
     tex_content: str
     optimization_id: Optional[str] = None
+    company_name: Optional[str] = "resume"
 
 @router.post("/", response_model=OptimizationResponse)
 async def optimize_resume(
@@ -858,7 +859,7 @@ async def compile_latex(request: CompileLatexRequest):
         pdf_result = await pdf_generator.compile_latex_to_pdf(
             request.tex_content,
             compile_id,
-            "edited_resume"  # default company name for manual compilations
+            request.company_name or "resume"
         )
         
         if not pdf_result['success']:

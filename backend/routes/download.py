@@ -107,8 +107,9 @@ async def view_pdf_inline(
         return FileResponse(
             path=pdf_path,
             media_type='application/pdf',
+            filename=pdf_file.name,
             headers={
-                "Content-Disposition": "inline",  # inline instead of attachment
+                "Content-Disposition": f"inline; filename={pdf_file.name}",  # inline with filename for save
                 "Cache-Control": "no-cache, no-store, must-revalidate",
                 "Pragma": "no-cache",
                 "Expires": "0"

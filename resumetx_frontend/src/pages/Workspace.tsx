@@ -43,8 +43,9 @@ export function Workspace() {
 
   // Auth & Resume state
   const [isDragging, setIsDragging] = useState(false);
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [resumeUploadSuccess, setResumeUploadSuccess] = useState(false);
+  const [resumeTemplates, setResumeTemplates] = useState<{name: string, content: string, size: number}[]>([]);
+  const [selectedTemplateIndex, setSelectedTemplateIndex] = useState<number | null>(null);
+  const MAX_TEMPLATES = 4;
 
   // Form state
   const [companyName, setCompanyName] = useState('');
@@ -135,13 +136,33 @@ export function Workspace() {
       document.documentElement.classList.add('dark');
     }
 
-    // Load resume
+    // Load resume templates
+    const savedTemplates = localStorage.getItem('resume_templates');
+    const savedSelectedIndex = localStorage.getItem('selected_template_index');
+    if (savedTemplates) {
+      try {
+        const templates = JSON.parse(savedTemplates);
+        setResumeTemplates(templates);
+        if (savedSelectedIndex !== null && templates.length > 0) {
+          const idx = parseInt(savedSelectedIndex);
+          setSelectedTemplateIndex(idx < templates.length ? idx : 0);
+        } else if (templates.length > 0) {
+          setSelectedTemplateIndex(0);
+        }
+      } catch (error) {
+        console.error('Error loading resume templates:', error);
+      }
+    }
+    // Migration: load old single resume if exists
     const existingContent = localStorage.getItem('user_resume_content');
     const existingFilename = localStorage.getItem('user_resume_filename');
-    if (existingContent && existingFilename) {
-      const mockFile = new File([existingContent], existingFilename, { type: 'text/plain' });
-      setResumeFile(mockFile);
-      setResumeUploadSuccess(true);
+    if (existingContent && existingFilename && !savedTemplates) {
+      const migratedTemplates = [{ name: existingFilename, content: existingContent, size: existingContent.length }];
+      setResumeTemplates(migratedTemplates);
+      setSelectedTemplateIndex(0);
+      localStorage.setItem('resume_templates', JSON.stringify(migratedTemplates));
+      localStorage.removeItem('user_resume_content');
+      localStorage.removeItem('user_resume_filename');
     }
 
     // Load LLM settings
@@ -247,19 +268,31 @@ export function Workspace() {
   };
 
   const handleResumeFile = (file: File) => {
+    if (resumeTemplates.length >= MAX_TEMPLATES) {
+      alert(`Maximum ${MAX_TEMPLATES} templates allowed. Please delete one to add more.`);
+      return;
+    }
+    // Check for duplicate filename
+    if (resumeTemplates.some(t => t.name === file.name)) {
+      alert(`A template with name "${file.name}" already exists.`);
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
-      localStorage.setItem('user_resume_content', content);
-      localStorage.setItem('user_resume_filename', file.name);
-      setResumeFile(file);
-      setResumeUploadSuccess(true);
+      const newTemplate = { name: file.name, content, size: file.size };
+      const updatedTemplates = [...resumeTemplates, newTemplate];
+      setResumeTemplates(updatedTemplates);
+      setSelectedTemplateIndex(updatedTemplates.length - 1); // Select newly added
+      localStorage.setItem('resume_templates', JSON.stringify(updatedTemplates));
+      localStorage.setItem('selected_template_index', String(updatedTemplates.length - 1));
 
       // Track resume upload
       trackEvent('resume_uploaded', {
         file_name: file.name,
         file_size: file.size,
         content_length: content.length,
+        total_templates: updatedTemplates.length,
       });
     };
     reader.onerror = () => {
@@ -268,11 +301,31 @@ export function Workspace() {
     reader.readAsText(file);
   };
 
-  const handleResetResume = () => {
-    setResumeFile(null);
-    setResumeUploadSuccess(false);
-    localStorage.removeItem('user_resume_content');
-    localStorage.removeItem('user_resume_filename');
+  const handleSelectTemplate = (index: number) => {
+    setSelectedTemplateIndex(index);
+    localStorage.setItem('selected_template_index', String(index));
+  };
+
+  const handleDeleteTemplate = (index: number) => {
+    const updatedTemplates = resumeTemplates.filter((_, i) => i !== index);
+    setResumeTemplates(updatedTemplates);
+    localStorage.setItem('resume_templates', JSON.stringify(updatedTemplates));
+
+    // Update selected index
+    if (updatedTemplates.length === 0) {
+      setSelectedTemplateIndex(null);
+      localStorage.removeItem('selected_template_index');
+    } else if (selectedTemplateIndex !== null) {
+      if (index === selectedTemplateIndex) {
+        // Deleted the selected one, select first
+        setSelectedTemplateIndex(0);
+        localStorage.setItem('selected_template_index', '0');
+      } else if (index < selectedTemplateIndex) {
+        // Deleted one before selected, adjust index
+        setSelectedTemplateIndex(selectedTemplateIndex - 1);
+        localStorage.setItem('selected_template_index', String(selectedTemplateIndex - 1));
+      }
+    }
   };
 
   // LLM Settings
@@ -324,8 +377,8 @@ export function Workspace() {
   // Optimization
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!resumeUploadSuccess) {
-      alert('Please upload your resume first!');
+    if (selectedTemplateIndex === null || resumeTemplates.length === 0) {
+      alert('Please upload and select a resume template first!');
       return;
     }
     if (!isLLMConnected) {
@@ -341,13 +394,13 @@ export function Workspace() {
     saveFormData();
 
     try {
-      const userResumeContent = localStorage.getItem('user_resume_content');
+      const selectedTemplate = resumeTemplates[selectedTemplateIndex];
       const llmProviderStored = localStorage.getItem('llm_provider');
       const llmModelStored = localStorage.getItem('llm_model');
       const llmApiKeyStored = localStorage.getItem('llm_api_key');
 
       const optimizationRequest = {
-        tex_content: userResumeContent,
+        tex_content: selectedTemplate.content,
         job_description: jobDescription,
         company_name: companyName,
         custom_instructions: customInstructions,
@@ -565,48 +618,77 @@ export function Workspace() {
               <div className="mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center">
                   <FileTextIcon className="h-5 w-5 mr-2 text-blue-600" />
-                  Your Master Resume
+                  Resume Templates
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">Upload once, optimize many times</p>
+                <p className="text-sm text-gray-600 mt-1">Upload up to {MAX_TEMPLATES} templates, select one to optimize</p>
               </div>
 
-              {!resumeFile ? (
+              {/* Template List */}
+              {resumeTemplates.length > 0 && (
+                <div className="space-y-2 mb-4">
+                  {resumeTemplates.map((template, index) => (
+                    <div
+                      key={index}
+                      className={`border rounded-lg p-3 flex items-center justify-between cursor-pointer transition ${
+                        selectedTemplateIndex === index
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => handleSelectTemplate(index)}
+                    >
+                      <div className="flex items-center flex-1">
+                        <input
+                          type="radio"
+                          name="resume-template"
+                          checked={selectedTemplateIndex === index}
+                          onChange={() => handleSelectTemplate(index)}
+                          className="h-4 w-4 text-blue-600 mr-3"
+                        />
+                        <FileTextIcon className="h-6 w-6 text-blue-600 mr-2" />
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-gray-900 truncate">{template.name}</p>
+                          <p className="text-xs text-gray-500">{(template.size / 1024).toFixed(2)} KB</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDeleteTemplate(index); }}
+                        className="text-gray-400 hover:text-red-500 ml-2"
+                        title="Delete template"
+                      >
+                        <XIcon className="h-5 w-5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Upload Area */}
+              {resumeTemplates.length < MAX_TEMPLATES && (
                 <div
-                  className={`border-2 border-dashed rounded-lg p-8 text-center transition ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}
+                  className={`border-2 border-dashed rounded-lg p-6 text-center transition ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                 >
-                  <UploadIcon className="mx-auto h-10 w-10 text-gray-400 mb-2" />
+                  <UploadIcon className="mx-auto h-8 w-8 text-gray-400 mb-2" />
                   <p className="text-gray-700 text-sm">
-                    Drag and drop your .tex file or{' '}
+                    {resumeTemplates.length === 0 ? 'Drag and drop your .tex file or ' : 'Add another template: '}
                     <label className="text-blue-600 hover:text-blue-800 cursor-pointer font-medium">
                       browse
                       <input type="file" className="hidden" accept=".tex" onChange={handleFileInput} />
                     </label>
                   </p>
-                  <p className="text-xs text-gray-500 mt-2">Only .tex files supported</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {resumeTemplates.length}/{MAX_TEMPLATES} templates • Only .tex files
+                  </p>
                 </div>
-              ) : (
-                <div className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <FileTextIcon className="h-8 w-8 text-blue-600 mr-3" />
-                      <div>
-                        <p className="font-medium text-gray-900">{resumeFile.name}</p>
-                        <p className="text-xs text-gray-500">{(resumeFile.size / 1024).toFixed(2)} KB</p>
-                      </div>
-                    </div>
-                    <button onClick={handleResetResume} className="text-gray-500 hover:text-gray-700">
-                      <XIcon className="h-5 w-5" />
-                    </button>
-                  </div>
-                  {resumeUploadSuccess && (
-                    <div className="mt-3 p-3 bg-green-50 text-green-800 rounded text-sm flex items-center">
-                      <CheckCircleIcon className="h-4 w-4 mr-2" />
-                      Resume loaded successfully
-                    </div>
-                  )}
+              )}
+
+              {/* Selected template indicator */}
+              {selectedTemplateIndex !== null && resumeTemplates.length > 0 && (
+                <div className="mt-3 p-3 bg-green-50 text-green-800 rounded text-sm flex items-center">
+                  <CheckCircleIcon className="h-4 w-4 mr-2" />
+                  Selected: {resumeTemplates[selectedTemplateIndex]?.name}
                 </div>
               )}
             </div>
@@ -692,9 +774,9 @@ export function Workspace() {
                 {/* Floating Optimize Button */}
                 <button
                   type="submit"
-                  disabled={isSubmitting || !resumeUploadSuccess}
+                  disabled={isSubmitting || selectedTemplateIndex === null}
                   className={`w-full py-3 rounded-lg font-semibold text-white flex items-center justify-center transition ${
-                    isSubmitting || !resumeUploadSuccess
+                    isSubmitting || selectedTemplateIndex === null
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-blue-600 hover:bg-blue-700'
                   }`}
@@ -862,7 +944,7 @@ export function Workspace() {
                               const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/optimize/compile-latex`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ tex_content: editableLatexCode, optimization_id: optimizationId })
+                                body: JSON.stringify({ tex_content: editableLatexCode, optimization_id: optimizationId, company_name: companyName || 'resume' })
                               });
                               if (res.ok) {
                                 const data = await res.json();
