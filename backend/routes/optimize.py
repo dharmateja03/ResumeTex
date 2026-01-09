@@ -59,7 +59,8 @@ def save_to_history(
     latex_path: Optional[str] = None,
     error_message: Optional[str] = None,
     cold_email: Optional[str] = None,
-    cover_letter: Optional[str] = None
+    cover_letter: Optional[str] = None,
+    processing_time_ms: Optional[int] = None
 ):
     """Save optimization to database history"""
     try:
@@ -92,7 +93,8 @@ def save_to_history(
             llm_provider=llm_provider,
             llm_model=llm_model,
             status=status,
-            error_message=error_message
+            error_message=error_message,
+            processing_time_ms=processing_time_ms
         )
 
         db.add(history_record)
@@ -211,10 +213,11 @@ class CompileLatexRequest(BaseModel):
 @router.post("/", response_model=OptimizationResponse)
 async def optimize_resume(
     request: OptimizationRequest,
-    background_tasks: BackgroundTasks
+    background_tasks: BackgroundTasks,
+    current_user: Optional[Dict[str, Any]] = Depends(get_current_user_optional)
 ):
     """Main resume optimization endpoint"""
-    user_email = 'anonymous'
+    user_email = current_user.get('email', 'anonymous') if current_user else 'anonymous'
     optimization_id = str(uuid.uuid4())
     
     logger.info(f"🎯 Starting resume optimization for {user_email}")
@@ -222,6 +225,10 @@ async def optimize_resume(
     logger.info(f"📄 Input sizes - LaTeX: {len(request.tex_content)} chars, Job desc: {len(request.job_description)} chars")
     
     try:
+        # Track processing time
+        import time
+        start_time = time.time()
+
         # Initialize optimization status
         optimization_status_store[optimization_id] = {
             "status": "processing",
@@ -515,6 +522,7 @@ async def process_optimization_background(optimization_id: str, request: Optimiz
                 })
 
                 # Save to history database (failed status)
+                processing_time_ms = int((time.time() - start_time) * 1000)
                 save_to_history(
                     optimization_id=optimization_id,
                     user_email=status_data.get("user_email", "anonymous"),
@@ -528,7 +536,8 @@ async def process_optimization_background(optimization_id: str, request: Optimiz
                     latex_path=str(tex_file_path),
                     error_message=f"PDF compilation failed: {error_msg}",
                     cold_email=cold_email_content,
-                    cover_letter=cover_letter_content
+                    cover_letter=cover_letter_content,
+                    processing_time_ms=processing_time_ms
                 )
 
                 logger.info(f"✅ Raw LaTeX available despite PDF failure for {optimization_id}")
@@ -596,6 +605,7 @@ async def process_optimization_background(optimization_id: str, request: Optimiz
             )
 
         # Save to history database
+        processing_time_ms = int((time.time() - start_time) * 1000)
         save_to_history(
             optimization_id=optimization_id,
             user_email=status_data.get("user_email", "anonymous"),
@@ -609,7 +619,8 @@ async def process_optimization_background(optimization_id: str, request: Optimiz
             pdf_path=str(pdf_save_path),
             latex_path=str(latex_save_path),
             cold_email=cold_email_content,
-            cover_letter=cover_letter_content
+            cover_letter=cover_letter_content,
+            processing_time_ms=processing_time_ms
         )
 
         logger.info(f"✅ Optimization completed successfully for {optimization_id}")

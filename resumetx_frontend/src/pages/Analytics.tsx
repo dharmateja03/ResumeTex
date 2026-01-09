@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart3Icon, ArrowLeftIcon, FileTextIcon } from 'lucide-react';
+import { BarChart3Icon, ArrowLeftIcon, FileTextIcon, ClockIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react';
 import { useAuth } from '@clerk/clerk-react';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 interface DailyData {
   date: string;
@@ -16,12 +17,40 @@ interface ResumeStats {
   end_date: string;
 }
 
+interface ProviderData {
+  name: string;
+  value: number;
+}
+
+interface LatencyStats {
+  avg_ms: number;
+  p50_ms: number;
+  p99_ms: number;
+  min_ms: number;
+  max_ms: number;
+  sample_count: number;
+}
+
+interface DetailedStats {
+  period: string;
+  total_optimizations: number;
+  provider_breakdown: ProviderData[];
+  latency_stats: LatencyStats;
+  success_count: number;
+  failure_count: number;
+  success_rate: number;
+}
+
 type TimePeriod = '7d' | '30d' | '1yr' | 'all';
+
+// Colors for pie chart
+const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
 
 export function Analytics() {
   const navigate = useNavigate();
   const { getToken, isSignedIn, isLoaded } = useAuth();
   const [stats, setStats] = useState<ResumeStats | null>(null);
+  const [detailedStats, setDetailedStats] = useState<DetailedStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('7d');
@@ -30,7 +59,6 @@ export function Analytics() {
     try {
       setLoading(true);
 
-      // Get Clerk session token
       const token = await getToken();
       if (!token) {
         navigate('/login');
@@ -38,24 +66,38 @@ export function Analytics() {
       }
 
       const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
-      const response = await fetch(`${apiUrl}/analytics/resume-stats?period=${period}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
 
-      if (response.status === 401) {
-        console.error('Auth token rejected by server. Token:', token?.substring(0, 20) + '...');
+      // Fetch both endpoints in parallel
+      const [resumeResponse, detailedResponse] = await Promise.all([
+        fetch(`${apiUrl}/analytics/resume-stats?period=${period}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch(`${apiUrl}/analytics/detailed-stats?period=${period}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      ]);
+
+      if (resumeResponse.status === 401 || detailedResponse.status === 401) {
         throw new Error('Authentication failed. Please try logging out and back in.');
       }
 
-      if (!response.ok) {
+      if (!resumeResponse.ok || !detailedResponse.ok) {
         throw new Error('Failed to fetch analytics data');
       }
 
-      const data = await response.json();
-      setStats(data);
+      const [resumeData, detailedData] = await Promise.all([
+        resumeResponse.json(),
+        detailedResponse.json()
+      ]);
+
+      setStats(resumeData);
+      setDetailedStats(detailedData);
       setError(null);
     } catch (err) {
       console.error('Error fetching analytics:', err);
@@ -80,15 +122,20 @@ export function Analytics() {
     setSelectedPeriod(period);
   };
 
-  const getMaxCount = (data: DailyData[]) => {
-    return Math.max(...data.map(d => d.count), 1);
+  const formatMs = (ms: number) => {
+    if (ms >= 60000) {
+      return `${(ms / 60000).toFixed(1)}m`;
+    } else if (ms >= 1000) {
+      return `${(ms / 1000).toFixed(1)}s`;
+    }
+    return `${ms}ms`;
   };
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     const month = date.toLocaleDateString('en-US', { month: 'short' });
     const day = date.getDate();
-    return { month, day };
+    return `${month} ${day}`;
   };
 
   if (!isLoaded || loading) {
@@ -96,10 +143,7 @@ export function Analytics() {
       <div className="w-full min-h-screen bg-gray-50 flex flex-col">
         <header className="bg-white shadow">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center">
-            <button
-              onClick={() => navigate('/workspace')}
-              className="mr-4 p-2 hover:bg-gray-100 rounded-lg transition"
-            >
+            <button onClick={() => navigate('/workspace')} className="mr-4 p-2 hover:bg-gray-100 rounded-lg transition">
               <ArrowLeftIcon className="h-5 w-5 text-gray-700" />
             </button>
             <div>
@@ -123,10 +167,7 @@ export function Analytics() {
       <div className="w-full min-h-screen bg-gray-50 flex flex-col">
         <header className="bg-white shadow">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center">
-            <button
-              onClick={() => navigate('/workspace')}
-              className="mr-4 p-2 hover:bg-gray-100 rounded-lg transition"
-            >
+            <button onClick={() => navigate('/workspace')} className="mr-4 p-2 hover:bg-gray-100 rounded-lg transition">
               <ArrowLeftIcon className="h-5 w-5 text-gray-700" />
             </button>
             <div>
@@ -138,10 +179,7 @@ export function Analytics() {
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="text-center">
             <p className="text-red-600 mb-4">{error}</p>
-            <button
-              onClick={() => navigate('/workspace')}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
+            <button onClick={() => navigate('/workspace')} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
               Back to Workspace
             </button>
           </div>
@@ -150,11 +188,15 @@ export function Analytics() {
     );
   }
 
-  if (!stats) {
+  if (!stats || !detailedStats) {
     return null;
   }
 
-  const maxCount = getMaxCount(stats.daily_data);
+  // Prepare bar chart data
+  const barChartData = stats.daily_data.map(d => ({
+    date: formatDate(d.date),
+    count: d.count
+  }));
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col">
@@ -162,10 +204,7 @@ export function Analytics() {
       <header className="bg-white shadow sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center">
-            <button
-              onClick={() => navigate('/workspace')}
-              className="mr-4 p-2 hover:bg-gray-100 rounded-lg transition"
-            >
+            <button onClick={() => navigate('/workspace')} className="mr-4 p-2 hover:bg-gray-100 rounded-lg transition">
               <ArrowLeftIcon className="h-5 w-5 text-gray-700" />
             </button>
             <div>
@@ -173,124 +212,185 @@ export function Analytics() {
               <p className="text-sm text-gray-600">Track your resume generation history</p>
             </div>
           </div>
-          <BarChart3Icon className="h-8 w-8 text-blue-600" />
+
+          {/* Time Period Selector */}
+          <div className="flex gap-2">
+            {(['7d', '30d', '1yr', 'all'] as TimePeriod[]).map((period) => (
+              <button
+                key={period}
+                onClick={() => handlePeriodChange(period)}
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition ${
+                  selectedPeriod === period
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {period === '7d' && '7 Days'}
+                {period === '30d' && '30 Days'}
+                {period === '1yr' && '1 Year'}
+                {period === 'all' && 'All Time'}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 space-y-6">
-        {/* Summary Card */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-blue-700 mb-1">Total Resumes Generated</p>
-              <p className="text-4xl font-bold text-blue-900">{stats.total_resumes}</p>
-              <p className="text-sm text-blue-600 mt-1">
-                {selectedPeriod === '7d' && 'Last 7 days'}
-                {selectedPeriod === '30d' && 'Last 30 days'}
-                {selectedPeriod === '1yr' && 'Last year'}
-                {selectedPeriod === 'all' && 'All time'}
-              </p>
+        {/* Top Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Total Resumes */}
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-700">Total Resumes</p>
+                <p className="text-3xl font-bold text-blue-900">{stats.total_resumes}</p>
+              </div>
+              <FileTextIcon className="h-10 w-10 text-blue-400" />
             </div>
-            <FileTextIcon className="h-16 w-16 text-blue-400 opacity-50" />
+          </div>
+
+          {/* Success Rate */}
+          <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-green-700">Success Rate</p>
+                <p className="text-3xl font-bold text-green-900">{detailedStats.success_rate}%</p>
+              </div>
+              <CheckCircleIcon className="h-10 w-10 text-green-400" />
+            </div>
+          </div>
+
+          {/* Avg Processing Time */}
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-purple-700">Avg Time</p>
+                <p className="text-3xl font-bold text-purple-900">{formatMs(detailedStats.latency_stats.avg_ms)}</p>
+              </div>
+              <ClockIcon className="h-10 w-10 text-purple-400" />
+            </div>
+          </div>
+
+          {/* Failures */}
+          <div className="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-red-700">Failed</p>
+                <p className="text-3xl font-bold text-red-900">{detailedStats.failure_count}</p>
+              </div>
+              <XCircleIcon className="h-10 w-10 text-red-400" />
+            </div>
           </div>
         </div>
 
-        {/* Bar Chart */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Bar Chart - Resume Generation Over Time */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <BarChart3Icon className="h-5 w-5 mr-2 text-blue-600" />
               Resume Generation Over Time
             </h2>
-
-            {/* Time Period Selector */}
-            <div className="flex gap-2">
-              {(['7d', '30d', '1yr', 'all'] as TimePeriod[]).map((period) => (
-                <button
-                  key={period}
-                  onClick={() => handlePeriodChange(period)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-lg transition ${
-                    selectedPeriod === period
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {period === '7d' && '7 Days'}
-                  {period === '30d' && '30 Days'}
-                  {period === '1yr' && '1 Year'}
-                  {period === 'all' && 'All Time'}
-                </button>
-              ))}
-            </div>
+            {barChartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={barChartData}>
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#1F2937', border: 'none', borderRadius: '8px', color: 'white' }}
+                    labelStyle={{ color: 'white' }}
+                  />
+                  <Bar dataKey="count" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-gray-500">
+                No data available
+              </div>
+            )}
           </div>
 
-          {stats.daily_data.length > 0 ? (
-            <div className="flex items-end h-80 gap-1 px-2 overflow-x-auto">
-              {stats.daily_data.map((day, idx) => {
-                const percentage = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
-                const { month, day: dayNum } = formatDate(day.date);
+          {/* Pie Chart - LLM Provider Breakdown */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">LLM Provider Usage</h2>
+            {detailedStats.provider_breakdown.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={detailedStats.provider_breakdown}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                  >
+                    {detailedStats.provider_breakdown.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#1F2937', border: 'none', borderRadius: '8px', color: 'white' }}
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-gray-500">
+                No provider data available
+              </div>
+            )}
+          </div>
+        </div>
 
-                // Determine bar width and spacing based on period
-                let barWidth = '';
-                let showLabel = false;
+        {/* Latency Stats */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <ClockIcon className="h-5 w-5 mr-2 text-purple-600" />
+            Processing Time Metrics
+          </h2>
 
-                if (selectedPeriod === '7d') {
-                  barWidth = 'min-w-[60px]';
-                  showLabel = true; // Show all labels for 7 days
-                } else if (selectedPeriod === '30d') {
-                  barWidth = 'min-w-[20px]';
-                  showLabel = idx % 5 === 0; // Show every 5th label
-                } else { // 1yr or all
-                  barWidth = 'min-w-[6px]';
-                  showLabel = idx % 60 === 0; // Show every 60th label
-                }
-
-                return (
-                  <div key={idx} className="flex flex-col items-center gap-2" style={{ minWidth: selectedPeriod === '7d' ? '60px' : selectedPeriod === '30d' ? '20px' : '6px' }}>
-                    {/* Bar */}
-                    <div className={`${barWidth} flex flex-col items-center`}>
-                      <div
-                        className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t transition-all duration-300 hover:from-blue-700 hover:to-blue-500 cursor-pointer group relative"
-                        style={{ height: `${Math.max(percentage, day.count > 0 ? 5 : 0)}%` }}
-                        title={`${day.count} resumes on ${day.date}`}
-                      >
-                        {day.count > 0 && (
-                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                            {day.count}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Date Label - Conditionally show based on period */}
-                    {showLabel && (
-                      <div className="text-center">
-                        <p className="text-xs font-medium text-gray-700">{month}</p>
-                        <p className="text-xs text-gray-500">{dayNum}</p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+          {detailedStats.latency_stats.sample_count > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="bg-gray-50 rounded-lg p-4 text-center">
+                <p className="text-sm text-gray-600 mb-1">Average</p>
+                <p className="text-2xl font-bold text-gray-900">{formatMs(detailedStats.latency_stats.avg_ms)}</p>
+              </div>
+              <div className="bg-blue-50 rounded-lg p-4 text-center">
+                <p className="text-sm text-blue-600 mb-1">P50 (Median)</p>
+                <p className="text-2xl font-bold text-blue-900">{formatMs(detailedStats.latency_stats.p50_ms)}</p>
+              </div>
+              <div className="bg-orange-50 rounded-lg p-4 text-center">
+                <p className="text-sm text-orange-600 mb-1">P99</p>
+                <p className="text-2xl font-bold text-orange-900">{formatMs(detailedStats.latency_stats.p99_ms)}</p>
+              </div>
+              <div className="bg-green-50 rounded-lg p-4 text-center">
+                <p className="text-sm text-green-600 mb-1">Min</p>
+                <p className="text-2xl font-bold text-green-900">{formatMs(detailedStats.latency_stats.min_ms)}</p>
+              </div>
+              <div className="bg-red-50 rounded-lg p-4 text-center">
+                <p className="text-sm text-red-600 mb-1">Max</p>
+                <p className="text-2xl font-bold text-red-900">{formatMs(detailedStats.latency_stats.max_ms)}</p>
+              </div>
             </div>
           ) : (
-            <div className="text-center py-12">
-              <FileTextIcon className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">No resumes generated yet</p>
-              <button
-                onClick={() => navigate('/workspace')}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                Create Your First Resume
-              </button>
+            <div className="text-center py-8 text-gray-500">
+              <ClockIcon className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+              <p>No timing data available yet</p>
+              <p className="text-sm">Generate some resumes to see processing metrics</p>
             </div>
           )}
+
+          <p className="text-xs text-gray-500 mt-4 text-center">
+            Based on {detailedStats.latency_stats.sample_count} optimization{detailedStats.latency_stats.sample_count !== 1 ? 's' : ''}
+          </p>
         </div>
 
         {/* Info Card */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-700">
-          <p>📊 This dashboard tracks your resume optimization history. Each bar represents the number of resumes generated on that day.</p>
+          <p>This dashboard tracks your resume optimization history. Data includes LLM provider usage, processing times (P50/P99 percentiles), and success rates.</p>
         </div>
       </main>
     </div>

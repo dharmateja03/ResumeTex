@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FileTextIcon, UploadIcon, CheckCircleIcon, XIcon, SendIcon, DownloadIcon, EditIcon, PlayIcon, AlertCircleIcon, ChevronDownIcon, ServerIcon, KeyIcon, CheckIcon, MailIcon, ClockIcon, BarChart3Icon, User, History, LogOut, Settings, Share2, Moon, Sun, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { trackEvent, resetUser } from '../lib/posthog';
-import { useClerk, useUser } from '@clerk/clerk-react';
+import { useClerk, useUser, useAuth } from '@clerk/clerk-react';
 
 interface OptimizationResult {
   optimization_id: string;
@@ -40,6 +40,7 @@ export function Workspace() {
   const resultsRef = useRef<HTMLDivElement>(null);
   const { signOut } = useClerk();
   const { user } = useUser();
+  const { getToken } = useAuth();
 
   // Auth & Resume state
   const [isDragging, setIsDragging] = useState(false);
@@ -399,6 +400,9 @@ export function Workspace() {
       const llmModelStored = localStorage.getItem('llm_model');
       const llmApiKeyStored = localStorage.getItem('llm_api_key');
 
+      // Get auth token for user tracking
+      const token = await getToken();
+
       const optimizationRequest = {
         tex_content: selectedTemplate.content,
         job_description: jobDescription,
@@ -415,7 +419,10 @@ export function Workspace() {
 
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/optimize/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
         body: JSON.stringify(optimizationRequest)
       });
 

@@ -6,9 +6,12 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 from collections import defaultdict, Counter
+from sqlalchemy.orm import Session
+from sqlalchemy import func
 
-from models.schemas import UserStats, OptimizationHistory, AnalyticsResponse
+from models.schemas import UserStats, OptimizationHistory as OptimizationHistorySchema, AnalyticsResponse
 from routes.auth import get_current_user, get_current_user_optional
+from database.models import OptimizationHistory, get_db
 from shared_state import optimization_status_store
 
 logger = logging.getLogger(__name__)
@@ -207,7 +210,8 @@ async def get_token_usage(current_user: Dict[str, Any] = Depends(get_current_use
 @router.get("/resume-stats")
 async def get_resume_stats(
     period: str = "7d",
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
     """Get resume generation statistics with time period filtering"""
     user_email = current_user.get('email', 'unknown')
@@ -229,19 +233,25 @@ async def get_resume_stats(
             days = 365  # Show last year max for "all"
             start_date = end_date - timedelta(days=364)
 
-        # Count resumes generated per day
-        daily_counts = defaultdict(int)
-        total_resumes = 0
+        # Query database for user's optimizations in date range
+        start_datetime = datetime.combine(start_date, datetime.min.time())
+        end_datetime = datetime.combine(end_date, datetime.max.time())
 
-        for opt_id, opt_data in optimization_status_store.items():
-            if opt_data.get("user_email") == user_email:
-                created_at = opt_data.get("created_at")
-                if created_at:
-                    opt_date = created_at.date()
-                    if start_date <= opt_date <= end_date:
-                        date_str = opt_date.isoformat()
-                        daily_counts[date_str] += 1
-                        total_resumes += 1
+        optimizations = db.query(OptimizationHistory)\
+            .filter(
+                OptimizationHistory.user_email == user_email,
+                OptimizationHistory.created_at >= start_datetime,
+                OptimizationHistory.created_at <= end_datetime
+            )\
+            .all()
+
+        # Count resumes per day
+        daily_counts = defaultdict(int)
+        for opt in optimizations:
+            date_str = opt.created_at.date().isoformat()
+            daily_counts[date_str] += 1
+
+        total_resumes = len(optimizations)
 
         # Build daily data array
         daily_data = []
@@ -271,45 +281,160 @@ async def get_resume_stats(
             detail="Failed to get resume statistics"
         )
 
+@router.get("/detailed-stats")
+async def get_detailed_stats(
+    period: str = "7d",
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get detailed analytics including provider breakdown and latency percentiles"""
+    user_email = current_user.get('email', 'unknown')
+    logger.info(f"📊 Getting detailed stats for: {user_email} (period: {period})")
+
+    try:
+        # Calculate date range based on period
+        end_date = datetime.now().date()
+        if period == "7d":
+            start_date = end_date - timedelta(days=6)
+        elif period == "30d":
+            start_date = end_date - timedelta(days=29)
+        elif period == "1yr":
+            start_date = end_date - timedelta(days=364)
+        else:  # all
+            start_date = end_date - timedelta(days=364)
+
+        start_datetime = datetime.combine(start_date, datetime.min.time())
+        end_datetime = datetime.combine(end_date, datetime.max.time())
+
+        # Query all optimizations for this user in date range
+        optimizations = db.query(OptimizationHistory)\
+            .filter(
+                OptimizationHistory.user_email == user_email,
+                OptimizationHistory.created_at >= start_datetime,
+                OptimizationHistory.created_at <= end_datetime
+            )\
+            .all()
+
+        # Provider breakdown for pie chart
+        provider_counts = {}
+        processing_times = []
+
+        for opt in optimizations:
+            # Count by provider
+            provider = opt.llm_provider or 'unknown'
+            provider_counts[provider] = provider_counts.get(provider, 0) + 1
+
+            # Collect processing times
+            if opt.processing_time_ms:
+                processing_times.append(opt.processing_time_ms)
+
+        # Convert to list format for pie chart
+        provider_data = [
+            {"name": provider, "value": count}
+            for provider, count in provider_counts.items()
+        ]
+
+        # Calculate latency percentiles
+        latency_stats = {
+            "avg_ms": 0,
+            "p50_ms": 0,
+            "p99_ms": 0,
+            "min_ms": 0,
+            "max_ms": 0,
+            "sample_count": len(processing_times)
+        }
+
+        if processing_times:
+            processing_times.sort()
+            n = len(processing_times)
+            latency_stats["avg_ms"] = int(sum(processing_times) / n)
+            latency_stats["p50_ms"] = processing_times[int(n * 0.5)]
+            latency_stats["p99_ms"] = processing_times[int(n * 0.99)] if n > 1 else processing_times[-1]
+            latency_stats["min_ms"] = processing_times[0]
+            latency_stats["max_ms"] = processing_times[-1]
+
+        # Success/failure breakdown
+        success_count = sum(1 for opt in optimizations if opt.status == 'completed')
+        failure_count = sum(1 for opt in optimizations if opt.status == 'failed')
+
+        stats = {
+            "period": period,
+            "total_optimizations": len(optimizations),
+            "provider_breakdown": provider_data,
+            "latency_stats": latency_stats,
+            "success_count": success_count,
+            "failure_count": failure_count,
+            "success_rate": round((success_count / max(len(optimizations), 1)) * 100, 1)
+        }
+
+        logger.info(f"📊 Detailed stats - Total: {len(optimizations)}, Providers: {len(provider_data)}")
+        return stats
+
+    except Exception as e:
+        logger.error(f"❌ Error getting detailed stats: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get detailed statistics"
+        )
+
 @router.get("/user-stats", response_model=UserStats)
-async def get_user_stats(current_user: Dict[str, Any] = Depends(get_current_user)):
+async def get_user_stats(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Get current user's optimization statistics"""
     user_email = current_user.get('email', 'unknown')
     logger.info(f"📊 Getting user stats for: {user_email}")
-    
+
     try:
-        user_metrics = analytics_store["user_metrics"].get(user_email, {})
-        
+        # Get total optimizations from database
+        total_optimizations = db.query(OptimizationHistory)\
+            .filter(OptimizationHistory.user_email == user_email)\
+            .count()
+
         # Calculate optimizations today
         today = datetime.now().date()
-        optimizations_today = 0
-        
-        # Check optimization store for today's optimizations by this user
-        for opt_data in optimization_status_store.values():
-            if (opt_data.get("user_email") == user_email and 
-                opt_data.get("created_at") and
-                opt_data["created_at"].date() == today):
-                optimizations_today += 1
-        
+        today_start = datetime.combine(today, datetime.min.time())
+        today_end = datetime.combine(today, datetime.max.time())
+
+        optimizations_today = db.query(OptimizationHistory)\
+            .filter(
+                OptimizationHistory.user_email == user_email,
+                OptimizationHistory.created_at >= today_start,
+                OptimizationHistory.created_at <= today_end
+            )\
+            .count()
+
         # Get most recent optimization
-        most_recent = user_metrics.get("last_optimization")
-        
-        # Get favorite LLM provider
-        providers_used = user_metrics.get("llm_providers_used", set())
-        favorite_llm = max(providers_used, key=lambda x: sum(1 for opt in optimization_status_store.values() 
-                                                           if opt.get("user_email") == user_email and opt.get("llm_provider") == x), 
-                          default=None) if providers_used else None
-        
+        most_recent_opt = db.query(OptimizationHistory)\
+            .filter(OptimizationHistory.user_email == user_email)\
+            .order_by(OptimizationHistory.created_at.desc())\
+            .first()
+
+        most_recent = most_recent_opt.created_at if most_recent_opt else None
+
+        # Get favorite LLM provider (most used)
+        provider_counts = db.query(
+            OptimizationHistory.llm_provider,
+            func.count(OptimizationHistory.llm_provider).label('count')
+        )\
+            .filter(OptimizationHistory.user_email == user_email)\
+            .group_by(OptimizationHistory.llm_provider)\
+            .order_by(func.count(OptimizationHistory.llm_provider).desc())\
+            .first()
+
+        favorite_llm = provider_counts[0] if provider_counts else None
+
         stats = UserStats(
-            total_optimizations=user_metrics.get("total_optimizations", 0),
+            total_optimizations=total_optimizations,
             optimizations_today=optimizations_today,
             most_recent_optimization=most_recent,
             favorite_llm_provider=favorite_llm
         )
-        
+
         logger.info(f"📊 User stats - Total: {stats.total_optimizations}, Today: {stats.optimizations_today}")
         return stats
-        
+
     except Exception as e:
         logger.error(f"❌ Error getting user stats: {str(e)}")
         raise HTTPException(
@@ -317,37 +442,39 @@ async def get_user_stats(current_user: Dict[str, Any] = Depends(get_current_user
             detail="Failed to get user statistics"
         )
 
-@router.get("/recent", response_model=List[OptimizationHistory])
+@router.get("/recent", response_model=List[OptimizationHistorySchema])
 async def get_recent_optimizations(
     limit: int = 10,
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
     """Get user's recent optimization history"""
     user_email = current_user.get('email', 'unknown')
     logger.info(f"📋 Getting recent optimizations for: {user_email} (limit: {limit})")
-    
+
     try:
-        # Get user's optimizations from the store
-        user_optimizations = []
-        
-        for opt_id, opt_data in optimization_status_store.items():
-            if opt_data.get("user_email") == user_email:
-                history_item = OptimizationHistory(
-                    optimization_id=opt_id,
-                    company_name=opt_data.get("company_name", "Unknown"),
-                    created_at=opt_data.get("created_at", datetime.now()),
-                    llm_provider=opt_data.get("llm_provider", "unknown"),
-                    status=opt_data.get("status", "unknown")
-                )
-                user_optimizations.append(history_item)
-        
-        # Sort by creation time (most recent first) and limit
-        user_optimizations.sort(key=lambda x: x.created_at, reverse=True)
-        recent_optimizations = user_optimizations[:limit]
-        
+        # Query database for user's recent optimizations
+        optimizations = db.query(OptimizationHistory)\
+            .filter(OptimizationHistory.user_email == user_email)\
+            .order_by(OptimizationHistory.created_at.desc())\
+            .limit(limit)\
+            .all()
+
+        # Convert to schema objects
+        recent_optimizations = [
+            OptimizationHistorySchema(
+                optimization_id=opt.optimization_id,
+                company_name=opt.company_name,
+                created_at=opt.created_at,
+                llm_provider=opt.llm_provider,
+                status=opt.status
+            )
+            for opt in optimizations
+        ]
+
         logger.info(f"📋 Returning {len(recent_optimizations)} recent optimizations")
         return recent_optimizations
-        
+
     except Exception as e:
         logger.error(f"❌ Error getting recent optimizations: {str(e)}")
         raise HTTPException(
@@ -356,26 +483,79 @@ async def get_recent_optimizations(
         )
 
 @router.get("/dashboard", response_model=AnalyticsResponse)
-async def get_user_dashboard(current_user: Dict[str, Any] = Depends(get_current_user)):
+async def get_user_dashboard(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Get complete user analytics dashboard"""
     user_email = current_user.get('email', 'unknown')
     logger.info(f"📊 Getting analytics dashboard for: {user_email}")
-    
+
     try:
         # Get user stats
-        user_stats = await get_user_stats(current_user)
-        
+        total_optimizations = db.query(OptimizationHistory)\
+            .filter(OptimizationHistory.user_email == user_email)\
+            .count()
+
+        today = datetime.now().date()
+        today_start = datetime.combine(today, datetime.min.time())
+        today_end = datetime.combine(today, datetime.max.time())
+
+        optimizations_today = db.query(OptimizationHistory)\
+            .filter(
+                OptimizationHistory.user_email == user_email,
+                OptimizationHistory.created_at >= today_start,
+                OptimizationHistory.created_at <= today_end
+            )\
+            .count()
+
+        most_recent_opt = db.query(OptimizationHistory)\
+            .filter(OptimizationHistory.user_email == user_email)\
+            .order_by(OptimizationHistory.created_at.desc())\
+            .first()
+
+        provider_counts = db.query(
+            OptimizationHistory.llm_provider,
+            func.count(OptimizationHistory.llm_provider).label('count')
+        )\
+            .filter(OptimizationHistory.user_email == user_email)\
+            .group_by(OptimizationHistory.llm_provider)\
+            .order_by(func.count(OptimizationHistory.llm_provider).desc())\
+            .first()
+
+        user_stats = UserStats(
+            total_optimizations=total_optimizations,
+            optimizations_today=optimizations_today,
+            most_recent_optimization=most_recent_opt.created_at if most_recent_opt else None,
+            favorite_llm_provider=provider_counts[0] if provider_counts else None
+        )
+
         # Get recent optimizations
-        recent_optimizations = await get_recent_optimizations(5, current_user)
-        
+        optimizations = db.query(OptimizationHistory)\
+            .filter(OptimizationHistory.user_email == user_email)\
+            .order_by(OptimizationHistory.created_at.desc())\
+            .limit(5)\
+            .all()
+
+        recent_optimizations = [
+            OptimizationHistorySchema(
+                optimization_id=opt.optimization_id,
+                company_name=opt.company_name,
+                created_at=opt.created_at,
+                llm_provider=opt.llm_provider,
+                status=opt.status
+            )
+            for opt in optimizations
+        ]
+
         response = AnalyticsResponse(
             user_stats=user_stats,
             recent_optimizations=recent_optimizations
         )
-        
+
         logger.info(f"📊 Dashboard data prepared for {user_email}")
         return response
-        
+
     except Exception as e:
         logger.error(f"❌ Error getting dashboard: {str(e)}")
         raise HTTPException(

@@ -1,7 +1,7 @@
 """
 Database models for optimization history
 """
-from sqlalchemy import Column, String, Text, DateTime, Boolean, create_engine
+from sqlalchemy import Column, String, Text, DateTime, Boolean, Integer, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -26,6 +26,7 @@ class OptimizationHistory(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     status = Column(String(20), nullable=False)  # 'completed' or 'failed'
     error_message = Column(Text, nullable=True)
+    processing_time_ms = Column(Integer, nullable=True)  # Time taken in milliseconds
 
     def to_dict(self):
         """Convert model to dictionary"""
@@ -42,7 +43,8 @@ class OptimizationHistory(Base):
             'llm_model': self.llm_model,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'status': self.status,
-            'error_message': self.error_message
+            'error_message': self.error_message,
+            'processing_time_ms': self.processing_time_ms
         }
 
 # Database setup
