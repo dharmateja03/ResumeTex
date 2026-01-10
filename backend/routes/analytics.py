@@ -210,11 +210,11 @@ async def get_token_usage(current_user: Dict[str, Any] = Depends(get_current_use
 @router.get("/resume-stats")
 async def get_resume_stats(
     period: str = "7d",
-    current_user: Dict[str, Any] = Depends(get_current_user),
+    current_user: Dict[str, Any] = Depends(get_current_user_optional),
     db: Session = Depends(get_db)
 ):
     """Get resume generation statistics with time period filtering"""
-    user_email = current_user.get('email', 'unknown')
+    user_email = current_user.get('email', 'anonymous') if current_user else 'anonymous'
     logger.info(f"📊 Getting resume stats for: {user_email} (period: {period})")
 
     try:
@@ -284,11 +284,11 @@ async def get_resume_stats(
 @router.get("/detailed-stats")
 async def get_detailed_stats(
     period: str = "7d",
-    current_user: Dict[str, Any] = Depends(get_current_user),
+    current_user: Dict[str, Any] = Depends(get_current_user_optional),
     db: Session = Depends(get_db)
 ):
     """Get detailed analytics including provider breakdown and latency percentiles"""
-    user_email = current_user.get('email', 'unknown')
+    user_email = current_user.get('email', 'anonymous') if current_user else 'anonymous'
     logger.info(f"📊 Getting detailed stats for: {user_email} (period: {period})")
 
     try:

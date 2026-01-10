@@ -68,7 +68,7 @@ class AuthService:
                     return None
 
                 # Fetch full user details from Clerk to verify token is valid
-                user = clerk_client.users.get(user_id)
+                user = clerk_client.users.get(user_id=user_id)
 
                 if not user:
                     logger.warning("⚠️ User not found in Clerk")
@@ -219,7 +219,7 @@ async def clerk_webhook(request: Request):
 
             if user_id and clerk_client:
                 try:
-                    user = clerk_client.users.get(user_id)
+                    user = clerk_client.users.get(user_id=user_id)
                     email = user.email_addresses[0].email_address if user.email_addresses else "unknown"
 
                     # Track login event

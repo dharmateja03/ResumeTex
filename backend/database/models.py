@@ -70,6 +70,25 @@ def init_db():
     """Initialize database tables"""
     Base.metadata.create_all(bind=engine)
 
+    # Run migrations for new columns
+    _run_migrations()
+
+def _run_migrations():
+    """Run database migrations for schema updates"""
+    from sqlalchemy import inspect, text
+
+    inspector = inspect(engine)
+
+    # Check if optimization_history table exists
+    if 'optimization_history' in inspector.get_table_names():
+        columns = [col['name'] for col in inspector.get_columns('optimization_history')]
+
+        # Add processing_time_ms column if it doesn't exist
+        if 'processing_time_ms' not in columns:
+            with engine.connect() as conn:
+                conn.execute(text('ALTER TABLE optimization_history ADD COLUMN processing_time_ms INTEGER'))
+                conn.commit()
+
 def get_db():
     """Get database session"""
     db = SessionLocal()
