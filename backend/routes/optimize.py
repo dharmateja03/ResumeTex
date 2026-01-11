@@ -339,7 +339,8 @@ async def optimize_resume(
 async def process_optimization_background(optimization_id: str, request: OptimizationRequest):
     """Background task for processing optimization"""
     logger.info(f"🔄 Background processing started for {optimization_id}")
-    
+    start_time = time.time()
+
     try:
         # Update progress
         optimization_status_store[optimization_id]["progress"] = 40
