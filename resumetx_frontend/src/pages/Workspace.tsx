@@ -52,8 +52,8 @@ export function Workspace() {
   const [companyName, setCompanyName] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [customInstructions, setCustomInstructions] = useState('');
-  const [generateColdEmail, setGenerateColdEmail] = useState(true);
-  const [generateCoverLetter, setGenerateCoverLetter] = useState(true);
+  const [generateColdEmail, setGenerateColdEmail] = useState(false);
+  const [generateCoverLetter, setGenerateCoverLetter] = useState(false);
 
   // LLM Settings state
   const [showLLMModal, setShowLLMModal] = useState(false);

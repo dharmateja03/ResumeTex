@@ -75,8 +75,10 @@ def init_db():
 
 def _run_migrations():
     """Run database migrations for schema updates"""
+    import logging
     from sqlalchemy import inspect, text
 
+    logger = logging.getLogger(__name__)
     inspector = inspect(engine)
 
     # Check if optimization_history table exists
@@ -85,9 +87,13 @@ def _run_migrations():
 
         # Add processing_time_ms column if it doesn't exist
         if 'processing_time_ms' not in columns:
-            with engine.connect() as conn:
-                conn.execute(text('ALTER TABLE optimization_history ADD COLUMN processing_time_ms INTEGER'))
-                conn.commit()
+            try:
+                with engine.connect() as conn:
+                    conn.execute(text('ALTER TABLE optimization_history ADD COLUMN processing_time_ms INTEGER'))
+                    conn.commit()
+                logger.info("✅ Migration: Added processing_time_ms column")
+            except Exception as e:
+                logger.error(f"❌ Migration failed: {str(e)}")
 
 def get_db():
     """Get database session"""

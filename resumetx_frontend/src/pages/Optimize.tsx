@@ -62,8 +62,8 @@ export function Optimize() {
   const [companyName, setCompanyName] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [customInstructions, setCustomInstructions] = useState('');
-  const [generateColdEmail, setGenerateColdEmail] = useState(true);
-  const [generateCoverLetter, setGenerateCoverLetter] = useState(true);
+  const [generateColdEmail, setGenerateColdEmail] = useState(false);
+  const [generateCoverLetter, setGenerateCoverLetter] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [optimizationId, setOptimizationId] = useState<string | null>(null);

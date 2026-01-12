@@ -64,6 +64,7 @@ def save_to_history(
     processing_time_ms: Optional[int] = None
 ):
     """Save optimization to database history"""
+    db = None
     try:
         db = SessionLocal()
 
