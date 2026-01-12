@@ -35,6 +35,30 @@ interface OptimizationStatus {
   step?: string;
 }
 
+// Play notification sound when optimization completes
+const playNotificationSound = () => {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Pleasant two-tone chime
+    oscillator.frequency.setValueAtTime(587.33, audioContext.currentTime); // D5
+    oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.15); // A5
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.4);
+  } catch (e) {
+    console.log('Audio not supported');
+  }
+};
+
 export function Workspace() {
   const navigate = useNavigate();
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -461,6 +485,9 @@ export function Workspace() {
             if (resultData.original_tex) setOriginalLatexCode(resultData.original_tex);
             setIsSubmitting(false);
             setShowResults(true);
+            if (statusData.status === 'completed') {
+              playNotificationSound();
+            }
             setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
           } else if (statusData.status === 'failed') {
             // Even if result fetch fails, show results with error message
