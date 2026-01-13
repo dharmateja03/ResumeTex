@@ -350,7 +350,8 @@ async def process_optimization_background(optimization_id: str, request: Optimiz
         # Load system prompt with character constraints and custom instructions injected
         system_prompt = await load_system_prompt(
             tex_content=request.tex_content,
-            custom_instructions=request.custom_instructions
+            custom_instructions=request.custom_instructions,
+            target_location=request.target_location
         )
         logger.info(f"📜 System prompt prepared with character constraints")
 
@@ -768,7 +769,7 @@ def get_character_constraints(tex_content: str, tolerance: float = 0.03) -> dict
         "tolerance_percent": int(tolerance * 100)
     }
 
-async def load_system_prompt(tex_content: str = None, custom_instructions: str = None) -> str:
+async def load_system_prompt(tex_content: str = None, custom_instructions: str = None, target_location: str = None) -> str:
     """Load system prompt from file and inject character constraints"""
     try:
         prompt_path = Path(__file__).parent.parent.parent / "latex_system_prompt.txt"
@@ -809,6 +810,12 @@ OPTIMIZATION REQUIREMENTS:
             prompt = prompt.replace("{custom_instructions}", custom_instructions.strip())
         else:
             prompt = prompt.replace("{custom_instructions}", "None provided - use job description as primary guide")
+
+        # Add location replacement instruction if target_location provided
+        if target_location and target_location.strip():
+            location_instruction = f"\n\nLOCATION UPDATE: Replace the candidate's current location/address in the resume header with: {target_location.strip()}"
+            prompt += location_instruction
+            logger.info(f"📍 Added location replacement: {target_location.strip()}")
 
         return prompt
 

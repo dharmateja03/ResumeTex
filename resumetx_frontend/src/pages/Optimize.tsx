@@ -85,6 +85,7 @@ export function Optimize() {
   }, [navigate]);
   const [companyName, setCompanyName] = useState('');
   const [jobDescription, setJobDescription] = useState('');
+  const [targetLocation, setTargetLocation] = useState('');
   const [customInstructions, setCustomInstructions] = useState('');
   const [generateColdEmail, setGenerateColdEmail] = useState(false);
   const [generateCoverLetter, setGenerateCoverLetter] = useState(false);
@@ -325,6 +326,7 @@ export function Optimize() {
         tex_content: texContentToOptimize,
         job_description: jobDescription,
         company_name: companyName,
+        target_location: targetLocation || null,
         custom_instructions: customInstructions,
         generate_cold_email: generateColdEmail,
         generate_cover_letter: generateCoverLetter,
@@ -462,6 +464,12 @@ export function Optimize() {
                   Company Name
                 </label>
                 <input type="text" id="company" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Acme Corporation" value={companyName} onChange={e => handleCompanyNameChange(e.target.value)} required />
+              </div>
+              <div>
+                <label htmlFor="targetLocation" className="block text-sm font-medium text-gray-700">
+                  Job Location (Optional)
+                </label>
+                <input type="text" id="targetLocation" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. San Francisco, CA - replaces your current location" value={targetLocation} onChange={e => setTargetLocation(e.target.value)} />
               </div>
               <div>
                 <label htmlFor="jobDescription" className="block text-sm font-medium text-gray-700">

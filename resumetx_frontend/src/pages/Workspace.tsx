@@ -75,6 +75,7 @@ export function Workspace() {
   // Form state
   const [companyName, setCompanyName] = useState('');
   const [jobDescription, setJobDescription] = useState('');
+  const [targetLocation, setTargetLocation] = useState('');
   const [customInstructions, setCustomInstructions] = useState('');
   const [generateColdEmail, setGenerateColdEmail] = useState(false);
   const [generateCoverLetter, setGenerateCoverLetter] = useState(false);
@@ -431,6 +432,7 @@ export function Workspace() {
         tex_content: selectedTemplate.content,
         job_description: jobDescription,
         company_name: companyName,
+        target_location: targetLocation || null,
         custom_instructions: customInstructions,
         generate_cold_email: generateColdEmail,
         generate_cover_letter: generateCoverLetter,
@@ -740,6 +742,17 @@ export function Workspace() {
                     placeholder="e.g., Google"
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Job Location (Optional)</label>
+                  <input
+                    type="text"
+                    value={targetLocation}
+                    onChange={(e) => setTargetLocation(e.target.value)}
+                    placeholder="e.g., San Francisco, CA - replaces your current location"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 

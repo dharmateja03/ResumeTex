@@ -53,6 +53,7 @@ class OptimizationRequest(BaseModel):
     tex_content: str = Field(..., min_length=10, description="LaTeX resume content")
     job_description: str = Field(..., min_length=10, description="Job description")
     company_name: str = Field(..., min_length=1, description="Company name")
+    target_location: Optional[str] = Field(None, description="Target job location to replace current location in resume")
     custom_instructions: Optional[str] = Field(None, description="Additional AI instructions")
     llm_config: LLMConfig
     generate_cold_email: bool = Field(default=False, description="Generate cold email (max 250 words)")
