@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 import {
   HistoryIcon,
   DownloadIcon,
@@ -39,6 +40,7 @@ interface HistoryResponse {
 
 export function History() {
   const navigate = useNavigate();
+  const { getToken } = useAuth();
   const [optimizations, setOptimizations] = useState<Optimization[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,10 +58,12 @@ export function History() {
       setLoading(true);
       setError(null);
 
+      const token = await getToken();
       const response = await fetch(`${API_BASE_URL}/history/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
         },
       });
 
@@ -80,7 +84,10 @@ export function History() {
 
   const handleDownloadPDF = async (optimizationId: string, companyName: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/history/${optimizationId}/pdf`);
+      const token = await getToken();
+      const response = await fetch(`${API_BASE_URL}/history/${optimizationId}/pdf`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
 
       if (!response.ok) {
         throw new Error('Failed to download PDF');
@@ -103,7 +110,10 @@ export function History() {
 
   const handleDownloadLatex = async (optimizationId: string, companyName: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/history/${optimizationId}/latex`);
+      const token = await getToken();
+      const response = await fetch(`${API_BASE_URL}/history/${optimizationId}/latex`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
 
       if (!response.ok) {
         throw new Error('Failed to download LaTeX');
@@ -131,9 +141,10 @@ export function History() {
 
     try {
       setDeleting(optimizationId);
-
+      const token = await getToken();
       const response = await fetch(`${API_BASE_URL}/history/${optimizationId}`, {
         method: 'DELETE',
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
       });
 
       if (!response.ok) {
