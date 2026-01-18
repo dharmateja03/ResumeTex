@@ -36,12 +36,12 @@ export function Footer() {
                     </div>
 
                     <div>
-                        <h4 className="text-white font-bold mb-4">Company</h4>
+                        <h4 className="text-white font-bold mb-4">Resources</h4>
                         <ul className="space-y-2 text-sm text-slate-400">
-                            <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                            <li><a href="/blog" className="hover:text-white transition-colors">Blog</a></li>
+                            <li><a href="/blog/what-is-ats-applicant-tracking-system-explained" className="hover:text-white transition-colors">ATS Guide</a></li>
+                            <li><a href="/blog/software-engineer-resume-guide-2024" className="hover:text-white transition-colors">Resume Guide</a></li>
+                            <li><a href="/blog/latex-resume-benefits-why-professionals-choose-tex" className="hover:text-white transition-colors">LaTeX Tips</a></li>
                         </ul>
                     </div>
 

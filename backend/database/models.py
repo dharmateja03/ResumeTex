@@ -50,16 +50,18 @@ class OptimizationHistory(Base):
 # Database setup
 def get_database_url():
     """Get database URL from environment or use default"""
-    # Allow configurable database path for deployment
-    db_path = os.getenv('DATABASE_PATH', '/app/data/optimization_history.db')
+    # Check for PostgreSQL DATABASE_URL (Railway provides this)
+    database_url = os.getenv('DATABASE_URL')
 
-    # For local development, use a local path
-    if not os.getenv('RAILWAY_ENVIRONMENT'):
-        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'optimization_history.db')
+    if database_url:
+        # Railway uses postgres:// but SQLAlchemy needs postgresql://
+        if database_url.startswith('postgres://'):
+            database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        return database_url
 
-    # Ensure directory exists
+    # For local development, use SQLite
+    db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'optimization_history.db')
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
-
     return f'sqlite:///{db_path}'
 
 # Create engine and session
@@ -89,11 +91,19 @@ def _run_migrations():
         if 'processing_time_ms' not in columns:
             try:
                 with engine.connect() as conn:
-                    conn.execute(text('ALTER TABLE optimization_history ADD COLUMN processing_time_ms INTEGER'))
+                    # PostgreSQL syntax works for both PostgreSQL and newer SQLite
+                    conn.execute(text('ALTER TABLE optimization_history ADD COLUMN IF NOT EXISTS processing_time_ms INTEGER'))
                     conn.commit()
                 logger.info("✅ Migration: Added processing_time_ms column")
             except Exception as e:
-                logger.error(f"❌ Migration failed: {str(e)}")
+                # Fallback for older SQLite versions that don't support IF NOT EXISTS
+                try:
+                    with engine.connect() as conn:
+                        conn.execute(text('ALTER TABLE optimization_history ADD COLUMN processing_time_ms INTEGER'))
+                        conn.commit()
+                    logger.info("✅ Migration: Added processing_time_ms column (fallback)")
+                except Exception as e2:
+                    logger.error(f"❌ Migration failed: {str(e2)}")
 
 def get_db():
     """Get database session"""

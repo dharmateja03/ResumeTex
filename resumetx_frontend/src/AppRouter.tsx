@@ -11,6 +11,8 @@ import { Results } from './pages/Results';
 import { History } from './pages/History';
 import { Analytics } from './pages/Analytics';
 import { Docs } from './pages/Docs';
+import { Blog } from './pages/Blog';
+import { BlogPost } from './pages/BlogPost';
 import { isAuthenticated } from './utils/auth';
 
 // Protected Route Component - Supports both Clerk and dev bypass
@@ -60,6 +62,8 @@ export function AppRouter() {
           }
         />
         <Route path="/docs" element={<Docs />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
 
         {/* Protected Routes */}
         <Route
