@@ -2,6 +2,7 @@ import React from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { LogoMarquee } from './components/LogoMarquee';
+import { ATSChecker } from './components/ATSChecker';
 import { Features } from './components/Features';
 import { ProductShowcase } from './components/ProductShowcase';
 import { HowItWorks } from './components/HowItWorks';
@@ -15,6 +16,7 @@ export function App() {
       <main>
         <Hero />
         <LogoMarquee />
+        <ATSChecker />
         <Features />
         <ProductShowcase />
         <HowItWorks />
