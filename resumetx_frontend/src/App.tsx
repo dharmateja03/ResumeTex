@@ -15,8 +15,8 @@ export function App() {
       <Navbar />
       <main>
         <Hero />
-        <LogoMarquee />
         <ATSChecker />
+        <LogoMarquee />
         <Features />
         <ProductShowcase />
         <HowItWorks />
