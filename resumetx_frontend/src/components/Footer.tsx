@@ -15,7 +15,7 @@ export function Footer() {
                             <span className="text-xl font-bold text-white">ResumeTeX</span>
                         </a>
                         <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                            Empowering professionals to achieve their career goals with advanced AI technology.
+                            Free ATS resume checker and AI-powered resume optimizer. Check your ATS score instantly, optimize for Applicant Tracking Systems, and land more interviews.
                         </p>
 
                         {/* Social Links */}
@@ -27,11 +27,12 @@ export function Footer() {
                     </div>
 
                     <div>
-                        <h4 className="text-white font-bold mb-4">Product</h4>
+                        <h4 className="text-white font-bold mb-4">Free Tools</h4>
                         <ul className="space-y-2 text-sm text-slate-400">
-                            <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                            <li><a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
-                            <li><a href="/docs" className="hover:text-white transition-colors">Docs</a></li>
+                            <li><a href="#ats-checker" className="text-emerald-400 hover:text-emerald-300 transition-colors font-medium">Free ATS Checker</a></li>
+                            <li><a href="#ats-checker" className="hover:text-white transition-colors">ATS Score Test</a></li>
+                            <li><a href="#ats-checker" className="hover:text-white transition-colors">Resume Scanner</a></li>
+                            <li><a href="#features" className="hover:text-white transition-colors">Resume Optimizer</a></li>
                         </ul>
                     </div>
 
@@ -39,9 +40,10 @@ export function Footer() {
                         <h4 className="text-white font-bold mb-4">Resources</h4>
                         <ul className="space-y-2 text-sm text-slate-400">
                             <li><a href="/blog" className="hover:text-white transition-colors">Blog</a></li>
-                            <li><a href="/blog/what-is-ats-applicant-tracking-system-explained" className="hover:text-white transition-colors">ATS Guide</a></li>
+                            <li><a href="/blog/what-is-ats-applicant-tracking-system-explained" className="hover:text-white transition-colors">What is ATS?</a></li>
                             <li><a href="/blog/software-engineer-resume-guide-2024" className="hover:text-white transition-colors">Resume Guide</a></li>
                             <li><a href="/blog/latex-resume-benefits-why-professionals-choose-tex" className="hover:text-white transition-colors">LaTeX Tips</a></li>
+                            <li><a href="/docs" className="hover:text-white transition-colors">Documentation</a></li>
                         </ul>
                     </div>
 

@@ -36,7 +36,8 @@ export function Navbar() {
         }
     };
 
-    const navLinks = [
+    const navLinks: { label: string; href: string; highlight?: boolean }[] = [
+        { label: 'Free ATS Checker', href: '#ats-checker', highlight: true },
         { label: 'Features', href: '#features' },
         { label: 'How It Works', href: '#how-it-works' },
         { label: 'Blog', href: '/blog' },
@@ -64,7 +65,11 @@ export function Navbar() {
                         <a
                             key={link.label}
                             href={link.href}
-                            className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
+                            className={`text-sm font-medium transition-colors ${
+                                link.highlight
+                                    ? 'text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300'
+                                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                            }`}
                         >
                             {link.label}
                         </a>
@@ -115,7 +120,11 @@ export function Navbar() {
                             key={link.label}
                             href={link.href}
                             onClick={() => setIsOpen(false)}
-                            className="block text-lg font-medium text-slate-900 dark:text-white py-3 border-b border-slate-100 dark:border-slate-800 last:border-0"
+                            className={`block text-lg font-medium py-3 border-b border-slate-100 dark:border-slate-800 last:border-0 ${
+                                link.highlight
+                                    ? 'text-emerald-600 dark:text-emerald-400'
+                                    : 'text-slate-900 dark:text-white'
+                            }`}
                         >
                             {link.label}
                         </a>
