@@ -26,7 +26,7 @@ interface ATSResult {
 
 type AnalysisState = 'idle' | 'uploading' | 'analyzing' | 'results' | 'error';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
 
 export function ATSChecker() {
     const { isSignedIn, getToken } = useAuth();
