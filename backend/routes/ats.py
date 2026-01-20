@@ -3,7 +3,7 @@ ATS Analysis Routes
 Provides free ATS checking functionality with optional authentication for full results.
 """
 import logging
-import json
+import os
 from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File, Form
 from typing import Dict, Any, Optional
 
@@ -18,16 +18,22 @@ router = APIRouter()
 # Maximum file size (10MB)
 MAX_FILE_SIZE = 10 * 1024 * 1024
 
+# Server-side LLM config for free ATS analysis
+ATS_LLM_CONFIG = {
+    "provider": os.getenv("ATS_LLM_PROVIDER", "openrouter"),
+    "model": os.getenv("ATS_LLM_MODEL", "deepseek/deepseek-chat"),
+    "api_key": os.getenv("ATS_LLM_API_KEY", "")
+}
+
 
 @router.post("/analyze")
 async def analyze_ats(
     file: UploadFile = File(...),
     job_description: Optional[str] = Form(None),
-    llm_config: str = Form(...),  # JSON string
     current_user: Optional[Dict[str, Any]] = Depends(get_current_user_optional)
 ):
     """
-    Analyze resume for ATS compatibility.
+    Analyze resume for ATS compatibility - FREE for all users.
 
     - Always returns: score, summary, first 2 suggestions
     - Authenticated users get: full keyword analysis, formatting issues,
@@ -37,6 +43,14 @@ async def analyze_ats(
     user_email = current_user.get('email', 'anonymous') if current_user else 'anonymous'
 
     logger.info(f"ATS analysis request from {user_email} (authenticated: {is_authenticated})")
+
+    # Validate server-side API key is configured
+    if not ATS_LLM_CONFIG.get("api_key"):
+        logger.error("ATS_LLM_API_KEY not configured")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="ATS service temporarily unavailable. Please try again later."
+        )
 
     try:
         # Validate file
@@ -64,15 +78,6 @@ async def analyze_ats(
 
         logger.info(f"Processing {file_type} file: {file.filename} ({len(file_bytes)} bytes)")
 
-        # Parse LLM config
-        try:
-            config = json.loads(llm_config)
-        except json.JSONDecodeError:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid LLM configuration"
-            )
-
         # Extract text from document
         resume_text, detected_type = await document_parser.extract_text(
             file_bytes, file.filename, file.content_type
@@ -86,11 +91,11 @@ async def analyze_ats(
 
         logger.info(f"Extracted {len(resume_text)} characters from {detected_type}")
 
-        # Run ATS analysis
+        # Run ATS analysis with server-side API key
         analysis_result = await ats_analyzer.analyze_resume(
             resume_text=resume_text,
             job_description=job_description,
-            llm_config=config
+            llm_config=ATS_LLM_CONFIG
         )
 
         # Build response based on authentication status

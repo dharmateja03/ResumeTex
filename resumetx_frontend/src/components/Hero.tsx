@@ -183,6 +183,10 @@ export function Hero() {
 
                 {/* Internal Links for SEO */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mt-8 animate-[fadeInUp_0.8s_ease-out_0.8s_forwards] opacity-0">
+                    <a href="#ats-checker" className="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
+                        Free ATS Score Checker
+                    </a>
+                    <span className="text-slate-300 dark:text-slate-700">•</span>
                     <a href="/blog/what-is-ats-applicant-tracking-system-explained" className="text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                         What is ATS?
                     </a>

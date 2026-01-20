@@ -89,33 +89,15 @@ export function ATSChecker() {
         setError(null);
 
         try {
-            // Get LLM config from localStorage or use defaults
-            const provider = localStorage.getItem('llm_provider') || 'anthropic';
-            const model = localStorage.getItem('llm_model') || 'claude-3-5-sonnet-20241022';
-            const apiKey = localStorage.getItem('llm_api_key') || '';
-
-            if (!apiKey) {
-                setError('Please configure your API key in Settings first');
-                setState('error');
-                return;
-            }
-
-            const llmConfig = JSON.stringify({
-                provider,
-                model,
-                api_key: apiKey
-            });
-
             setState('analyzing');
 
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('llm_config', llmConfig);
             if (jobDescription.trim()) {
                 formData.append('job_description', jobDescription.trim());
             }
 
-            // Get auth token if signed in
+            // Get auth token if signed in (for full results)
             const headers: Record<string, string> = {};
             if (isSignedIn) {
                 const token = await getToken();
@@ -183,15 +165,24 @@ export function ATSChecker() {
                 <div className="text-center mb-12">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-sm font-medium mb-6">
                         <CheckCircle2 size={14} />
-                        Free ATS Check
+                        100% Free - No Sign Up Required
                     </div>
                     <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4 font-display">
-                        Free ATS Resume Checker
+                        Free ATS Resume Score Checker
                     </h2>
-                    <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-                        Upload your resume and get an instant ATS compatibility score.
-                        See how well your resume will perform in Applicant Tracking Systems.
+                    <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-4">
+                        <strong>Check your ATS score instantly - completely free.</strong> Upload your resume and get an AI-powered
+                        ATS compatibility analysis in seconds. No account needed.
                     </p>
+                    <div className="flex flex-wrap justify-center gap-3 text-sm text-slate-400 dark:text-slate-500">
+                        <span>ATS Score Checker</span>
+                        <span>•</span>
+                        <span>Resume ATS Test</span>
+                        <span>•</span>
+                        <span>Free Resume Scanner</span>
+                        <span>•</span>
+                        <span>ATS Compatibility Check</span>
+                    </div>
                 </div>
 
                 {/* Main Content */}
@@ -552,12 +543,20 @@ export function ATSChecker() {
                     ) : null}
                 </div>
 
-                {/* Bottom Info */}
-                <div className="mt-8 text-center">
+                {/* Bottom Info - SEO Content */}
+                <div className="mt-12 text-center max-w-3xl mx-auto">
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-3">
+                        Why Check Your ATS Resume Score?
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                        Over 75% of resumes are rejected by Applicant Tracking Systems before a human ever sees them.
+                        Our free ATS resume checker uses AI to scan your resume the same way ATS software does,
+                        giving you an instant compatibility score and actionable feedback to improve your chances.
+                    </p>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Your resume is analyzed locally and not stored.{' '}
+                        Works with PDF, Word (DOCX), and LaTeX resumes. Your resume is analyzed securely and never stored.{' '}
                         <a href="#features" className="text-indigo-600 dark:text-indigo-400 hover:underline">
-                            Learn more about our optimization
+                            Learn more about our AI resume optimization
                         </a>
                     </p>
                 </div>
