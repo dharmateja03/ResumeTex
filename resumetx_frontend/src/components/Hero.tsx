@@ -130,8 +130,8 @@ export function Hero() {
                 </div>
 
                 <h1 className="text-6xl md:text-7xl lg:text-9xl font-bold tracking-tight text-primary dark:text-white mb-8 leading-[1] animate-[fadeInUp_0.8s_ease-out_forwards] opacity-0 font-display">
-                    Your resume, <br className="hidden md:block"/>
-                    powered by AI. <br className="hidden md:block"/>
+                    AI Resume <br className="hidden md:block"/>
+                    Optimizer. <br className="hidden md:block"/>
                     <span className="text-slate-400 dark:text-slate-500 relative inline-block">
                         Always free
                         {/* Underline decoration */}
@@ -179,6 +179,42 @@ export function Hero() {
                             <span className="text-slate-900 dark:text-white font-bold">453 users</span> are currently using this
                         </p>
                     </div>
+                </div>
+
+                {/* Internal Links for SEO */}
+                <div className="flex flex-wrap items-center justify-center gap-3 mt-8 animate-[fadeInUp_0.8s_ease-out_0.8s_forwards] opacity-0">
+                    <a href="/blog/what-is-ats-applicant-tracking-system-explained" className="text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                        What is ATS?
+                    </a>
+                    <span className="text-slate-300 dark:text-slate-700">•</span>
+                    <a href="/blog/software-engineer-resume-guide-2024" className="text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                        Resume Guide
+                    </a>
+                    <span className="text-slate-300 dark:text-slate-700">•</span>
+                    <a href="/blog/latex-resume-benefits-why-professionals-choose-tex" className="text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                        Why LaTeX?
+                    </a>
+                    <span className="text-slate-300 dark:text-slate-700">•</span>
+                    <a href="/docs" className="text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                        Documentation
+                    </a>
+                </div>
+
+                {/* SEO Content Section */}
+                <div className="mt-16 max-w-3xl mx-auto text-center animate-[fadeInUp_0.8s_ease-out_1s_forwards] opacity-0">
+                    <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
+                        Why Use an AI Resume Optimizer?
+                    </h2>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                        Over 90% of Fortune 500 companies use Applicant Tracking Systems (ATS) to filter resumes before a human ever sees them.
+                        Our AI-powered resume optimizer analyzes job descriptions, identifies critical keywords, and tailors your LaTeX resume
+                        to match exactly what recruiters and ATS systems are looking for.
+                    </p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Unlike generic resume builders, ResumeTex preserves your professional LaTeX formatting while intelligently
+                        incorporating job-specific skills, technologies, and action verbs. Whether you're a software engineer, data scientist,
+                        or product manager, get more interviews by ensuring your resume speaks the same language as the job posting.
+                    </p>
                 </div>
             </div>
 
