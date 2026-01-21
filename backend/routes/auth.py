@@ -242,6 +242,7 @@ async def clerk_webhook(request: Request):
             user_data = payload.get("data", {})
             email = user_data.get("email_addresses", [{}])[0].get("email_address", "unknown")
             user_id = user_data.get("id")
+            first_name = user_data.get("first_name", "")
 
             # Track signup event
             track_login_event(
@@ -254,6 +255,15 @@ async def clerk_webhook(request: Request):
                 }
             )
             logger.info(f"✅ Tracked signup for user: {email}")
+
+            # Send welcome email
+            try:
+                from services.email_service import send_welcome_email
+                import asyncio
+                asyncio.create_task(send_welcome_email(email, first_name))
+                logger.info(f"📧 Welcome email queued for {email}")
+            except Exception as e:
+                logger.error(f"❌ Failed to queue welcome email: {str(e)}")
 
         return {"status": "success", "event_type": event_type}
 

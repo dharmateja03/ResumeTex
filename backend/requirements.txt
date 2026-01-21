@@ -16,3 +16,4 @@ psycopg2-binary==2.9.9
 cryptography>=3.4.0
 PyPDF2>=3.0.0
 python-docx>=0.8.11
+resend>=0.5.0
