@@ -18,12 +18,14 @@ router = APIRouter()
 # Maximum file size (10MB)
 MAX_FILE_SIZE = 10 * 1024 * 1024
 
-# Server-side LLM config for free ATS analysis
-ATS_LLM_CONFIG = {
-    "provider": os.getenv("ATS_LLM_PROVIDER", "openrouter"),
-    "model": os.getenv("ATS_LLM_MODEL", "deepseek/deepseek-chat"),
-    "api_key": os.getenv("ATS_LLM_API_KEY", "")
-}
+
+def get_ats_llm_config():
+    """Get ATS LLM config at runtime (not import time)"""
+    return {
+        "provider": os.getenv("ATS_LLM_PROVIDER", "openrouter"),
+        "model": os.getenv("ATS_LLM_MODEL", "deepseek/deepseek-chat"),
+        "api_key": os.getenv("ATS_LLM_API_KEY", "")
+    }
 
 
 @router.post("/analyze")
@@ -44,9 +46,12 @@ async def analyze_ats(
 
     logger.info(f"ATS analysis request from {user_email} (authenticated: {is_authenticated})")
 
+    # Get LLM config at runtime
+    ats_config = get_ats_llm_config()
+
     # Validate server-side API key is configured
-    if not ATS_LLM_CONFIG.get("api_key"):
-        logger.error("ATS_LLM_API_KEY not configured")
+    if not ats_config.get("api_key"):
+        logger.error(f"ATS_LLM_API_KEY not configured. Provider: {ats_config.get('provider')}, Model: {ats_config.get('model')}")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="ATS service temporarily unavailable. Please try again later."
@@ -95,7 +100,7 @@ async def analyze_ats(
         analysis_result = await ats_analyzer.analyze_resume(
             resume_text=resume_text,
             job_description=job_description,
-            llm_config=ATS_LLM_CONFIG
+            llm_config=ats_config
         )
 
         # Build response based on authentication status
@@ -152,8 +157,12 @@ async def analyze_ats(
 @router.get("/health")
 async def ats_health():
     """ATS service health check"""
+    config = get_ats_llm_config()
     return {
-        "status": "healthy",
+        "status": "healthy" if config.get("api_key") else "degraded",
         "service": "ats-analyzer",
-        "supported_formats": list(document_parser.SUPPORTED_FORMATS)
+        "supported_formats": list(document_parser.SUPPORTED_FORMATS),
+        "llm_provider": config.get("provider"),
+        "llm_model": config.get("model"),
+        "api_key_configured": bool(config.get("api_key"))
     }
