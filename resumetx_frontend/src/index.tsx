@@ -22,7 +22,7 @@ if (!clerkPubKey) {
 render(
   <ClerkProvider publishableKey={clerkPubKey}
      publishableKey={clerkPubKey}
-    frontendApi={clerkFrontendApi}     
+    
     domain="clerk.resumetex.tech" 
     >
     <AppRouter />
