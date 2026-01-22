@@ -20,7 +20,9 @@ if (!clerkPubKey) {
 }
 
 render(
-  <ClerkProvider publishableKey={clerkPubKey}>
+  <ClerkProvider publishableKey={clerkPubKey}
+    clerkJSUrl="https://js.clerk.com/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    >
     <AppRouter />
   </ClerkProvider>,
   document.getElementById('root')
