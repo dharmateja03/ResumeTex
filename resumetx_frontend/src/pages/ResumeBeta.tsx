@@ -18,6 +18,12 @@ interface Suggestion {
 
 type FileType = 'pdf' | 'latex' | null;
 
+// Get API base URL
+const getAPIUrl = (): string => {
+  const isDev = window.location.hostname === 'localhost';
+  return isDev ? 'http://localhost:8001' : '';
+};
+
 export function ResumeBeta() {
   const { getToken } = useAuth();
   const navigate = useNavigate();
@@ -86,7 +92,7 @@ export function ResumeBeta() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('http://localhost:8001/resume_beta/upload', {
+      const response = await fetch(`${getAPIUrl()}/resume_beta/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -116,7 +122,7 @@ export function ResumeBeta() {
     try {
       const token = await getToken();
 
-      const response = await fetch('http://localhost:8001/resume_beta/suggestions', {
+      const response = await fetch(`${getAPIUrl()}/resume_beta/suggestions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
