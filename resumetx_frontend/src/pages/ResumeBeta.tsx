@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, X, Loader, Download, ExternalLink } from 'lucide-react';
+import { Upload, X, Loader, Download, ExternalLink, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -183,6 +183,11 @@ export function ResumeBeta() {
     setCustomInstructions('');
   };
 
+  // Go back to workspace
+  const handleBackToWorkspace = () => {
+    navigate('/workspace');
+  };
+
   // File input component
   const FileUploadArea = () => {
     if (blocks.length > 0) return null;
@@ -313,18 +318,28 @@ export function ResumeBeta() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Resume Analyzer (Beta)
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Upload your resume, analyze blocks, and get AI suggestions
-            </p>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleBackToWorkspace}
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              title="Back to Workspace"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Resume Analyzer (Beta)
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
+                Upload your resume, analyze blocks, and get AI suggestions
+              </p>
+            </div>
           </div>
           {blocks.length > 0 && (
             <button
               onClick={handleReset}
               className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg border border-gray-300 dark:border-gray-600 transition"
+              title="Start over"
             >
               <X className="h-5 w-5" />
             </button>

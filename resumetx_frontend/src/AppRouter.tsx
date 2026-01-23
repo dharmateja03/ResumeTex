@@ -57,7 +57,7 @@ export function AppRouter() {
                 routing="path"
                 path="/signup"
                 signInUrl="/login"
-                afterSignUpUrl="/workspace"
+                afterSignUpUrl="/resume-beta"
               />
             </div>
           }
@@ -128,7 +128,7 @@ export function AppRouter() {
 
         {/* Clerk SSO Callback Routes */}
         <Route path="/login/sso-callback" element={<Navigate to="/workspace" replace />} />
-        <Route path="/signup/sso-callback" element={<Navigate to="/workspace" replace />} />
+        <Route path="/signup/sso-callback" element={<Navigate to="/resume-beta" replace />} />
 
         {/* Redirect old OAuth callback to login */}
         <Route path="/auth/callback" element={<Navigate to="/login" replace />} />
