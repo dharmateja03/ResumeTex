@@ -13,6 +13,7 @@ import { Analytics } from './pages/Analytics';
 import { Docs } from './pages/Docs';
 import { Blog } from './pages/Blog';
 import { BlogPost } from './pages/BlogPost';
+import { ResumeBeta } from './pages/ResumeBeta';
 import { isAuthenticated } from './utils/auth';
 
 // Protected Route Component - Supports both Clerk and dev bypass
@@ -113,6 +114,14 @@ export function AppRouter() {
           element={
             <ProtectedRoute>
               <Analytics />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/resume-beta"
+          element={
+            <ProtectedRoute>
+              <ResumeBeta />
             </ProtectedRoute>
           }
         />

@@ -577,6 +577,16 @@ export function Workspace() {
                     <BarChart3Icon className="h-4 w-4" />
                     <span>Analytics</span>
                   </button>
+                  <button
+                    onClick={() => {
+                      navigate('/resume-beta');
+                      setShowProfileDropdown(false);
+                    }}
+                    className={`w-full px-4 py-2 text-left text-sm ${darkMode ? 'text-purple-400 hover:bg-gray-700' : 'text-purple-600 hover:bg-purple-50'} flex items-center space-x-2`}
+                  >
+                    <span className="text-lg">✨</span>
+                    <span>Resume Analyzer (Beta)</span>
+                  </button>
 
                   <hr className={`my-2 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`} />
 

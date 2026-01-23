@@ -20,6 +20,7 @@ from routes.download import router as download_router
 from routes.analytics import router as analytics_router
 from routes.history import router as history_router
 from routes.ats import router as ats_router
+from routes.resume_beta import router as resume_beta_router
 from database import init_db
 
 # Load environment variables
@@ -95,6 +96,7 @@ app.include_router(download_router, prefix="/download", tags=["File Downloads"])
 app.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
 app.include_router(history_router, prefix="/history", tags=["History"])
 app.include_router(ats_router, prefix="/ats", tags=["ATS Analysis"])
+app.include_router(resume_beta_router, prefix="/resume_beta", tags=["Resume Beta"])
 
 # Global error handlers
 @app.exception_handler(HTTPException)
@@ -154,7 +156,7 @@ if os.path.exists("frontend_build"):
     async def serve_react_routes(full_path: str):
         """Serve React app for all non-API routes"""
         # Don't interfere with API routes
-        if full_path.startswith(("auth/", "llm/", "optimize/", "download/", "analytics/", "history/", "ats/", "health", "metrics", "docs")):
+        if full_path.startswith(("auth/", "llm/", "optimize/", "download/", "analytics/", "history/", "ats/", "resume_beta/", "health", "metrics", "docs")):
             raise HTTPException(status_code=404, detail="Not found")
         return FileResponse("frontend_build/index.html")
 else:
