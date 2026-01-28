@@ -17,6 +17,8 @@ export function LLMSettings() {
   const [provider, setProvider] = useState('openrouter');
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState('');
+  const [customModelInput, setCustomModelInput] = useState('');
+  const [isCustomModel, setIsCustomModel] = useState(false);
   const [isProviderDropdownOpen, setIsProviderDropdownOpen] = useState(false);
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -134,6 +136,9 @@ export function LLMSettings() {
     }, {
       id: 'deepseek/deepseek-chat',
       name: 'DeepSeek Chat (via OpenRouter)'
+    }, {
+      id: '__custom__',
+      name: 'Custom Model (Enter Model ID)'
     }],
     custom: [{
       id: 'custom',
@@ -144,6 +149,8 @@ export function LLMSettings() {
     // Set default model when provider changes
     if (modelsByProvider[provider]?.length > 0) {
       setModel(modelsByProvider[provider][0].id);
+      setIsCustomModel(false);
+      setCustomModelInput('');
     } else {
       setModel('');
     }
@@ -180,7 +187,19 @@ export function LLMSettings() {
         setProvider(savedProvider);
       }
       if (savedModel) {
-        setModel(savedModel);
+        // Check if saved model is a preset or custom
+        const isPresetModel = savedProvider && modelsByProvider[savedProvider]?.some(m => m.id === savedModel && m.id !== '__custom__');
+        if (isPresetModel) {
+          setModel(savedModel);
+          setIsCustomModel(false);
+        } else if (savedProvider === 'openrouter') {
+          // It's a custom model for OpenRouter
+          setModel('__custom__');
+          setCustomModelInput(savedModel);
+          setIsCustomModel(true);
+        } else {
+          setModel(savedModel);
+        }
       }
       if (savedApiKey) {
         setApiKey(savedApiKey);
@@ -193,6 +212,17 @@ export function LLMSettings() {
       alert('Please enter an API key');
       return;
     }
+
+    // Determine the actual model to use
+    const actualModel = (provider === 'openrouter' && model === '__custom__')
+      ? customModelInput.trim()
+      : model;
+
+    if (!actualModel) {
+      alert('Please enter a model name');
+      return;
+    }
+
     setIsButtonAnimating(true);
     setIsLoading(true);
 
@@ -205,7 +235,7 @@ export function LLMSettings() {
         },
         body: JSON.stringify({
           provider: provider,
-          model: model,
+          model: actualModel,
           api_key: apiKey
         })
       });
@@ -215,7 +245,7 @@ export function LLMSettings() {
       if (response.ok && result.status === 'success') {
         // Save to localStorage only if connection test passes
         localStorage.setItem('llm_provider', provider);
-        localStorage.setItem('llm_model', model);
+        localStorage.setItem('llm_model', actualModel);
         localStorage.setItem('llm_api_key', apiKey);
         setIsConnected(true);
 
@@ -327,6 +357,7 @@ export function LLMSettings() {
                   {isModelDropdownOpen && <ul className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-lg py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm" tabIndex={-1} role="listbox">
                       {modelsByProvider[provider]?.map(modelOption => <li key={modelOption.id} className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-50 ${model === modelOption.id ? 'bg-blue-50 text-blue-600' : 'text-gray-900'}`} onClick={() => {
                     setModel(modelOption.id);
+                    setIsCustomModel(modelOption.id === '__custom__');
                     setIsModelDropdownOpen(false);
                   }} role="option" aria-selected={model === modelOption.id}>
                           <span className={`block truncate ${model === modelOption.id ? 'font-medium' : 'font-normal'}`}>
@@ -339,6 +370,33 @@ export function LLMSettings() {
                     </ul>}
                 </div>
               </div>
+              {/* Custom Model Input (shown when custom model is selected for OpenRouter) */}
+              {provider === 'openrouter' && isCustomModel && (
+                <div>
+                  <label htmlFor="custom-model" className="block text-sm font-medium text-gray-700 mb-1">
+                    Custom Model ID
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      type="text"
+                      name="custom-model"
+                      id="custom-model"
+                      className="focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-lg transition-all duration-200"
+                      placeholder="e.g., anthropic/claude-3.5-sonnet:beta"
+                      value={customModelInput}
+                      onChange={e => setCustomModelInput(e.target.value)}
+                      disabled={isConnected}
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Copy the model ID from{' '}
+                      <a href="https://openrouter.ai/models" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        openrouter.ai/models
+                      </a>
+                      {' '}- click any model, then copy the ID shown (e.g., <code className="bg-gray-100 px-1 rounded">anthropic/claude-3.5-sonnet</code>)
+                    </p>
+                  </div>
+                </div>
+              )}
               {/* API Key Input */}
               <div>
                 <label htmlFor="api-key" className="block text-sm font-medium text-gray-700 mb-1">

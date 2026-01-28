@@ -85,6 +85,8 @@ export function Workspace() {
   const [llmProvider, setLlmProvider] = useState('openai');
   const [llmModel, setLlmModel] = useState('gpt-4o');
   const [llmApiKey, setLlmApiKey] = useState('');
+  const [customModelInput, setCustomModelInput] = useState('');
+  const [isCustomModel, setIsCustomModel] = useState(false);
   const [isLLMConnected, setIsLLMConnected] = useState(false);
   const [isLLMLoading, setIsLLMLoading] = useState(false);
   const [isProviderDropdownOpen, setIsProviderDropdownOpen] = useState(false);
@@ -149,7 +151,8 @@ export function Workspace() {
       { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet (via OpenRouter)' },
       { id: 'openai/gpt-4o', name: 'GPT-4o (via OpenRouter)' },
       { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (Free)' },
-      { id: 'deepseek/deepseek-chat', name: 'DeepSeek Chat (via OpenRouter)' }
+      { id: 'deepseek/deepseek-chat', name: 'DeepSeek Chat (via OpenRouter)' },
+      { id: '__custom__', name: 'Custom Model (Enter Model ID)' }
     ],
     custom: [{ id: 'custom', name: 'Custom Model' }]
   };
@@ -215,7 +218,21 @@ export function Workspace() {
     } else {
       // Use saved settings
       if (savedProvider) setLlmProvider(savedProvider);
-      if (savedModel) setLlmModel(savedModel);
+      if (savedModel) {
+        // Check if saved model is a preset or custom for OpenRouter
+        const isPresetModel = savedProvider && modelsByProvider[savedProvider]?.some(m => m.id === savedModel && m.id !== '__custom__');
+        if (isPresetModel) {
+          setLlmModel(savedModel);
+          setIsCustomModel(false);
+        } else if (savedProvider === 'openrouter') {
+          // It's a custom model for OpenRouter
+          setLlmModel('__custom__');
+          setCustomModelInput(savedModel);
+          setIsCustomModel(true);
+        } else {
+          setLlmModel(savedModel);
+        }
+      }
       if (savedApiKey) {
         setLlmApiKey(savedApiKey);
         setIsLLMConnected(true);
@@ -240,6 +257,8 @@ export function Workspace() {
   useEffect(() => {
     if (modelsByProvider[llmProvider]?.length > 0) {
       setLlmModel(modelsByProvider[llmProvider][0].id);
+      setIsCustomModel(false);
+      setCustomModelInput('');
     }
   }, [llmProvider]);
 
@@ -248,15 +267,20 @@ export function Workspace() {
     const savedProvider = localStorage.getItem('llm_provider');
     const savedModel = localStorage.getItem('llm_model');
     const savedApiKey = localStorage.getItem('llm_api_key');
-    
+
+    // Determine actual model being used (custom input for OpenRouter custom, otherwise llmModel)
+    const actualModel = (llmProvider === 'openrouter' && llmModel === '__custom__')
+      ? customModelInput.trim()
+      : llmModel;
+
     // Check if ANY setting differs from saved values
-    const hasChanges = 
-      llmProvider !== savedProvider || 
-      llmModel !== savedModel || 
+    const hasChanges =
+      llmProvider !== savedProvider ||
+      actualModel !== savedModel ||
       llmApiKey !== savedApiKey;
-    
+
     setHasLLMUnsavedChanges(hasChanges && isLLMConnected);
-  }, [llmProvider, llmModel, llmApiKey, isLLMConnected]);
+  }, [llmProvider, llmModel, llmApiKey, customModelInput, isLLMConnected]);
 
   // Save form data to localStorage
   const saveFormData = () => {
@@ -360,6 +384,17 @@ export function Workspace() {
       alert('Please enter an API key');
       return;
     }
+
+    // Determine the actual model to use
+    const actualModel = (llmProvider === 'openrouter' && llmModel === '__custom__')
+      ? customModelInput.trim()
+      : llmModel;
+
+    if (!actualModel) {
+      alert('Please enter a model name');
+      return;
+    }
+
     setIsLLMLoading(true);
 
     try {
@@ -368,7 +403,7 @@ export function Workspace() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           provider: llmProvider,
-          model: llmModel,
+          model: actualModel,
           api_key: llmApiKey
         })
       });
@@ -376,7 +411,7 @@ export function Workspace() {
       const result = await response.json();
       if (response.ok && result.status === 'success') {
         localStorage.setItem('llm_provider', llmProvider);
-        localStorage.setItem('llm_model', llmModel);
+        localStorage.setItem('llm_model', actualModel);
         localStorage.setItem('llm_api_key', llmApiKey);
         setIsLLMConnected(true);
         alert('✅ LLM Configuration saved!');
@@ -1223,6 +1258,7 @@ export function Workspace() {
                           key={m.id}
                           onClick={() => {
                             setLlmModel(m.id);
+                            setIsCustomModel(m.id === '__custom__');
                             setIsModelDropdownOpen(false);
                           }}
                           className="px-3 py-2 hover:bg-blue-50 cursor-pointer"
@@ -1234,6 +1270,27 @@ export function Workspace() {
                   )}
                 </div>
               </div>
+
+              {/* Custom Model Input (shown when custom model is selected for OpenRouter) */}
+              {llmProvider === 'openrouter' && isCustomModel && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Custom Model ID</label>
+                  <input
+                    type="text"
+                    value={customModelInput}
+                    onChange={(e) => setCustomModelInput(e.target.value)}
+                    placeholder="e.g., anthropic/claude-3.5-sonnet:beta"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Copy the model ID from{' '}
+                    <a href="https://openrouter.ai/models" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      openrouter.ai/models
+                    </a>
+                    {' '}- click any model, then copy the ID (e.g., <code className="bg-gray-100 px-1 rounded">anthropic/claude-3.5-sonnet</code>)
+                  </p>
+                </div>
+              )}
 
               {/* API Key */}
               <div>
