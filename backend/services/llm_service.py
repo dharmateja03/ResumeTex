@@ -446,7 +446,7 @@ class LLMService:
                 json={
                     "model": config.model,
                     "messages": [{"role": "user", "content": "Test connection"}],
-                    "max_tokens": 5
+                    "max_tokens": 16  # Some models require minimum 16 tokens
                 }
             )
 
