@@ -25,6 +25,7 @@ export function LLMSettings() {
   const [isLoading, setIsLoading] = useState(false);
   const [isButtonAnimating, setIsButtonAnimating] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [savedCustomModels, setSavedCustomModels] = useState<{id: string, name: string}[]>([]);
   const providers = [{
     id: 'openai',
     name: 'OpenAI'
@@ -146,6 +147,41 @@ export function LLMSettings() {
       name: 'Custom Model'
     }]
   };
+  // Fetch custom models from API
+  useEffect(() => {
+    const fetchCustomModels = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/llm/custom-models?provider=openrouter`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.models && data.models.length > 0) {
+            const customModels = data.models.map((m: any) => ({
+              id: m.model_id,
+              name: m.display_name || m.model_id
+            }));
+            setSavedCustomModels(customModels);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching custom models:', error);
+      }
+    };
+    fetchCustomModels();
+  }, []);
+
+  // Get combined models for openrouter (presets + saved custom + custom input option)
+  const getOpenRouterModels = () => {
+    const presets = modelsByProvider.openrouter;
+    // Insert saved custom models before the "__custom__" option
+    const customOption = presets.find(m => m.id === '__custom__');
+    const presetsWithoutCustom = presets.filter(m => m.id !== '__custom__');
+    // Filter out duplicates (in case a saved model matches a preset)
+    const uniqueCustom = savedCustomModels.filter(
+      cm => !presetsWithoutCustom.some(p => p.id === cm.id)
+    );
+    return [...presetsWithoutCustom, ...uniqueCustom, customOption!];
+  };
+
   useEffect(() => {
     // Set default model when provider changes (but not on initial load)
     if (isInitialLoad) return;
@@ -352,14 +388,14 @@ export function LLMSettings() {
                 <div className="mt-1 relative">
                   <button type="button" className="bg-white relative w-full border border-gray-300 rounded-lg shadow-sm pl-3 pr-10 py-2 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)} aria-haspopup="listbox" aria-expanded={isModelDropdownOpen}>
                     <span className="block truncate">
-                      {modelsByProvider[provider]?.find(m => m.id === model)?.name || 'Select model'}
+                      {(provider === 'openrouter' ? getOpenRouterModels() : modelsByProvider[provider])?.find(m => m.id === model)?.name || 'Select model'}
                     </span>
                     <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                       <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                     </span>
                   </button>
                   {isModelDropdownOpen && <ul className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-lg py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm" tabIndex={-1} role="listbox">
-                      {modelsByProvider[provider]?.map(modelOption => <li key={modelOption.id} className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-50 ${model === modelOption.id ? 'bg-blue-50 text-blue-600' : 'text-gray-900'}`} onClick={() => {
+                      {(provider === 'openrouter' ? getOpenRouterModels() : modelsByProvider[provider])?.map(modelOption => <li key={modelOption.id} className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-50 ${model === modelOption.id ? 'bg-blue-50 text-blue-600' : 'text-gray-900'}`} onClick={() => {
                     setModel(modelOption.id);
                     setIsCustomModel(modelOption.id === '__custom__');
                     setIsModelDropdownOpen(false);

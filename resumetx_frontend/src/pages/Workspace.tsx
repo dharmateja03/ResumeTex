@@ -93,6 +93,7 @@ export function Workspace() {
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const [hasLLMUnsavedChanges, setHasLLMUnsavedChanges] = useState(false);
   const [isLLMInitialLoad, setIsLLMInitialLoad] = useState(true);
+  const [savedCustomModels, setSavedCustomModels] = useState<{id: string, name: string}[]>([]);
 
   // Optimization state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -157,6 +158,39 @@ export function Workspace() {
     ],
     custom: [{ id: 'custom', name: 'Custom Model' }]
   };
+
+  // Get combined models for openrouter (presets + saved custom + custom input option)
+  const getOpenRouterModels = () => {
+    const presets = modelsByProvider.openrouter;
+    const customOption = presets.find(m => m.id === '__custom__');
+    const presetsWithoutCustom = presets.filter(m => m.id !== '__custom__');
+    const uniqueCustom = savedCustomModels.filter(
+      cm => !presetsWithoutCustom.some(p => p.id === cm.id)
+    );
+    return [...presetsWithoutCustom, ...uniqueCustom, customOption!];
+  };
+
+  // Fetch custom models from API
+  useEffect(() => {
+    const fetchCustomModels = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'}/llm/custom-models?provider=openrouter`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.models && data.models.length > 0) {
+            const customModels = data.models.map((m: any) => ({
+              id: m.model_id,
+              name: m.display_name || m.model_id
+            }));
+            setSavedCustomModels(customModels);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching custom models:', error);
+      }
+    };
+    fetchCustomModels();
+  }, []);
 
   // Initialize on mount
   useEffect(() => {
@@ -1253,12 +1287,12 @@ export function Workspace() {
                     onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-left flex items-center justify-between hover:border-gray-400"
                   >
-                    <span>{modelsByProvider[llmProvider]?.find((m) => m.id === llmModel)?.name || 'Select'}</span>
+                    <span>{(llmProvider === 'openrouter' ? getOpenRouterModels() : modelsByProvider[llmProvider])?.find((m) => m.id === llmModel)?.name || 'Select'}</span>
                     <ChevronDownIcon className="h-4 w-4" />
                   </button>
                   {isModelDropdownOpen && (
                     <ul className="absolute top-full left-0 right-0 mt-1 border border-gray-300 rounded-lg bg-white shadow-lg z-10 max-h-48 overflow-y-auto">
-                      {modelsByProvider[llmProvider]?.map((m) => (
+                      {(llmProvider === 'openrouter' ? getOpenRouterModels() : modelsByProvider[llmProvider])?.map((m) => (
                         <li
                           key={m.id}
                           onClick={() => {

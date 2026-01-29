@@ -9,6 +9,31 @@ import os
 
 Base = declarative_base()
 
+class CustomModel(Base):
+    """Model for storing user-added custom OpenRouter models"""
+    __tablename__ = 'custom_models'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    model_id = Column(String(255), nullable=False, unique=True, index=True)  # e.g., "anthropic/claude-3.5-sonnet:beta"
+    display_name = Column(String(255), nullable=True)  # Optional friendly name
+    provider = Column(String(50), nullable=False, default='openrouter')  # Provider (openrouter, etc.)
+    added_by = Column(String(255), nullable=True)  # User email who added it (optional)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    usage_count = Column(Integer, default=0)  # Track how often it's used
+
+    def to_dict(self):
+        """Convert model to dictionary"""
+        return {
+            'id': self.id,
+            'model_id': self.model_id,
+            'display_name': self.display_name or self.model_id,
+            'provider': self.provider,
+            'added_by': self.added_by,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'usage_count': self.usage_count
+        }
+
+
 class OptimizationHistory(Base):
     """Model for storing optimization history"""
     __tablename__ = 'optimization_history'

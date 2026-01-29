@@ -3,17 +3,60 @@ LLM configuration routes for testing connections and managing providers
 """
 import logging
 from fastapi import APIRouter, HTTPException, Depends, status
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from models.schemas import (
-    LLMConnectionTest, LLMConnectionResponse, LLMProvider, 
+    LLMConnectionTest, LLMConnectionResponse, LLMProvider,
     LLMProvider_Info, ErrorResponse
 )
 from services.llm_service import llm_service
 from routes.auth import get_current_user, get_current_user_optional
+from database.models import CustomModel, SessionLocal
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+def get_db():
+    """Get database session"""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def save_custom_model_to_db(model_id: str, provider: str = "openrouter", user_email: Optional[str] = None):
+    """Save a custom model to database if it doesn't exist"""
+    db = SessionLocal()
+    try:
+        # Check if model already exists
+        existing = db.query(CustomModel).filter(CustomModel.model_id == model_id).first()
+        if existing:
+            # Increment usage count
+            existing.usage_count += 1
+            db.commit()
+            logger.info(f"📊 Incremented usage count for model: {model_id}")
+            return existing
+
+        # Create new custom model entry
+        new_model = CustomModel(
+            model_id=model_id,
+            provider=provider,
+            added_by=user_email,
+            usage_count=1
+        )
+        db.add(new_model)
+        db.commit()
+        db.refresh(new_model)
+        logger.info(f"✅ Saved new custom model to database: {model_id}")
+        return new_model
+    except Exception as e:
+        logger.error(f"❌ Error saving custom model: {str(e)}")
+        db.rollback()
+        return None
+    finally:
+        db.close()
 
 @router.get("/providers", response_model=List[LLMProvider_Info])
 async def get_available_providers():
@@ -111,7 +154,7 @@ async def test_llm_connection(config: LLMConnectionTest):
     """Test connection to LLM provider"""
     logger.info(f"🧪 Testing LLM connection - Provider: {config.provider}, Model: {config.model}")
     logger.info(f"🔑 API key length: {len(config.api_key) if config.api_key else 0} characters")
-    
+
     try:
         # Convert to LLMConfig for the service
         from models.schemas import LLMConfig
@@ -121,23 +164,58 @@ async def test_llm_connection(config: LLMConnectionTest):
             api_key=config.api_key,
             custom_endpoint=config.custom_endpoint
         )
-        
+
         # Test the connection
         result = await llm_service.test_connection(llm_config)
-        
+
         if result.status == "success":
             logger.info(f"✅ Connection test successful for {config.provider}")
+
+            # Save custom model to database for OpenRouter (if not a preset)
+            if config.provider == "openrouter":
+                preset_models = [
+                    "x-ai/grok-code-fast-1",
+                    "anthropic/claude-3.5-sonnet",
+                    "openai/gpt-4o",
+                    "google/gemini-2.0-flash-exp:free",
+                    "deepseek/deepseek-chat"
+                ]
+                if config.model not in preset_models:
+                    save_custom_model_to_db(config.model, "openrouter")
         else:
             logger.warning(f"⚠️ Connection test failed for {config.provider}: {result.message}")
-        
+
         return result
-        
+
     except Exception as e:
         logger.error(f"❌ Connection test error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Connection test failed: {str(e)}"
         )
+
+@router.get("/custom-models")
+async def get_custom_models(provider: str = "openrouter"):
+    """Get list of user-added custom models"""
+    logger.info(f"📋 Fetching custom models for provider: {provider}")
+
+    db = SessionLocal()
+    try:
+        models = db.query(CustomModel).filter(
+            CustomModel.provider == provider
+        ).order_by(CustomModel.usage_count.desc()).all()
+
+        logger.info(f"✅ Found {len(models)} custom models")
+        return {
+            "models": [m.to_dict() for m in models],
+            "count": len(models)
+        }
+    except Exception as e:
+        logger.error(f"❌ Error fetching custom models: {str(e)}")
+        return {"models": [], "count": 0}
+    finally:
+        db.close()
+
 
 @router.post("/save-config")
 async def save_llm_config(
