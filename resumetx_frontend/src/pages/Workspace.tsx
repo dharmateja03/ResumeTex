@@ -92,6 +92,7 @@ export function Workspace() {
   const [isProviderDropdownOpen, setIsProviderDropdownOpen] = useState(false);
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const [hasLLMUnsavedChanges, setHasLLMUnsavedChanges] = useState(false);
+  const [isLLMInitialLoad, setIsLLMInitialLoad] = useState(true);
 
   // Optimization state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -251,16 +252,20 @@ export function Workspace() {
         console.error('Error parsing stored form data:', error);
       }
     }
+
+    // Mark LLM initial load as complete so provider changes will reset model
+    setIsLLMInitialLoad(false);
   }, []);
 
-  // Update default model when provider changes
+  // Update default model when provider changes (but not on initial load)
   useEffect(() => {
+    if (isLLMInitialLoad) return;
     if (modelsByProvider[llmProvider]?.length > 0) {
       setLlmModel(modelsByProvider[llmProvider][0].id);
       setIsCustomModel(false);
       setCustomModelInput('');
     }
-  }, [llmProvider]);
+  }, [llmProvider, isLLMInitialLoad]);
 
   // Track unsaved LLM changes
   useEffect(() => {

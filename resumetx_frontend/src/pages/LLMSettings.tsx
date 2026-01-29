@@ -24,6 +24,7 @@ export function LLMSettings() {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isButtonAnimating, setIsButtonAnimating] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const providers = [{
     id: 'openai',
     name: 'OpenAI'
@@ -146,7 +147,8 @@ export function LLMSettings() {
     }]
   };
   useEffect(() => {
-    // Set default model when provider changes
+    // Set default model when provider changes (but not on initial load)
+    if (isInitialLoad) return;
     if (modelsByProvider[provider]?.length > 0) {
       setModel(modelsByProvider[provider][0].id);
       setIsCustomModel(false);
@@ -154,7 +156,7 @@ export function LLMSettings() {
     } else {
       setModel('');
     }
-  }, [provider]);
+  }, [provider, isInitialLoad]);
   useEffect(() => {
     // Load saved settings from localStorage
     const savedProvider = localStorage.getItem('llm_provider');
@@ -206,6 +208,8 @@ export function LLMSettings() {
         setIsConnected(true);
       }
     }
+    // Mark initial load as complete so provider changes will reset model
+    setIsInitialLoad(false);
   }, []);
   const handleConnect = async () => {
     if (!apiKey.trim()) {
